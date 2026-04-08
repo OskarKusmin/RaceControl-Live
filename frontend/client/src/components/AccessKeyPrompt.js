@@ -16,7 +16,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
 
         socket.on('key-validation-response', (response) => {
             if(response.success) {
-                onAccessGranted(role, accessKey);
+                onAccessGranted(role);
             } else {
                 setError(response.message || 'Invalid access key. Try again.');
             }
@@ -25,7 +25,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
         return () => {
             socket.off('key-validation-response');
         }
-    }, [socket, role, accessKey, onAccessGranted]);
+    }, [socket, role, onAccessGranted]);
 
     const handleAccess = () => {
         if (!socket) return;

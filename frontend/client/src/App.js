@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import io from 'socket.io-client';
 import FrontDesk from './components/FrontDesk';
 import RaceControl from './components/RaceControl';
@@ -22,7 +22,6 @@ const App = () => {
     const [raceSessions, setRaceSessions] = useState([]);
 
     useEffect(() => {
-        // Replace localhost url with ngrok free url when using ngrok
         const newSocket = io("http://localhost:5001", { transports: ["polling", "websocket"] });
 
         setSocket(newSocket);
@@ -69,13 +68,9 @@ const App = () => {
         }
     }, []);
 
-    const handleAccessGranted = (userRole, accessKey) => {
+    const handleAccessGranted = (userRole) => {
         setAccessGranted(true);
         setRole(userRole);
-
-        if (socket) {
-            socket.emit('join-role', { role: userRole, accessKey });
-        }
     };
 
     return (
@@ -96,7 +91,7 @@ const App = () => {
                                 <FrontDesk />
                             ) : (
                                 <AccessKeyPrompt
-                                    onAccessGranted={(key) => handleAccessGranted('receptionist', key)}
+                                    onAccessGranted={() => handleAccessGranted('receptionist')}
                                     role="receptionist"
                                 />
                             )
@@ -109,7 +104,7 @@ const App = () => {
                                 <RaceControl />
                             ) : (
                                 <AccessKeyPrompt
-                                    onAccessGranted={(key) => handleAccessGranted('safety', key)}
+                                    onAccessGranted={() => handleAccessGranted('safety')}
                                     role="safety"
                                 />
                             )
@@ -122,7 +117,7 @@ const App = () => {
                             <LapLineTracker />
                         ) : (
                             <AccessKeyPrompt
-                                onAccessGranted={(key) => handleAccessGranted('observer', key)}
+                                onAccessGranted={() => handleAccessGranted('observer')}
                                 role='observer'
                             />
                         )
