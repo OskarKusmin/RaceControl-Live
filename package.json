@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "## Overview The Racetrack App is a real-time race management system built with Node.js and Socket.IO. It allows receptionists, safety officials, and spectators to manage and view race sessions efficiently. This application includes interfaces for various roles, each designed to simplify specific tasks.",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "dev": "concurrently -n server,client -c blue,magenta \"npm run dev --prefix backend\" \"npm start --prefix frontend/client\"",
     "install:all": "npm install && npm install --prefix backend && npm install --prefix frontend/client"
@@ -12,5 +13,8 @@
   "license": "ISC",
   "dependencies": {
     "all": "^0.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
