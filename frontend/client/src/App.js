@@ -130,7 +130,6 @@ const App = () => {
                     />
                     <Route path="/leaderboard" element={<Leaderboard />} />
                     <Route path="/race-flags" element={<RaceFlags />} />
-                    <Route path="/" element={<Navigate to="/front-desk" replace />} />
                     <Route path="/next-race" element={<NextRace />} />
                     <Route path="/race-countdown" element={<RaceCountdown />} />
                     <Route path="*" element={<p>404: Page Not Found</p>} />
