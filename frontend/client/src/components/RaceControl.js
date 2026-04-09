@@ -1,311 +1,280 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { SocketContext } from '../App';
-import { RaceSessionContext } from "../contexts/RaceSessionContext";
+import { RaceSessionContext } from '../contexts/RaceSessionContext';
+import './css/RaceControl.css';
+
+/* ── Constants ────────────────────────────────────────────── */
+
+const FLAG_MODES = [
+  {
+    mode:    'Safe',
+    label:   'Safe',
+    variant: 'green',
+    desc:    'Green flag — track clear',
+  },
+  {
+    mode:    'Hazard',
+    label:   'Hazard',
+    variant: 'yellow',
+    desc:    'Yellow flag — caution, no overtaking',
+  },
+  {
+    mode:    'Danger',
+    label:   'Danger',
+    variant: 'red',
+    desc:    'Red flag — stop immediately',
+  },
+  {
+    mode:    'Finish',
+    label:   'Finish',
+    variant: 'chequered',
+    desc:    'Chequered flag — race complete',
+  },
+];
+
+const MODE_BADGE = {
+  Safe:    'green',
+  Hazard:  'amber',
+  Danger:  'red',
+  Finish:  'blue',
+};
+
+/* ── Helpers ──────────────────────────────────────────────── */
+
+const formatTime = (ms) => {
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  const cents   = Math.floor((ms % 1000) / 10);
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(cents).padStart(2, '0')}`;
+};
+
+/* ── Component ────────────────────────────────────────────── */
 
 const RaceControl = () => {
-    const socket = useContext(SocketContext);
-    const [raceMode, setRaceMode] = useState('Danger');
-    const [countdown, setCountdown] = useState(0);
-    const [currentSession, setCurrentSession] = useState('');
-    const [isRaceActive, setIsRaceActive] = useState(false);
-    const [isRaceFinished, setIsRaceFinished] = useState(false);
-    const { raceSessions } = useContext(RaceSessionContext);
+  const socket = useContext(SocketContext);
+  const { raceSessions } = useContext(RaceSessionContext);
 
-    useEffect(() => {
-        if (raceSessions.length > 0 && !currentSession) {
-            const firstAvailableSession = raceSessions.find(
-                session => session.status === 'upcoming' || session.status === 'confirmed');
-            
-            if (firstAvailableSession) {
-                setCurrentSession(firstAvailableSession)
-                socket.emit('select-session', firstAvailableSession.id);
-            }
+  const [raceMode,       setRaceMode]       = useState('Danger');
+  const [countdown,      setCountdown]      = useState(0);
+  const [currentSession, setCurrentSession] = useState(null);
+  const [isRaceActive,   setIsRaceActive]   = useState(false);
+  const [isRaceFinished, setIsRaceFinished] = useState(false);
+  const [error,          setError]          = useState('');
+
+  /* Auto-select first available session */
+  useEffect(() => {
+    if (raceSessions.length > 0 && !currentSession) {
+      const first = raceSessions.find(
+        s => s.status === 'upcoming' || s.status === 'confirmed'
+      );
+      if (first) {
+        setCurrentSession(first);
+        socket.emit('select-session', first.id);
+      }
+    }
+  }, [raceSessions, currentSession, socket]);
+
+  /* Socket listeners */
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleSessionsUpdate = (sessions) => {
+      const next = sessions.find(
+        s => s.id === currentSession?.id ||
+             s.status === 'upcoming'     ||
+             s.status === 'confirmed'
+      );
+      if (next) {
+        setCurrentSession(next);
+        if (!currentSession || next.id !== currentSession.id) {
+          socket.emit('change-mode', { mode: 'Danger' });
         }
-    }, [raceSessions, currentSession, socket]);
-
-    useEffect(() => {
-        if (!socket) return;
-
-        const handleSessionsUpdate = (sessions) => {
-            // Find current or next available session
-            const currentOrNextSession = sessions.find(
-                session => session.id === currentSession?.id || 
-                          session.status === 'upcoming' || 
-                          session.status === 'confirmed'
-            );
-            
-            if (currentOrNextSession) {
-                setCurrentSession(currentOrNextSession);
-                if (!currentSession || currentOrNextSession.id !== currentSession.id) {
-                    socket.emit('change-mode', { mode: 'Danger'});
-                }
-            } else {
-                setCurrentSession(null);
-                setIsRaceActive(false);
-                setIsRaceFinished(false);
-            }
-        };
-    
-        const handleRaceModeChange = (mode) => {
-            setRaceMode(mode);      
-        };
-
-        const handleCountdownUpdate = (timeInMs) => setCountdown(timeInMs);
-
-        socket.on('fetch-sessions-response', handleSessionsUpdate);
-        socket.on('race-mode-changed', handleRaceModeChange);
-        socket.on('countdown-update', handleCountdownUpdate);
-
-        socket.emit('fetch-sessions');
-
-        return () => {
-            socket.off('fetch-sessions-response', handleSessionsUpdate);
-            socket.off('race-mode-changed', handleRaceModeChange);
-            socket.off('countdown-update', handleCountdownUpdate);
-        };
-    }, [socket, currentSession]);
-
-    useEffect(() => {
-        document.title = "Race Control";
-    }, []);
-
-    const formatTime = (milliseconds) => {
-        const minutes = Math.floor(milliseconds / 60000);
-        const seconds = Math.floor((milliseconds % 60000) / 1000);
-        const ms = Math.floor((milliseconds % 1000) / 10); // Show only 2 digits for milliseconds
-    
-        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
-    };
-    
-    // Changing the race modes
-    const changeMode = (mode) => {
-        socket.emit('change-mode', {mode});
-    };
-
-    // Function to start the race
-    const startRace = () => {
-        if (!currentSession) {
-            alert('No race available');
-            return;
-        }
-
-        socket.emit(
-            'start-race',
-            { sessionId: currentSession.id },
-            (response) => {
-                if (response.success) {
-                    setCountdown(response.duration);
-                    setIsRaceActive(true);
-                    setIsRaceFinished(false);
-                } else {
-                    alert(response.error || 'Failed to start race.');
-                }
-            }
-        );
-    };
-
-    // Function to finish the race
-    const finishRace = () => {
-        if (!currentSession) {
-            alert('No race availalbve');
-            return;
-        }
-
-        socket.emit('finish-race', { sessionId: currentSession.id }, (response) => {
-            if (response.success) {
-                setIsRaceActive(false);
-                setIsRaceFinished(true);
-            } else {
-                alert(response.error || 'Failed to finish race.');
-            }
-        });
-    };
-    
-    // Function to end the race session
-    const endRaceSession = () => {
-        if (!currentSession || !isRaceFinished) {
-            alert('Cannot end session. Either no session is selected or the race hasn\'t been finished.');
-            return;
-        };
-
-        socket.emit('end-race-session', { sessionId: currentSession.id });   
-        setIsRaceFinished(false);
+      } else {
+        setCurrentSession(null);
         setIsRaceActive(false);
-        setCountdown(0);
-    };
-    const styles = {
-        container: {
-            textAlign: 'center',
-            fontFamily: 'Arial, sans-serif',
-            padding: '10px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '10px', 
-        },
-        timer: {
-            fontSize: '40px',
-            fontWeight: 'bold',
-            border: '2px solid black',
-            borderRadius: '15px',
-            padding: '5px',
-            width: '250px',
-            backgroundColor: '#f7f7f7',
-        },
-        section: {
-            border: '2px solid black',
-            borderRadius: '15px',
-            padding: '10px 15px',
-            width: '80%', 
-            maxWidth: '400px', 
-            textAlign: 'center',
-            backgroundColor: '#f9f9f9',
-        },
-        buttonGroup: {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '15px',
-        },
-        rowGroup: {
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            gap: '10px',
-            width: '100%',
-        },
-        flagButton: (backgroundColor, isCheckered) => ({
-            position: 'relative',
-            padding: '0',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            border: '2px solid black',
-            borderRadius: '50%',
-            width: '80px',
-            height: '80px',
-            backgroundColor: isCheckered ? 'white' : backgroundColor,
-            backgroundImage: isCheckered
-                ? `linear-gradient(45deg, #000 25%, transparent 25%),
-                   linear-gradient(-45deg, #000 25%, transparent 25%),
-                   linear-gradient(45deg, transparent 75%, #000 75%),
-                   linear-gradient(-45deg, transparent 75%, #000 75%)`
-                : 'none',
-            backgroundSize: isCheckered ? '20px 20px' : 'none',
-            backgroundPosition: isCheckered ? '0 0, 0 10px, 10px -10px, -10px 0px' : 'none',
-            color: isCheckered ? 'black' : '#ffffff',
-            cursor: 'pointer',
-            overflow: 'hidden',
-        }),
-        finishButtonText: {
-            position: 'absolute',
-            top: '33%',
-            left: '0',
-            right: '0',
-            height: '33%',
-            backgroundColor: 'black',
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '16px',
-            fontWeight: 'bold',
-        },
-        button: {
-            padding: '10px 20px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            border: '2px solid black',
-            borderRadius: '15px',
-            backgroundColor: '#ffffff',
-            cursor: 'pointer',
-        },
+        setIsRaceFinished(false);
+      }
     };
 
-    return (
-        <div style={styles.container}>
-            <h1 style={{ fontSize: '20px' }}>RACE CONTROL INTERFACE</h1>
-            <div style={styles.timer}>{formatTime(countdown)}</div>
-    
-            {currentSession ? (
-                <div style={styles.section}>
-                    <h3>RACE INFO</h3>
-                    <p>Current Race Mode: {raceMode}</p>
-                    <p>Current Session: {currentSession.sessionName}</p>
-                    <p>Status: {isRaceActive ? 'In Progress' : isRaceFinished ? 'Finished' : 'Not Started'}</p>
-                </div>
-            ) : (
-                <div style={{
-                    ...styles.section,
-                    backgroundColor: '#fff3cd',
-                    border: '2px solid #ffeeba',
-                    color: '#856404'
-                }}>
-                    <p style={{ margin: '10px 0' }}>No upcoming races</p>
-                </div>
-            )}
-    
-            <div style={styles.section}>
-                <h3>RACE CONTROLS</h3>
-                <div style={styles.buttonGroup}>
-                    <div style={styles.rowGroup}>
-                        {!isRaceActive && !isRaceFinished && (
-                            <button
-                                onClick={startRace}
-                                style={styles.button}
-                            >
-                                Start Race
-                            </button>
-                        )}
-                        {isRaceFinished && (
-                            <button
-                                onClick={endRaceSession}
-                                style={styles.button}
-                            >
-                                End Race
-                            </button>
-                        )}
-                    </div>
-                    <div style={styles.rowGroup}>
-                        {isRaceActive && (
-                            <>
-                                <button
-                                    onClick={() => changeMode('Safe')}
-                                    style={styles.flagButton('green', false)}
-                                >
-                                    Safe
-                                </button>
-                                <button
-                                    onClick={() => changeMode('Danger')}
-                                    style={styles.flagButton('red', false)}
-                                >
-                                    Danger
-                                </button>
-                            </>
-                        )}
-                    </div>
-                    <div style={styles.rowGroup}>
-                        {isRaceActive && (
-                            <>
-                                <button
-                                    onClick={() => changeMode('Hazard')}
-                                    style={styles.flagButton('#ffbf00', false)}
-                                >
-                                    Hazard
-                                </button>
-                                {!isRaceFinished && (
-                                    <button
-                                        onClick={finishRace}
-                                        style={styles.flagButton('white', true)}
-                                    >
-                                        <div style={styles.finishButtonText}>Finish</div>
-                                    </button>
-                                )}
-                            </>
-                        )}
-                    </div>
-                </div>
-            </div>
+    socket.on('fetch-sessions-response', handleSessionsUpdate);
+    socket.on('race-mode-changed', (mode) => setRaceMode(mode));
+    socket.on('countdown-update',  (t)    => setCountdown(t));
+
+    socket.emit('fetch-sessions');
+
+    return () => {
+      socket.off('fetch-sessions-response', handleSessionsUpdate);
+      socket.off('race-mode-changed');
+      socket.off('countdown-update');
+    };
+  }, [socket, currentSession]);
+
+  useEffect(() => { document.title = 'Race Control — RaceControl Live'; }, []);
+
+  /* Actions */
+  const changeMode = (mode) => {
+    setError('');
+    socket.emit('change-mode', { mode });
+  };
+
+  const startRace = () => {
+    if (!currentSession) { setError('No session selected.'); return; }
+    setError('');
+    socket.emit('start-race', { sessionId: currentSession.id }, (response) => {
+      if (response.success) {
+        setCountdown(response.duration);
+        setIsRaceActive(true);
+        setIsRaceFinished(false);
+      } else {
+        setError(response.error || 'Failed to start race.');
+      }
+    });
+  };
+
+  const finishRace = () => {
+    if (!currentSession) { setError('No session selected.'); return; }
+    setError('');
+    socket.emit('finish-race', { sessionId: currentSession.id }, (response) => {
+      if (response.success) {
+        setIsRaceActive(false);
+        setIsRaceFinished(true);
+      } else {
+        setError(response.error || 'Failed to finish race.');
+      }
+    });
+  };
+
+  const endRaceSession = () => {
+    if (!currentSession || !isRaceFinished) {
+      setError('Race must be finished before ending the session.');
+      return;
+    }
+    setError('');
+    socket.emit('end-race-session', { sessionId: currentSession.id });
+    setIsRaceFinished(false);
+    setIsRaceActive(false);
+    setCountdown(0);
+  };
+
+  /* Derived */
+  const raceStatus = isRaceActive ? 'In Progress' : isRaceFinished ? 'Finished' : 'Not Started';
+  const badgeVariant = MODE_BADGE[raceMode] ?? 'blue';
+
+  /* ── Render ─────────────────────────────────────────────── */
+  return (
+    <div className="rc-ctrl-page">
+      <div className="lp-grid-bg" aria-hidden="true" />
+
+      <div className="rc-ctrl-content">
+
+        {/* ── Page header ─────────────────────────────────── */}
+        <header className="rc-ctrl-header">
+          <div>
+            <h1 className="rc-ctrl-title">Race Control</h1>
+            <p className="rc-label">Safety &amp; race management</p>
+          </div>
+          <div className="rc-ctrl-header__right">
+            <span className={`rc-badge rc-badge--${badgeVariant}`}>
+              {isRaceActive && <span className="rc-live-dot" />}
+              {raceMode}
+            </span>
+          </div>
+        </header>
+
+        {/* ── Countdown ───────────────────────────────────── */}
+        <div className="rc-card rc-ctrl-timer-card">
+          <span className="rc-label">Race countdown</span>
+          <div className={`rc-ctrl-timer ${countdown < 30000 && countdown > 0 && isRaceActive ? 'rc-ctrl-timer--warning' : ''}`}>
+            {formatTime(countdown)}
+          </div>
         </div>
-    );
+
+        {/* ── Session info ────────────────────────────────── */}
+        {currentSession ? (
+          <div className="rc-card rc-ctrl-session-card">
+            <div className="rc-ctrl-session-row">
+              <div>
+                <p className="rc-label">Current session</p>
+                <p className="rc-ctrl-session-name">{currentSession.sessionName}</p>
+              </div>
+              <div className="rc-ctrl-session-meta">
+                <p className="rc-label">Status</p>
+                <p className="rc-ctrl-session-status">{raceStatus}</p>
+              </div>
+              <div className="rc-ctrl-session-meta">
+                <p className="rc-label">Drivers</p>
+                <p className="rc-ctrl-session-status">{currentSession.drivers?.length ?? '—'}</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="rc-ctrl-no-session">
+            <p>No upcoming sessions. Add a session at the Front Desk.</p>
+          </div>
+        )}
+
+        {/* ── Error message ───────────────────────────────── */}
+        {error && (
+          <p className="rc-ctrl-error" role="alert">{error}</p>
+        )}
+
+        {/* ── Race lifecycle controls ──────────────────────── */}
+        <div className="rc-card rc-ctrl-lifecycle">
+          <h2 className="rc-ctrl-section-title">Race controls</h2>
+          <div className="rc-ctrl-lifecycle-row">
+            {!isRaceActive && !isRaceFinished && (
+              <button
+                className="rc-btn rc-btn--success rc-btn--lg rc-ctrl-action-btn"
+                onClick={startRace}
+                disabled={!currentSession}
+              >
+                Start race
+              </button>
+            )}
+            {isRaceActive && (
+              <button
+                className="rc-btn rc-btn--warning rc-btn--lg rc-ctrl-action-btn"
+                onClick={finishRace}
+              >
+                Finish race
+              </button>
+            )}
+            {isRaceFinished && (
+              <button
+                className="rc-btn rc-btn--ghost rc-btn--lg rc-ctrl-action-btn"
+                onClick={endRaceSession}
+              >
+                End session
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* ── Flag controls ────────────────────────────────── */}
+        {isRaceActive && (
+          <div className="rc-card rc-ctrl-flags">
+            <h2 className="rc-ctrl-section-title">Flag controls</h2>
+            <div className="rc-ctrl-flag-grid">
+              {FLAG_MODES.map(({ mode, label, variant, desc }) => (
+                <button
+                  key={mode}
+                  className={`rc-ctrl-flag-btn rc-ctrl-flag-btn--${variant} ${raceMode === mode ? 'rc-ctrl-flag-btn--active' : ''}`}
+                  onClick={() => changeMode(mode)}
+                  aria-pressed={raceMode === mode}
+                  title={desc}
+                >
+                  <span className="rc-ctrl-flag-btn__swatch" aria-hidden="true" />
+                  <span className="rc-ctrl-flag-btn__label">{label}</span>
+                  <span className="rc-ctrl-flag-btn__desc">{desc}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
 };
 
 export default RaceControl;
