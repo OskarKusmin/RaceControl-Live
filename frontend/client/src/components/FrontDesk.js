@@ -1,21 +1,22 @@
 import React, { useEffect, useState, useContext } from "react";
 import { SocketContext } from "../App";
 import { RaceSessionContext } from "../contexts/RaceSessionContext";
+import './css/FrontDesk.css';
 
 const FrontDesk = () => {
   const socket = useContext(SocketContext);
   const { raceSessions, setRaceSessions } = useContext(RaceSessionContext);
-  const [newSessionName, setNewSessionName] = useState(""); // Stores the name of a new session to be added
-  const [editingSessionId, setEditingSessionId] = useState(null); // Tracks the session being edited
+  const [newSessionName, setNewSessionName] = useState("");
+  const [editingSessionId, setEditingSessionId] = useState(null);
+  const [sessionError, setSessionError] = useState("");
+  const [confirmError, setConfirmError] = useState("");
 
-  // Fetch race sessions from the backend when the component mounts
   useEffect(() => {
-    if (!socket) return; 
+    if (!socket) return;
 
     const handleSessionsUpdate = (sessions) => {
-      // Filter out in-progress and finished sessions and update with 8 drivers
       const updatedSessions = sessions
-        .filter(session => session.status !== 'in-progress' && session.status !== 'Finished')
+        .filter(s => s.status !== 'in-progress' && s.status !== 'Finished')
         .map((session) => ({
           ...session,
           drivers: session.drivers.concat(
@@ -26,46 +27,39 @@ const FrontDesk = () => {
           ),
         }));
       setRaceSessions(updatedSessions);
-    }
-      
-    socket.emit("fetch-sessions"); // Request sessions from the backend
+    };
 
+    socket.emit("fetch-sessions");
     socket.on("fetch-sessions-response", handleSessionsUpdate);
-    socket.on("session-added", () => socket.emit("fetch-sessions"));
+    socket.on("session-added",   () => socket.emit("fetch-sessions"));
     socket.on("session-deleted", () => socket.emit("fetch-sessions"));
     socket.on("session-updated", () => socket.emit("fetch-sessions"));
-      
+
     return () => {
-      socket.off("fetch-sessions-response"); 
+      socket.off("fetch-sessions-response");
       socket.off("session-added");
       socket.off("session-deleted");
       socket.off("session-updated");
     };
-    
   }, [socket, setRaceSessions]);
 
-  useEffect(() => {
-    document.title = "Front Desk";
-  }, []);
+  useEffect(() => { document.title = "Front Desk — RaceControl Live"; }, []);
 
-  // Add a new race session
   const addRaceSession = () => {
     if (!newSessionName.trim()) {
-      alert('Please enter a session name');
+      setSessionError("Please enter a session name.");
       return;
     }
-
-    socket.emit('add-session', { sessionName: newSessionName}, (response) => {
+    setSessionError("");
+    socket.emit('add-session', { sessionName: newSessionName }, (response) => {
       if (response.success) {
-        setNewSessionName("") //clearing input field
-        // No need to fetch sessions as server will emit them
+        setNewSessionName("");
       } else {
-        alert(response.error || 'Failed to add session.')
+        setSessionError(response.error || 'Failed to add session.');
       }
     });
   };
 
-  // Delete a race session
   const deleteRaceSession = (sessionId) => {
     socket.emit('delete-session', { sessionId }, (response) => {
       if (!response.success) {
@@ -74,186 +68,190 @@ const FrontDesk = () => {
     });
   };
 
-  // Confirm and save edits to a session's drivers
   const confirmSession = (sessionId) => {
-    const session = raceSessions.find((s) => s.id === sessionId); // Find the session
-    const drivers = session.drivers
-      .map((driver) => driver.name.trim())
-      .filter((name) => name); // Get non-empty driver names
-
-    // Ensure driver names are unique
-    const lowerCaseDrivers = drivers.map((name) => name.toLowerCase());
-    const uniqueDrivers = [...new Set(lowerCaseDrivers)];
-    if (drivers.length !== uniqueDrivers.length) {
-      alert("Driver names must be unique");
+    const session = raceSessions.find((s) => s.id === sessionId);
+    const drivers = session.drivers.map((d) => d.name.trim()).filter(Boolean);
+    const unique = [...new Set(drivers.map(n => n.toLowerCase()))];
+    if (drivers.length !== unique.length) {
+      setConfirmError("Driver names must be unique within a session.");
       return;
     }
-
+    setConfirmError("");
     socket.emit("confirm-session", { sessionId, drivers }, (response) => {
       if (response.success) {
-        setEditingSessionId(null); // Exit editing mode
+        setEditingSessionId(null);
       } else {
-        alert(response.error || "Failed to confirm session.");
+        setConfirmError(response.error || "Failed to confirm session.");
       }
     });
   };
 
-  // Handle edits to individual driver names
   const handleDriverEdit = (sessionId, driverIndex, newName) => {
-    setRaceSessions(prevSessions => 
-      prevSessions.map((session) => 
+    setRaceSessions(prev =>
+      prev.map((session) =>
         session.id === sessionId
-      ? {
-        ...session,
-        drivers: session.drivers.map((driver,index) =>
-          index === driverIndex
-            ? { ...driver, name: newName }
-            : driver
-          ),
-        }
-      : session
-    ));
+          ? {
+              ...session,
+              drivers: session.drivers.map((driver, i) =>
+                i === driverIndex ? { ...driver, name: newName } : driver
+              ),
+            }
+          : session
+      )
+    );
   };
 
-  const styles = {
-    container: {
-      textAlign: "center",
-      fontFamily: "Arial, sans-serif",
-      padding: "20px",
-    },
-    section: {
-      border: "2px solid black",
-      borderRadius: "15px",
-      padding: "20px",
-      margin: "10px auto",
-      width: "90%", 
-      maxWidth: "400px", 
-      textAlign: "center",
-      backgroundColor: "#f9f9f9",
-      boxSizing: "border-box",
-    },
-    session: {
-      border: "2px solid black",
-      borderRadius: "15px",
-      padding: "20px",
-      margin: "10px auto",
-      width: "90%", 
-      maxWidth: "400px", 
-      backgroundColor: "#f7f7f7",
-      textAlign: "center", 
-      boxSizing: "border-box",
-    },
-    input: {
-      padding: "10px",
-      fontSize: "16px",
-      borderRadius: "5px",
-      border: "1px solid black",
-      marginBottom: "10px",
-      width: "calc(100% - 22px)", 
-      boxSizing: "border-box",
-    },
-    button: {
-      padding: "10px",
-      fontSize: "16px",
-      fontWeight: "bold",
-      border: "2px solid black",
-      borderRadius: "5px",
-      backgroundColor: "#ffffff",
-      cursor: "pointer",
-      transition: "background-color 0.3s ease, transform 0.2s ease",
-      width: "100%", 
-      boxSizing: "border-box",
-    },
-    buttonGroup: {
-      display: "flex",
-      justifyContent: "center",
-      gap: "10px",
-    },
-    driverInput: {
-      padding: "8px",
-      fontSize: "14px",
-      marginBottom: "10px",
-      borderRadius: "5px",
-      border: "1px solid black",
-      display: "block",
-      width: "calc(100% - 22px)", 
-      boxSizing: "border-box",
-    },
+  const startEditing = (sessionId) => {
+    setConfirmError("");
+    setEditingSessionId(sessionId);
   };
-  
+
+  const cancelEditing = () => {
+    setConfirmError("");
+    setEditingSessionId(null);
+  };
+
+  const handleAddKeyDown = (e) => {
+    if (e.key === 'Enter') addRaceSession();
+  };
+
   return (
-    <div style={styles.container}>
-      <h1>FRONT DESK INTERFACE</h1>
-      <div style={styles.section}>
-        <h3>Add New Race Session</h3>
-        <input
-          type="text"
-          value={newSessionName}
-          onChange={(e) => setNewSessionName(e.target.value)}
-          placeholder="Enter session name"
-          style={styles.input}
-        />
-        <button onClick={addRaceSession} style={styles.button}>
-          Add Session
-        </button>
-      </div>
-      <h3>RACE SESSIONS</h3>
-      <div>
-        {raceSessions.map((session) => (
-          <div key={session.id} style={styles.session}>
-            <h4>Session: {session.sessionName}</h4>
-            <div>
-              {session.drivers.map((driver, index) => (
-                <input
-                  key={driver.id || index}
-                  type="text"
-                  value={driver.name || ""}
-                  disabled={editingSessionId !== session.id}
-                  onChange={(e) =>
-                    handleDriverEdit(session.id, index, e.target.value)
-                  }
-                  placeholder={`Driver ${index + 1}`}
-                  style={styles.driverInput}
-                />
-              ))}
-            </div>
-            <div style={styles.buttonGroup}>
-              {editingSessionId === session.id ? (
-                <>
-                  <button
-                    onClick={() => confirmSession(session.id)}
-                    style={styles.button}
-                  >
-                    Confirm
-                  </button>
-                  <button
-                    onClick={() => setEditingSessionId(null)}
-                    style={styles.button}
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setEditingSessionId(session.id)}
-                  style={styles.button}
-                >
-                  Edit
-                </button>
-              )}
-              <button
-                onClick={() => deleteRaceSession(session.id)}
-                style={styles.button}
-              >
-                Delete
-              </button>
-            </div>
+    <div className="fd-page">
+      <div className="lp-grid-bg" aria-hidden="true" />
+
+      <div className="fd-content">
+
+        <header className="fd-header">
+          <div className="fd-header__titles">
+            <h1 className="fd-title">Front Desk</h1>
+            <p className="rc-label">Session &amp; driver management</p>
           </div>
-        ))}
+        </header>
+
+        {/* Add session panel */}
+        <section className="rc-card fd-add-panel" aria-label="Add new race session">
+          <h2 className="fd-section-title">New Race Session</h2>
+          <div className="fd-add-row">
+            <div className="rc-form-group fd-add-field">
+              <label htmlFor="fd-session-name" className="rc-form-label">Session name</label>
+              <input
+                id="fd-session-name"
+                className="rc-input"
+                type="text"
+                value={newSessionName}
+                onChange={(e) => { setNewSessionName(e.target.value); setSessionError(""); }}
+                onKeyDown={handleAddKeyDown}
+                placeholder="e.g. Junior Sprint — Heat 1"
+                autoComplete="off"
+              />
+            </div>
+            <button
+              className="rc-btn rc-btn--primary fd-add-btn"
+              onClick={addRaceSession}
+              disabled={!newSessionName.trim()}
+            >
+              Add session
+            </button>
+          </div>
+          {sessionError && (
+            <p className="fd-inline-error" role="alert">{sessionError}</p>
+          )}
+        </section>
+
+        {/* Session list */}
+        <section aria-label="Race sessions">
+          <div className="fd-sessions-header">
+            <h2 className="fd-section-title">Race Sessions</h2>
+            <span className="rc-label">{raceSessions.length} queued</span>
+          </div>
+
+          {raceSessions.length === 0 ? (
+            <div className="fd-empty">
+              <p>No sessions queued. Add one above to get started.</p>
+            </div>
+          ) : (
+            <div className="fd-session-list">
+              {raceSessions.map((session) => {
+                const isEditing = editingSessionId === session.id;
+                const filledCount = session.drivers.filter(d => d.name.trim()).length;
+
+                return (
+                  <div
+                    key={session.id}
+                    className={`fd-session-card ${isEditing ? 'fd-session-card--editing' : ''}`}
+                  >
+                    {/* Session card header */}
+                    <div className="fd-session-card__header">
+                      <div>
+                        <h3 className="fd-session-name">{session.sessionName}</h3>
+                        <span className="rc-label">
+                          {filledCount} / 8 drivers assigned
+                        </span>
+                      </div>
+                      <div className="fd-session-card__actions">
+                        {isEditing ? (
+                          <>
+                            <button
+                              className="rc-btn rc-btn--success rc-btn--sm"
+                              onClick={() => confirmSession(session.id)}
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              className="rc-btn rc-btn--ghost rc-btn--sm"
+                              onClick={cancelEditing}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            className="rc-btn rc-btn--ghost rc-btn--sm"
+                            onClick={() => startEditing(session.id)}
+                          >
+                            Edit
+                          </button>
+                        )}
+                        <button
+                          className="rc-btn rc-btn--danger rc-btn--sm"
+                          onClick={() => deleteRaceSession(session.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Confirm error (scoped to the editing session) */}
+                    {isEditing && confirmError && (
+                      <p className="fd-inline-error" role="alert">{confirmError}</p>
+                    )}
+
+                    {/* Driver grid */}
+                    <div className="fd-driver-grid">
+                      {session.drivers.map((driver, index) => (
+                        <div key={driver.id || index} className="fd-driver-row">
+                          <span className="rc-car-num">{index + 1}</span>
+                          <input
+                            className={`rc-input fd-driver-input ${!isEditing ? 'fd-driver-input--readonly' : ''}`}
+                            type="text"
+                            value={driver.name || ""}
+                            disabled={!isEditing}
+                            onChange={(e) => handleDriverEdit(session.id, index, e.target.value)}
+                            placeholder={`Driver ${index + 1}`}
+                            aria-label={`Car ${index + 1} driver name`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
 };
-
 
 export default FrontDesk;

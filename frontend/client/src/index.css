@@ -1,7 +1,5 @@
 /* ======== 1. Design tokens ======== */
-
 :root {
-
 /* --- Backgrounds --- */
 --rc-bg:           #0e0f11;   /* page / outermost background      */
 --rc-surface:      #161820;   /* cards, panels, primary surfaces  */
@@ -63,9 +61,7 @@
 --rc-transition: 0.15s ease;
 }
   
-  
 /* ======== 2. RESET & BASE ======== */
-  
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -101,9 +97,7 @@ a:hover {
   text-decoration: underline;
 }
   
-  
 /* ======== 3. TYPOGRAPHY ======== */
-
 /* Page / section title */
 h1 {
   font-size: 24px;
@@ -187,9 +181,7 @@ p {
   color: var(--rc-accent);
 }
   
-  
 /* ======== 4. LAYOUT UTILITIES ======== */
-
 .rc-page {
   max-width: 1280px;
   margin: 0 auto;
@@ -227,10 +219,8 @@ p {
   border-top: 1px solid var(--rc-border);
   margin: var(--rc-space-md) 0;
 }
-  
-  
-/* ======== 5. CARDS & PANELS ======== */
 
+/* ======== 5. CARDS & PANELS ======== */
 /* Standard surface card */
 .rc-card {
   background: var(--rc-surface);
@@ -315,7 +305,6 @@ p {
 }
 
 /* Variants */
-
 .rc-btn--primary {
   background: var(--rc-accent);
   color: #fff;
@@ -373,10 +362,8 @@ p {
 .rc-btn--block {
   width: 100%;
 }
-  
-  
-/* ======== 7. BADGES & STATUS INDICATORS ======== */
 
+/* ======== 7. BADGES & STATUS INDICATORS ======== */
 .rc-badge {
   display: inline-flex;
   align-items: center;
@@ -427,9 +414,7 @@ p {
   50%       { opacity: 0.25; }
 }
   
-  
 /* ======== 8. FLAG BUTTONS ======== */
-
 .rc-flag {
   display: inline-flex;
   align-items: center;
@@ -484,7 +469,6 @@ p {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
-  
   
 /* ======== 9. LEADERBOARD TABLE ======== */
 
@@ -543,10 +527,8 @@ p {
 .rc-pos--2 { color: var(--rc-silver); }
 .rc-pos--3 { color: var(--rc-bronze); }
 .rc-pos--n { color: var(--rc-text-muted); }
-  
-  
-/* ======== 10. FORM ELEMENTS ======== */
 
+/* ======== 10. FORM ELEMENTS ======== */
 .rc-form-group {
   display: flex;
   flex-direction: column;
@@ -612,9 +594,7 @@ p {
   letter-spacing: 0.04em;
 }
 
-
 /* ======== 11. COUNTDOWN DISPLAY: Full-width centred block for the race countdown / timer panel. ======== */
-
 .rc-countdown {
   display: flex;
   flex-direction: column;
@@ -651,9 +631,7 @@ p {
   color: var(--rc-red);
 }
 
-
 /* ======== 12. SCROLLBAR (Slim dark scrollbar consistent across panels) ======== */
-
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -672,9 +650,7 @@ p {
   background: var(--rc-border-strong);
 }
 
-
 /* ======== 13. UTILITY CLASSES ======== */
-
 /* Text colours */
 .rc-text-muted    { color: var(--rc-text-muted); }
 .rc-text-faint    { color: var(--rc-text-faint); }
