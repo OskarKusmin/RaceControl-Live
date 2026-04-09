@@ -1,0 +1,318 @@
+.llt-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--rc-bg);
+    color: var(--rc-text);
+    /* Prevent pull-to-refresh / scroll bounce interfering with taps */
+    overscroll-behavior: none;
+}
+
+.llt-statusbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 20px;
+    background: var(--rc-surface);
+    border-bottom: 1px solid var(--rc-border-md);
+}
+
+.llt-statusbar__session {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.llt-statusbar__name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rc-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+
+.llt-statusbar__center {
+    flex-shrink: 0;
+}
+
+.llt-statusbar__countdown {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.llt-countdown {
+    font-family: var(--rc-font-mono);
+    font-size: 20px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--rc-text);
+    line-height: 1;
+}
+
+.llt-countdown--warning {
+    color: var(--rc-amber);
+}
+
+.llt-no-drivers {
+    margin: 20px;
+    padding: 16px 20px;
+    background: var(--rc-amber-dim);
+    border: 1px solid var(--rc-amber-border);
+    border-radius: var(--rc-radius-md);
+    color: var(--rc-amber);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.llt-cars-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 14px;
+    flex: 1;
+    align-content: start;
+}
+
+.llt-car-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    font-family: var(--rc-font-ui);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 20px 12px 16px;
+    min-height: 180px;
+    background: var(--rc-surface);
+    border: 2px solid var(--rc-border-md);
+    border-radius: var(--rc-radius-lg);
+    transition: background-color 0.1s ease, border-color 0.1s ease, transform 0.08s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+.llt-car-btn:not(.llt-car-btn--disabled):active {
+    transform: scale(0.96);
+    background: var(--rc-surface-3);
+}
+
+.llt-car-btn:not(.llt-car-btn--disabled) {
+    border-color: var(--rc-accent);
+}
+
+.llt-car-btn:not(.llt-car-btn--disabled):hover {
+    background: var(--rc-surface-2);
+}
+
+.llt-car-btn--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    border-color: var(--rc-border);
+}
+
+.llt-car-btn--flash {
+    background: var(--rc-green-dim) !important;
+    border-color: var(--rc-green) !important;
+}
+
+.llt-car-number {
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--rc-text);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.llt-car-number__hash {
+    font-size: 28px;
+    color: var(--rc-accent);
+    font-weight: 700;
+    align-self: flex-start;
+    margin-top: 6px;
+}
+
+.llt-driver-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--rc-text-muted);
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.llt-current-time {
+    font-family: var(--rc-font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--rc-text);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+}
+
+.llt-car-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-top: 8px;
+    border-top: 1px solid var(--rc-border);
+    gap: 8px;
+}
+
+.llt-lap-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--rc-text-muted);
+}
+
+.llt-best-lap {
+    font-family: var(--rc-font-mono);
+    font-size: 11px;
+    color: var(--rc-green);
+    font-weight: 600;
+}
+
+.llt-history {
+    padding: 20px 14px 32px;
+    border-top: 1px solid var(--rc-border);
+    margin-top: 4px;
+}
+
+.llt-history__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--rc-text-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.llt-history-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.llt-history-card {
+    background: var(--rc-surface);
+    border: 1px solid var(--rc-border);
+    border-radius: var(--rc-radius-md);
+    overflow: hidden;
+}
+
+.llt-history-card__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--rc-border);
+    background: var(--rc-surface-2);
+}
+
+.llt-history-card__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--rc-text);
+}
+
+.llt-history-laps {
+    display: flex;
+    flex-direction: column;
+}
+
+.llt-history-lap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--rc-border);
+    font-size: 13px;
+}
+
+.llt-history-lap:last-child {
+    border-bottom: none;
+}
+
+.llt-history-lap__num {
+    color: var(--rc-text-muted);
+    font-size: 12px;
+}
+
+.llt-history-lap__time {
+    font-family: var(--rc-font-mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    color: var(--rc-text);
+}
+
+.llt-history-lap--best {
+    background: var(--rc-green-dim);
+}
+
+.llt-history-lap--best .llt-history-lap__time {
+    color: var(--rc-green);
+    font-weight: 700;
+}
+
+.llt-history-lap--best .llt-history-lap__num::after {
+    content: ' ★';
+    color: var(--rc-green);
+}
+
+@media (max-width: 480px) {
+    .llt-cars-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 10px;
+    }
+
+    .llt-car-btn {
+    min-height: 150px;
+    padding: 14px 8px 12px;
+    }
+
+    .llt-car-number {
+    font-size: 44px;
+    }
+
+    .llt-current-time {
+    font-size: 18px;
+    }
+
+    .llt-history-grid {
+    grid-template-columns: 1fr;
+    }
+
+    .llt-statusbar__name {
+    max-width: 130px;
+    }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+    .llt-cars-grid {
+    grid-template-columns: repeat(4, 1fr);
+    }
+
+    .llt-car-btn {
+    min-height: 140px;
+    }
+}
