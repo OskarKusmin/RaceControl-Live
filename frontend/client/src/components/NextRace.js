@@ -1,195 +1,151 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import { SocketContext } from "../App";
 import { RaceSessionContext } from "../contexts/RaceSessionContext";
+import './css/NextRace.css';
 
 const NextRace = () => {
-    const socket = useContext(SocketContext);
-    const { raceSessions } = useContext(RaceSessionContext);
-    const [nextRace, setNextRace] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [message, setMessage] = useState("");
+  const socket = useContext(SocketContext);
+  const { raceSessions } = useContext(RaceSessionContext);
 
-    const fetchNextRace = useCallback(() => {
+  const [nextRace,    setNextRace]    = useState(null);
+  const [loading,     setLoading]     = useState(true);
+  const [paddockCall, setPaddockCall] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-        const nextAvailableRace = raceSessions.find(session => 
-            (session.status === 'upcoming' || session.status === 'confirmed') &&
-            session.status !== 'in-progress'
-        );
-
-        setLoading(false);
-
-        if (nextAvailableRace) {
-            setNextRace({
-                sessionName: nextAvailableRace.sessionName,
-                drivers: nextAvailableRace.drivers.map((driver, index) => ({
-                    ...driver,
-                    car: `Car ${index + 1}`
-                }))
-            });
-        } else {
-            setNextRace(null);
-            setMessage("No upcoming race available");
-        }
-    }, [raceSessions]);
-
-    useEffect(() => {
-        if (!socket) return;
-
-        socket.on('select-session', () => {
-            fetchNextRace();
-        });
-
-        socket.on('race-started', () => {
-            setMessage("");
-            fetchNextRace();
-        });
-
-        socket.on('race-mode-changed', (mode) => {
-            fetchNextRace();
-        });
-
-        socket.on('end-race-session', () => {
-            setMessage("Please proceed to paddock");
-            fetchNextRace();
-        });
-
-        fetchNextRace();
-
-        return () => {
-            socket.off('select-session');
-            socket.off('race-started');
-            socket.off('race-mode-changed');
-            socket.off('end-race-session');
-        };
-    }, [socket, fetchNextRace]);
-
-    useEffect(() => {
-        document.title = "Next Race";
-    }, []);
-
-    // ** Full-Screen Toggle Function **
-        const toggleFullScreen = () => {
-            const element = document.documentElement;
-            if (!document.fullscreenElement) {
-             element.requestFullscreen().catch(err => {
-                 console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-              });
-          } else {
-                document.exitFullscreen();
-          }
-    };
-
-    return (
-        <div style={styles.container}>
-            <h1 style={styles.title}>Next Race</h1>
-            <button style={styles.fullScreenButton} onClick={toggleFullScreen}>
-                Toggle Fullscreen
-            </button>
-            {loading ? (
-                <p style={styles.loading}>Loading...</p>
-            ) : nextRace ? (
-                <div style={styles.card}>
-                    <p style={styles.sessionName}>{nextRace.sessionName}</p>
-                    <div style={styles.driversContainer}>
-                        <h3 style={styles.driversTitle}>DRIVERS</h3>
-                        <ul style={styles.driversList}>
-                            {nextRace.drivers.map((driver) => (
-                                <li key={driver.id} style={styles.driverItem}>
-                                    <span style={styles.driverName}>
-                                        {driver.name}
-                                    </span>
-                                    <span style={styles.carNumber}>
-                                        {driver.car}
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    {message && <p style={styles.message}>{message}</p>}
-                </div>
-            ) : (
-                <p style={styles.message}>{message}</p>
-            )}
-        </div>
+  const fetchNextRace = useCallback(() => {
+    const next = raceSessions.find(
+      s => (s.status === 'upcoming' || s.status === 'confirmed') &&
+            s.status !== 'in-progress'
     );
-};
-
-const styles = {
-    container: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-        backgroundColor: "#f5f5f5",
-        padding: "20px",
-        fontFamily: "'Arial', sans-serif",
-    },
-    fullScreenButton: {
-        position: "absolute", top: "10px", right: "10px", padding: "10px",
-        fontSize: "16px", cursor: "pointer", background: "#007BFF",
-        color: "#fff", border: "none", borderRadius: "5px"
-    },
-    title: {
-        fontSize: "32px",
-        fontWeight: "bold",
-        marginBottom: "20px",
-        textAlign: "center",
-    },
-    card: {
-        backgroundColor: "white",
-        padding: "20px",
-        borderRadius: "10px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-        textAlign: "center",
-        maxWidth: "400px",
-        width: "100%",
-    },
-    subTitle: {
-        fontSize: "24px",
-        fontWeight: "bold",
-        marginBottom: "10px",
-    },
-    sessionName: {
-        fontSize: "18px",
-        marginBottom: "20px",
-    },
-    driversContainer: {
-        textAlign: "center",
-    },
-    driversTitle: {
-        fontSize: "20px",
-        fontWeight: "bold",
-        marginBottom: "10px",
-    },
-    driversList: {
-        listStyleType: "none",
-        padding: 0,
-    },
-    driverItem: {
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "10px",
-        marginBottom: "5px",
-        border: "1px solid #ddd",
-        borderRadius: "5px",
-    },
-    driverName: {
-        fontSize: "16px",
-    },
-    carNumber: {
-        fontSize: "16px",
-        fontWeight: "bold",
-    },
-    loading: {
-        fontSize: "18px",
-    },
-    message: {
-        fontSize: "24px",
-        color: "#dc3545",
-        fontWeight: "bold",
-        textAlign: "center",
+    setLoading(false);
+    if (next) {
+      setNextRace({
+        sessionName: next.sessionName,
+        drivers: next.drivers
+          .filter(d => d.name?.trim())
+          .map((driver, index) => ({
+            ...driver,
+            carNumber: index + 1,
+          })),
+      });
+    } else {
+      setNextRace(null);
     }
+  }, [raceSessions]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('select-session',   () => { setPaddockCall(false); fetchNextRace(); });
+    socket.on('race-started',     () => { setPaddockCall(false); fetchNextRace(); });
+    socket.on('race-mode-changed',() => fetchNextRace());
+    socket.on('end-race-session', () => { setPaddockCall(true);  fetchNextRace(); });
+
+    fetchNextRace();
+
+    return () => {
+      socket.off('select-session');
+      socket.off('race-started');
+      socket.off('race-mode-changed');
+      socket.off('end-race-session');
+    };
+  }, [socket, fetchNextRace]);
+
+  useEffect(() => { document.title = 'Next Race — RaceControl Live'; }, []);
+
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(console.error);
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  return (
+    <div className={`nr-page ${paddockCall ? 'nr-page--paddock' : ''}`}>
+
+      <div className="lp-grid-bg" aria-hidden="true" />
+
+      <button className="nr-fs-btn" onClick={toggleFullScreen} title="Toggle fullscreen">
+        {isFullscreen ? (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+          </svg>
+        ) : (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+          </svg>
+        )}
+      </button>
+
+      <div className="nr-content">
+
+        <header className="nr-header">
+          <p className="nr-eyebrow rc-label">Up next</p>
+          <h1 className="nr-title">Next Race</h1>
+        </header>
+
+        {loading && (
+          <div className="nr-state-block">
+            <div className="nr-spinner" aria-label="Loading…" />
+            <p className="nr-state-text">Loading session data…</p>
+          </div>
+        )}
+
+        {paddockCall && (
+          <div className="nr-paddock-banner" role="alert" aria-live="assertive">
+            <svg className="nr-paddock-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            <p className="nr-paddock-text">Proceed to paddock</p>
+            <p className="nr-paddock-sub">Drivers for this session — please make your way to the starting area now</p>
+          </div>
+        )}
+
+        {!loading && !nextRace && !paddockCall && (
+          <div className="nr-state-block">
+            <p className="nr-state-text">No upcoming race sessions scheduled.</p>
+          </div>
+        )}
+
+        {!loading && nextRace && (
+          <div className="nr-card">
+
+            <div className="nr-card__header">
+              <h2 className="nr-session-name">{nextRace.sessionName}</h2>
+              <span className="rc-badge rc-badge--blue">
+                {nextRace.drivers.length} {nextRace.drivers.length === 1 ? 'driver' : 'drivers'}
+              </span>
+            </div>
+
+            {nextRace.drivers.length === 0 ? (
+              <p className="nr-no-drivers">Drivers not yet assigned. Check back shortly.</p>
+            ) : (
+              <ul className="nr-driver-list" role="list">
+                {nextRace.drivers.map((driver) => (
+                  <li key={driver.id} className="nr-driver-row" role="listitem">
+                    <span className="nr-car-badge">
+                      <span className="nr-car-badge__hash">#</span>
+                      {driver.carNumber}
+                    </span>
+                    <span className="nr-driver-name">{driver.name}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
 };
 
 export default NextRace;

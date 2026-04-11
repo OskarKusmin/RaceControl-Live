@@ -61,7 +61,6 @@ const RaceControl = () => {
   const [isRaceFinished, setIsRaceFinished] = useState(false);
   const [error,          setError]          = useState('');
 
-  /* Auto-select first available session */
   useEffect(() => {
     if (raceSessions.length > 0 && !currentSession) {
       const first = raceSessions.find(
@@ -74,7 +73,6 @@ const RaceControl = () => {
     }
   }, [raceSessions, currentSession, socket]);
 
-  /* Socket listeners */
   useEffect(() => {
     if (!socket) return;
 
@@ -156,18 +154,15 @@ const RaceControl = () => {
     setCountdown(0);
   };
 
-  /* Derived */
   const raceStatus = isRaceActive ? 'In Progress' : isRaceFinished ? 'Finished' : 'Not Started';
   const badgeVariant = MODE_BADGE[raceMode] ?? 'blue';
 
-  /* ── Render ─────────────────────────────────────────────── */
   return (
     <div className="rc-ctrl-page">
       <div className="lp-grid-bg" aria-hidden="true" />
 
       <div className="rc-ctrl-content">
 
-        {/* ── Page header ─────────────────────────────────── */}
         <header className="rc-ctrl-header">
           <div>
             <h1 className="rc-ctrl-title">Race Control</h1>
@@ -181,7 +176,6 @@ const RaceControl = () => {
           </div>
         </header>
 
-        {/* ── Countdown ───────────────────────────────────── */}
         <div className="rc-card rc-ctrl-timer-card">
           <span className="rc-label">Race countdown</span>
           <div className={`rc-ctrl-timer ${countdown < 30000 && countdown > 0 && isRaceActive ? 'rc-ctrl-timer--warning' : ''}`}>
@@ -189,7 +183,6 @@ const RaceControl = () => {
           </div>
         </div>
 
-        {/* ── Session info ────────────────────────────────── */}
         {currentSession ? (
           <div className="rc-card rc-ctrl-session-card">
             <div className="rc-ctrl-session-row">
@@ -213,12 +206,10 @@ const RaceControl = () => {
           </div>
         )}
 
-        {/* ── Error message ───────────────────────────────── */}
         {error && (
           <p className="rc-ctrl-error" role="alert">{error}</p>
         )}
 
-        {/* ── Race lifecycle controls ──────────────────────── */}
         <div className="rc-card rc-ctrl-lifecycle">
           <h2 className="rc-ctrl-section-title">Race controls</h2>
           <div className="rc-ctrl-lifecycle-row">
@@ -250,7 +241,6 @@ const RaceControl = () => {
           </div>
         </div>
 
-        {/* ── Flag controls ────────────────────────────────── */}
         {isRaceActive && (
           <div className="rc-card rc-ctrl-flags">
             <h2 className="rc-ctrl-section-title">Flag controls</h2>

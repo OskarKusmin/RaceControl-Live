@@ -1,0 +1,127 @@
+.rf-page {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  transition: background-color 0.4s ease, background-image 0.4s ease;
+  overflow: hidden;
+}
+
+.rf-flag--safe {
+  background-color: #16a34a;
+}
+
+.rf-flag--hazard {
+  background-color: #d97706;
+}
+
+.rf-flag--danger {
+  background-color: #dc2626;
+}
+
+.rf-flag--finish {
+  background-color: #fff;
+  background-image:
+    repeating-conic-gradient(#111 0% 25%, #fff 0% 50%);
+  background-size: 210px 210px;
+}
+
+.rf-flag--hazard {
+  animation: rf-hazard-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes rf-hazard-pulse {
+  0%, 100% { background-color: #d97706; }
+  50%       { background-color: #b45309; }
+}
+
+.rf-flag--danger {
+  animation: rf-danger-flash 0.7s ease-in-out infinite;
+}
+
+@keyframes rf-danger-flash {
+  0%, 100% { background-color: #dc2626; }
+  50%       { background-color: #991b1b; }
+}
+
+.rf-fs-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--rc-radius-md);
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: opacity 0.3s ease, background 0.15s ease;
+  animation: rf-btn-fade 3s ease forwards;
+}
+
+.rf-page:hover .rf-fs-btn {
+  animation: none;
+  opacity: 1;
+}
+
+.rf-fs-btn:hover {
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+
+@keyframes rf-btn-fade {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.rf-flag--finish .rf-fs-btn {
+  background: rgba(0, 0, 0, 0.5);
+  border-color: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.rf-main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+}
+
+.rf-flag-text {
+  font-size: clamp(120px, 28vw, 560px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+  text-align: center;
+  user-select: none;
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.18);
+}
+
+.rf-flag-text--safe   { color: #fff; }
+.rf-flag-text--hazard { color: #fff; }
+.rf-flag-text--danger { color: #fff; }
+.rf-flag-text--finish {
+  color: #111;
+  text-shadow:
+    0 0 80px rgba(255, 255, 255, 0.8),
+    0 0 160px rgba(255, 255, 255, 0.4);  background: rgba(255, 255, 255, 0.55);
+  padding: 0 40px;
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .rf-flag--finish {
+    background-size: 60px 60px;
+  }
+}
