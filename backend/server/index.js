@@ -14,16 +14,18 @@ if (!process.env.RECEPTIONIST_KEY || !process.env.OBSERVER_KEY || !process.env.S
 }
 
 const app = express(); // Initialising the express application
-const server = http.createServer(app); //Creating an http server using express
-// Initialising a Socke.IO server and configuring CORS to allow requests from any origin
+const server = http.createServer(app); // Creating an http server using express
+
+// Initialising a Socke.IO server
+// CORS is set to allow all origins because the application is meant to be used on local networks where client device IPs are not known in advance. This is acceptable because the server is not exposed to the public internet.
 const io = new Server(server, {
     cors: {
-        origin: '*', // Allosing requests from any origin. ngrok won't work without this.
+        origin: '*',
         credentials: true,
     },
 });
 
-app.use(cors({ origin: '*' })); // This enables cors for all origins 
+app.use(cors({ origin: '*' }));
 app.use(express.json()); // enabling the application to parse json requests. Needed for the system persistence requirement.
 
 let raceSessions = []; //Array for storing race sessions (objects containing drivers, race state, status, etc)
