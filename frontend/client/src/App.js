@@ -22,7 +22,8 @@ const App = () => {
     const [raceSessions, setRaceSessions] = useState([]);
 
     useEffect(() => {
-        const newSocket = io("http://localhost:5001", { transports: ["polling", "websocket"] });
+        const serverUrl = `${window.location.protocol}//${window.location.hostname}:5001`
+        const newSocket = io(serverUrl, { transports: ["polling", "websocket"] });
 
         setSocket(newSocket);
 
