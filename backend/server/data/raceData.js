@@ -14,7 +14,8 @@ const RaceData = {
                 return {
                     raceSessions: [],
                     currentSelectSession: null,
-                    raceTimers: {}
+                    raceTimers: {},
+                    currentRaceMode: 'Danger'
                 };
             }
             throw error;

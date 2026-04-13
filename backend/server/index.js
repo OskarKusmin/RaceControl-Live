@@ -32,6 +32,7 @@ let raceSessions = []; //Array for storing race sessions (objects containing dri
 let currentSelectSession = null; //variable to hold ID for the race session currently selected (Appearing in RaceControl now)
 let activeTimers = {}; // variable to store the active countdown timer
 let raceTimers = {}; // variable for storing timers and duration of sessions needed in case of server restart
+let currentRaceMode = 'Danger'
 
 //This function loads the persisted race sesson data from storage if the server restarts.
 async function initializeData() {
@@ -42,6 +43,7 @@ async function initializeData() {
         raceTimers = data.raceTimers || {};
         activeTimers = {}; //initialising an empty object to store the active countdown timer
         raceSessions = raceSessions.filter(session => session.status !== 'Finished'); // Filtering out finished sessions
+        currentRaceMode = data.currentRaceMode;
 
         // Removing raceTimers of finished sessions
         const activeSessionIds = new Set(raceSessions.map(s => String(s.id)));
@@ -90,7 +92,8 @@ async function saveState() {
         const stateToSave = {
             raceSessions,
             currentSelectSession,
-            raceTimers
+            raceTimers,
+            currentRaceMode
         };
         await RaceData.save(stateToSave); //calling the save method from RaceData module. This weites the state data to a json file 
     } catch (error) {
@@ -128,6 +131,7 @@ function startRaceTimer(session, duration) {
             clearRaceTimer(session.id);
             session.status = 'Finished';
             raceTimers[session.id].status = 'finished';
+            currentRaceMode = 'Finish';
             io.emit('race-mode-changed', 'Finish'); //emitting race mode change to other clients when race ends
             io.emit('fetch-sessions-response', raceSessions); //updating list of sessions for clients
             saveState();//saving the current state to json
@@ -138,6 +142,7 @@ function startRaceTimer(session, duration) {
     
     io.emit('countdown-update', duration);
     io.emit('race-started', session.id); //Informing connected clients that the race has begun (detected by LapLineTracker, LeaderBoard and NextRace)
+    currentRaceMode = 'Safe'
     io.emit('race-mode-changed', 'Safe'); //Race mode changes to safe upon a race being started
     io.emit('fetch-sessions-response', raceSessions);
     saveState();
@@ -164,6 +169,7 @@ io.on('connection', (socket) => {
     // change-mode is emitted by RaceControl when the official clicks the flag buttons. Then emits race-mode-change to update RaceFlags and Leaderboard
     socket.on('change-mode', ({mode}) => {
         if (!authorize(socket, 'safety', null)) return;
+        currentRaceMode = mode;
         io.emit('race-mode-changed', mode);
     });
 
@@ -196,6 +202,7 @@ io.on('connection', (socket) => {
 
         clearRaceTimer(session.id); //clearing the timer
         session.status = 'Finished';
+        currentRaceMode = 'Finish';
         io.emit('race-mode-changed', 'Finish'); //Updating connected clients on race mode update to 'Finish'
         io.emit('countdown-update', 0); //Updating clients to zero the couintdown
         io.emit('fetch-sessions-response', raceSessions); //Updating the clients on the current race sessions
