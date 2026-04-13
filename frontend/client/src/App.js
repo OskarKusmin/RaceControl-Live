@@ -27,16 +27,8 @@ const App = () => {
 
         setSocket(newSocket);
 
-        newSocket.on('connect', () => {
-            console.log('Connected to server');
-            // Request current state
-            newSocket.emit('fetch-sessions');
-        });
-
-        newSocket.on('reconnect', () => {
-            console.log('Reconnected to server');
-            // Re-fetch all necessary data
-            newSocket.emit('fetch-sessions');
+        newSocket.on('full-state', (state) => {
+            setRaceSessions(state.raceSessions);
         });
 
         newSocket.on('connect_error', (err) => {
@@ -58,7 +50,7 @@ const App = () => {
         // Clean up the socket connection on unmount
         return () => {
             newSocket.disconnect();
-            newSocket.off('connect');
+            newSocket.off('full-state');
             newSocket.off('fetch-sessions-response');
             newSocket.off('session-deleted');
         }

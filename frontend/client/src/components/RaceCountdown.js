@@ -27,7 +27,11 @@ const RaceCountdown = () => {
   useEffect(() => {
     if (!socket) return;
     socket.on('countdown-update', (t) => setCountdown(t));
-    return () => socket.off('countdown-update');
+    socket.on('full-state', (state) => setCountdown(state.countdown));
+    return () => {
+      socket.off('countdown-update');
+      socket.off('full-state');
+    } 
   }, [socket]);
 
   useEffect(() => { document.title = 'Countdown — RaceControl Live'; }, []);

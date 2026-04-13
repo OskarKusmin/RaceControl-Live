@@ -158,8 +158,23 @@ function authorize(socket, requiredRole, callback) {
     return false;
 }
 
+function getCurrentCountdown() {
+    if (!currentSelectSession) return 0;
+    const timer = raceTimers[currentSelectSession];
+    if (!timer || timer.status !== 'running') return 0;
+    const remaining = timer.duration - (Date.now() - timer.startTime);
+    return Math.max(0, remaining);
+}
+
 //socket event listeners
 io.on('connection', (socket) => {
+
+    socket.emit('full-state', {
+        raceSessions,
+        currentSelectSession,
+        currentRaceMode,
+        countdown: getCurrentCountdown()
+    });
     
     //this one is for updating the clients with the latest race sessions
     socket.on('fetch-sessions', () => { 
@@ -271,17 +286,6 @@ io.on('connection', (socket) => {
         if (!authorize(socket, 'observer', null)) return;
         socket.broadcast.emit('current-lap-times', data);
     });
-
-    // Making sure LapLineTracker gets the currently selected session upon being opened. 
-    socket.on('lap-line-tracker-opened', () => {
-        if (!authorize(socket, 'observer', null)) return;
-        io.emit('select-session', currentSelectSession);
-    })
-
-    // Making sure LeaderBoard gets the currently selected session upon being opened. 
-    socket.on('leaderboard-opened', () => {
-        io.emit('select-session', currentSelectSession);
-    })
 
     // Handler for which session is selected in RaceControl
     socket.on('select-session', (sessionId, callback) => {

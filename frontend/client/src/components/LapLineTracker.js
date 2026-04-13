@@ -14,7 +14,6 @@ const LapLineTracker = () => {
 
   useEffect(() => {
     if (!socket) return;
-    socket.emit('lap-line-tracker-opened');
     setCars([]);
     setIsRaceActive(false);
 
@@ -77,6 +76,12 @@ const LapLineTracker = () => {
     socket.on('race-mode-changed', handleRaceModeChange);
     socket.on('countdown-update',  (t) => setCountdown(t));
     socket.on('end-race-session',  handleEndSession);
+    socket.on('full-state', (state) => {
+      setCountdown(state.countdown);
+      if (state.currentSelectSession) {
+        socket.emit('request-session-data', state.currentSelectSession);
+      }
+    });
 
     return () => {
       socket.off('select-session');
@@ -85,6 +90,7 @@ const LapLineTracker = () => {
       socket.off('race-mode-changed');
       socket.off('countdown-update');
       socket.off('end-race-session');
+      socket.off('full-state');
     };
   }, [socket]);
 

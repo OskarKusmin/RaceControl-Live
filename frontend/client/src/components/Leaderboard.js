@@ -29,7 +29,6 @@ const LeaderBoard = () => {
 
   useEffect(() => {
     if (!socket) return;
-    socket.emit('leaderboard-opened');
     setCars([]);
 
     const handleSessionSelected = (sessionId) => {
@@ -74,6 +73,13 @@ const LeaderBoard = () => {
       setCountdown(0);
       setRaceInfo(prev => ({ ...prev, sessionName: 'Awaiting session…' }));
     });
+    socket.on('full-state', (state) => {
+      setRaceInfo(prev => ({ ...prev, mode: state.currentRaceMode }));
+      setCountdown(state.countdown);
+      if (state.currentSelectSession) {
+        socket.emit('request-session-data', state.currentSelectSession);
+      };
+    });
 
     return () => {
       socket.off('select-session');
@@ -83,12 +89,12 @@ const LeaderBoard = () => {
       socket.off('countdown-update');
       socket.off('race-started');
       socket.off('session-deleted');
+      socket.off('full-state');
     };
   }, [socket]);
 
   useEffect(() => { document.title = 'Leaderboard — RaceControl Live'; }, []);
 
-  /* Track fullscreen state for button label */
   useEffect(() => {
     const onChange = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener('fullscreenchange', onChange);
