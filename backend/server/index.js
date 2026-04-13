@@ -194,12 +194,12 @@ io.on('connection', (socket) => {
 
         if(sessionIndex !== -1) { 
             raceSessions.splice(sessionIndex, 1); //Removing the ended race session from the raceSessions array
-
+            saveState();
             const nextSession = raceSessions.find( // checking if there is another session to queue up
                 session => session.status === 'upcoming' || session.status === 'confirmed'
             );
 
-            io.emit('session-deleted', { sessionId }); //Updating clients that session has been deleted (FrontDesk, LeaderBoard and NextRace)
+            io.emit('session-deleted', { id: sessionId }); //Updating clients that session has been deleted (FrontDesk, LeaderBoard and NextRace)
             io.emit('end-race-session'); //Emitting this to inform LapLineTracker that this session has ended and to update to next one
 
             if (nextSession) { // Setting the selected session in RaceControl and other clients if another one is found. 
