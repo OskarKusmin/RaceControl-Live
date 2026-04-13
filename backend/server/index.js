@@ -37,10 +37,27 @@ let raceTimers = {}; // variable for storing timers and duration of sessions nee
 async function initializeData() {
     try {
         const data = await RaceData.load(); //Loading the saved race session data
-        raceSessions = data.raceSessions; //Assigning loaded race sessions to a variable
-        currentSelectSession = data.currentSelectSession; //setting currentSelectSession to the saved one
-        raceTimers = data.raceTimers || {}; //loading the raceTimers object for the sessions.
+        raceSessions = data.raceSessions;
+        currentSelectSession = data.currentSelectSession;
+        raceTimers = data.raceTimers || {};
         activeTimers = {}; //initialising an empty object to store the active countdown timer
+        raceSessions = raceSessions.filter(session => session.status !== 'Finished'); // Filtering out finished sessions
+
+        // Removing raceTimers of finished sessions
+        const activeSessionIds = new Set(raceSessions.map(s => String(s.id)));
+        for (const timerId of Object.keys(raceTimers)) {
+            if (!activeSessionIds.has(timerId)) {
+                delete raceTimers[timerId];
+            }
+        }
+
+        const selectedExists = raceSessions.some(s => s.id === currentSelectSession);
+        if (!selectedExists) {
+            const nextAvailable = raceSessions.find(
+                s => s.status === 'upcoming' || s.status === 'confirmed'
+            );
+            currentSelectSession = nextAvailable ? nextAvailable.id : null;
+        }
 
         //Iterating over each session to check if any were in progress when the server was last stopped
         raceSessions.forEach(session => {
