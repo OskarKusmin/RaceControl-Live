@@ -126,6 +126,16 @@ function startRaceTimer(session, duration) {
     saveState();
 }
 
+function authorize(socket, requiredRole, callback) {
+    if (socket.data.role === requiredRole) {
+        return true;
+    }
+    if (typeof callback === 'function') {
+        callback({ success: false, error: 'Not authorized' });
+    }
+    return false;
+}
+
 //socket event listeners
 io.on('connection', (socket) => {
     
@@ -136,11 +146,13 @@ io.on('connection', (socket) => {
 
     // change-mode is emitted by RaceControl when the official clicks the flag buttons. Then emits race-mode-change to update RaceFlags and Leaderboard
     socket.on('change-mode', ({mode}) => {
+        if (!authorize(socket, 'safety', null)) return;
         io.emit('race-mode-changed', mode);
     });
 
     //Handler for 'start-race' which is emitted by RaceControl when the Start Race button is clicked by the safety official
     socket.on('start-race', async ({ duration, sessionId }, callback) => {
+        if (!authorize(socket, 'safety', callback)) return;
         const session = raceSessions.find((s) => s.id === Number(sessionId)); // making sure the session exists before starting it
         if (!session) {
             callback({ success: false, error: 'Session not found' });
@@ -157,6 +169,7 @@ io.on('connection', (socket) => {
 
     //Handler for 'finish-race' which is emitted by RaceControl when 'Finish' flag button is clicked
     socket.on('finish-race', ({ sessionId }, callback) => {
+        if (!authorize(socket, 'safety', callback)) return;
         const session = raceSessions.find(s => s.id === Number(sessionId));
         
         if (!session) {
@@ -176,6 +189,7 @@ io.on('connection', (socket) => {
 
     //Handler for 'end-race-session' which is emitted by RaceControl when 'End Race' is clicked
     socket.on('end-race-session', ({ sessionId }) => {
+        if (!authorize(socket, 'safety', null)) return;
         const sessionIndex = raceSessions.findIndex((s) => s.id === Number(sessionId));
 
         if(sessionIndex !== -1) { 
@@ -198,9 +212,8 @@ io.on('connection', (socket) => {
     //Handler for 'validate-key' which is emiter by AccessKeyPrompt when an access key is submitted
     socket.on('validate-key', ({ key, role }) => {
         let isValid = false; //Initialising key validity to false
-        let message = 'Invalid access key';
 
-        //Checking for match with provided key ad key assigned to that role in environment variables
+        //Checking for match with provided key and key assigned to that role in environment variables
         switch (role) {
             case 'receptionist':
                 isValid = key === process.env.RECEPTIONIST_KEY;
@@ -212,24 +225,32 @@ io.on('connection', (socket) => {
                 isValid = key === process.env.SAFETY_KEY;
                 break;
         }
+
+        // Storing role on the socket if key is valid
+        if (isValid) {
+            socket.data.role = role;
+        }
+
          // 500ms delay for invalid keys
         const delay = isValid ? 0 : 500; // No delay for valid keys
         setTimeout(() => {
-            //Emitting response to AccessKeyPrompt
+            // Emitting response to AccessKeyPrompt
             socket.emit('key-validation-response', {
                 success: isValid,
-                message: isValid ? 'Access granted' : message
+                message: isValid ? 'Access granted' : 'Invalid access key'
             });
         }, delay);
     });
 
     //Handler for car lap timers which is emitted by LapLineTracker and then broadcased to be detected by LeaderBoard so it can display them
     socket.on('current-lap-times', (data) => {
+        if (!authorize(socket, 'observer', null)) return;
         socket.broadcast.emit('current-lap-times', data);
     });
 
     // Making sure LapLineTracker gets the currently selected session upon being opened. 
-    socket.on('lap-line-tracker-opened', () => { 
+    socket.on('lap-line-tracker-opened', () => {
+        if (!authorize(socket, 'observer', null)) return;
         io.emit('select-session', currentSelectSession);
     })
 
@@ -240,6 +261,7 @@ io.on('connection', (socket) => {
 
     // Handler for which session is selected in RaceControl
     socket.on('select-session', (sessionId, callback) => {
+        if (!authorize(socket, 'safety', callback)) return;
         currentSelectSession = sessionId; //updating the local variable with the session ID
         io.emit('select-session', sessionId); // Emitting the selected session ID to other clients
 
@@ -290,6 +312,7 @@ io.on('connection', (socket) => {
 
     //Listener for race sessions being added in FrontDesk
     socket.on('add-session', async (data, callback) => {
+        if (!authorize(socket, 'receptionist', callback)) return;
         const { sessionName } = data;
 
         if(!sessionName) {
@@ -321,6 +344,7 @@ io.on('connection', (socket) => {
 
     // Listener for race session being deleted in FrontDesk
     socket.on('delete-session', async (data, callback) => {
+        if (!authorize(socket, 'receptionist', callback)) return;
         const { sessionId } = data;
     
         const sessionIndex = raceSessions.findIndex((session) => session.id === sessionId);
@@ -346,6 +370,7 @@ io.on('connection', (socket) => {
 
     // Confirming a session when receptionist is done editing ('Confirm button in FrontDesk)
     socket.on('confirm-session', async (data, callback) => {
+        if (!authorize(socket, 'receptionist', callback)) return;
         const { sessionId, drivers } = data;
 
         const session = raceSessions.find((s) => s.id === sessionId);
