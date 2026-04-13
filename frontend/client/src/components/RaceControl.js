@@ -107,7 +107,6 @@ const RaceControl = () => {
     setError('');
     socket.emit('start-race', { sessionId: currentSession.id }, (response) => {
       if (response.success) {
-        setCountdown(response.duration);
         setIsRaceActive(true);
         setIsRaceFinished(false);
       } else {
