@@ -1,14 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { SocketContext } from '../App';
 import './css/LeaderBoard.css';
-
-const formatTime = (ms) => {
-  if (!ms) return '—';
-  const minutes = Math.floor(ms / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000);
-  const cents   = Math.floor((ms % 1000) / 10);
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(cents).padStart(2, '0')}`;
-};
+import { formatTime } from './utils';
 
 const sortByFastest = (cars) =>
   [...cars].sort((a, b) => {

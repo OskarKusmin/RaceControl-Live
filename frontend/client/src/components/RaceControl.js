@@ -2,8 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { SocketContext } from '../App';
 import { RaceSessionContext } from '../contexts/RaceSessionContext';
 import './css/RaceControl.css';
-
-/* ── Constants ────────────────────────────────────────────── */
+import { formatTime } from './utils';
 
 const FLAG_MODES = [
   {
@@ -38,17 +37,6 @@ const MODE_BADGE = {
   Danger:  'red',
   Finish:  'blue',
 };
-
-/* ── Helpers ──────────────────────────────────────────────── */
-
-const formatTime = (ms) => {
-  const minutes = Math.floor(ms / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000);
-  const cents   = Math.floor((ms % 1000) / 10);
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(cents).padStart(2, '0')}`;
-};
-
-/* ── Component ────────────────────────────────────────────── */
 
 const RaceControl = () => {
   const socket = useContext(SocketContext);
@@ -109,7 +97,6 @@ const RaceControl = () => {
 
   useEffect(() => { document.title = 'Race Control — RaceControl Live'; }, []);
 
-  /* Actions */
   const changeMode = (mode) => {
     setError('');
     socket.emit('change-mode', { mode });

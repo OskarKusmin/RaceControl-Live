@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { SocketContext } from '../App';
 import './css/LapLineTracker.css';
+import { formatTime } from './utils';
 
 const LapLineTracker = () => {
   const socket = useContext(SocketContext);
@@ -154,13 +155,6 @@ const LapLineTracker = () => {
         [carId]: { startTime: now, currentTime: 0, lapTimes: newLapTimes },
       };
     });
-  };
-
-  const formatTime = (ms) => {
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    const cents   = Math.floor((ms % 1000) / 10);
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(cents).padStart(2, '0')}`;
   };
 
   const getBestLap = (lapTimes) => {
