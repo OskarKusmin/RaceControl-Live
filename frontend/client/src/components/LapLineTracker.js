@@ -143,13 +143,6 @@ const LapLineTracker = () => {
       const newLapTimes = [...(car.lapTimes || [])];
       if (car.startTime) newLapTimes.push(now - car.startTime);
 
-      socket.emit('record-completed-lap', [{
-        id:          carId,
-        currentTime: 0,
-        lapTimes:    newLapTimes,
-        startTime:   now,
-      }]);
-
       return {
         ...prev,
         [carId]: { startTime: now, currentTime: 0, lapTimes: newLapTimes },

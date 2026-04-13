@@ -47,10 +47,6 @@ const App = () => {
             setRaceSessions(sessions);
         });
 
-        newSocket.on('session-added', (newSession) => {
-            setRaceSessions(prev => [...prev, newSession]);
-        })
-
         newSocket.on('session-deleted', (deletedSession) => {
             if (deletedSession && deletedSession.id) {
                 setRaceSessions(prev =>
@@ -64,7 +60,6 @@ const App = () => {
             newSocket.disconnect();
             newSocket.off('connect');
             newSocket.off('fetch-sessions-response');
-            newSocket.off('session-added');
             newSocket.off('session-deleted');
         }
     }, []);

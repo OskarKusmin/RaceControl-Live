@@ -31,15 +31,11 @@ const FrontDesk = () => {
 
     socket.emit("fetch-sessions");
     socket.on("fetch-sessions-response", handleSessionsUpdate);
-    socket.on("session-added",   () => socket.emit("fetch-sessions"));
     socket.on("session-deleted", () => socket.emit("fetch-sessions"));
-    socket.on("session-updated", () => socket.emit("fetch-sessions"));
 
     return () => {
       socket.off("fetch-sessions-response");
-      socket.off("session-added");
       socket.off("session-deleted");
-      socket.off("session-updated");
     };
   }, [socket, setRaceSessions]);
 
