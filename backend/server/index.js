@@ -5,6 +5,7 @@ const dotenv = require('dotenv'); // Importing dotenv. Used for loading environt
 const cors = require('cors'); // 
 const RaceData = require('./data/raceData'); // Importing the raceData module as it is needed to persist data if server restarts
 
+
 dotenv.config(); // This call loads environment variables from the .env file to process.env
 
 // Checking to make sure access keys have been defined in .env otherwise application should not work
@@ -33,6 +34,7 @@ let currentSelectSession = null; //variable to hold ID for the race session curr
 let activeTimers = {}; // variable to store the active countdown timer
 let raceTimers = {}; // variable for storing timers and duration of sessions needed in case of server restart
 let currentRaceMode = 'Danger'
+let startingCountdown = null;
 
 //This function loads the persisted race sesson data from storage if the server restarts.
 async function initializeData() {
@@ -173,7 +175,8 @@ io.on('connection', (socket) => {
         raceSessions,
         currentSelectSession,
         currentRaceMode,
-        countdown: getCurrentCountdown()
+        countdown: getCurrentCountdown(),
+        startingCountdown
     });
     
     //this one is for updating the clients with the latest race sessions
@@ -197,11 +200,30 @@ io.on('connection', (socket) => {
             return;
         }
 
-        session.status = 'in-progress'; //updating session status
+        if (startingCountdown) {
+            callback({ success: false, error: 'Start countdown already in progress'});
+            return;
+        }
+        
         //this variable checks which duration is provided for the timer which would depend on if the server is started in development mode or normal mode
         const initialDuration = (duration || (process.env.NODE_ENV === 'development' ? 60 : 600)) * 1000;
+
+        let count = 3;
+        startingCountdown = { sessionId: session.id};
+        io.emit('race-starting', { count });
+
+        const countdownInterval = setInterval(() => {
+            count--;
+            if (count > 0) {
+                io.emit('race-starting', { count });
+            } else {
+                clearInterval(countdownInterval);
+                startingCountdown = null;
+                session.status = 'in-progress';
+                startRaceTimer(session, initialDuration);
+            }
+        }, 1000);
         
-        startRaceTimer(session, initialDuration); //calling the startRaceTimer and provides with with the initial duration for the countdown
         callback({ success: true });
     });
 

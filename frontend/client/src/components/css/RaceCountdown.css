@@ -146,3 +146,18 @@
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.4; }
 }
+
+.rcd-time--starting {
+  color: var(--rc-text);
+  animation: rcd-start-pop 0.3s ease;
+}
+
+@keyframes rcd-start-pop {
+  0%   { transform: scale(1.3); opacity: 0.5; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+.rcd-strip--starting {
+  background: var(--rc-text);
+  height: 10px;
+}

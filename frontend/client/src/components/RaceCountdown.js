@@ -1,6 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { SocketContext } from '../App';
 import './css/RaceCountdown.css';
+import countSound from './sounds/count.mp3';
+import goSound from './sounds/go.mp3';
 
 const formatCountdown = (ms) => {
   const total   = Math.floor(ms / 1000);
@@ -21,17 +23,37 @@ const getUrgency = (ms) => {
 
 const RaceCountdown = () => {
   const socket = useContext(SocketContext);
-  const [countdown,   setCountdown]   = useState(0);
+  const [countdown,   setCountdown]     = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [startCount, setStartCount]     = useState(null);
+  const countRef                        = useRef(new Audio(countSound));
+  const goRef                           = useRef(new Audio(goSound));
 
   useEffect(() => {
     if (!socket) return;
     socket.on('countdown-update', (t) => setCountdown(t));
+    
     socket.on('full-state', (state) => setCountdown(state.countdown));
+    
+    socket.on('race-starting', ({ count }) => {
+      setStartCount(count);
+      countRef.current.currentTime = 0;
+      countRef.current.play().catch(() => {});
+    });
+
+    socket.on('race-started', () => {
+      setStartCount(null);
+      goRef.current.currentTime = 0;
+      goRef.current.play().catch(() => {});
+    });
+
     return () => {
       socket.off('countdown-update');
       socket.off('full-state');
+      socket.off('race-starting');
+      socket.off('race-started');
     } 
+
   }, [socket]);
 
   useEffect(() => { document.title = 'Countdown — RaceControl Live'; }, []);
@@ -70,15 +92,22 @@ const RaceCountdown = () => {
       </button>
 
       <main className="rcd-main" aria-live="polite" aria-label="Race countdown">
-
-        <p className="rcd-label rc-label">Time remaining</p>
-
-        <div className={`rcd-time rcd-time--${urgency}`} aria-atomic="true">
-          {urgency === 'finished' ? 'Time up' : formatCountdown(countdown)}
-        </div>
-
-        <div className={`rcd-strip rcd-strip--${urgency}`} aria-hidden="true" />
-
+        {startCount !== null ? (
+          <>
+            <p className='rcd-label rc-label'>Race starting in</p>
+            <div className='rcd-time rcd-time--starting' aria-atomic='true'>
+              {startCount}
+            </div>
+          </>
+        ) : (
+          <>
+            <p className='rcd-label rc-label'>Time remaining</p>
+            <div className={`rcd-time rcd-time--${urgency}`} aria-atomic='true'>
+              {urgency === 'finished' ? 'Time up' : formatCountdown(countdown)}
+            </div>
+          </>
+        )}
+        <div className={`rcd-strip rcd-strip--${startCount !== null ? 'starting' : urgency}`} aria-hidden="true" />
       </main>
 
     </div>
