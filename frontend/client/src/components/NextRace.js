@@ -6,10 +6,9 @@ import './css/NextRace.css';
 const NextRace = () => {
   const socket = useContext(SocketContext);
   const { raceSessions } = useContext(RaceSessionContext);
-
+  const [isRaceInProgress, setIsRaceInProgress] = useState(false);
   const [nextRace,    setNextRace]    = useState(null);
   const [loading,     setLoading]     = useState(true);
-  const [paddockCall, setPaddockCall] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const fetchNextRace = useCallback(() => {
@@ -36,10 +35,17 @@ const NextRace = () => {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('select-session',   () => { setPaddockCall(false); fetchNextRace(); });
-    socket.on('race-started',     () => { setPaddockCall(false); fetchNextRace(); });
-    socket.on('race-mode-changed',() => fetchNextRace());
-    socket.on('end-race-session', () => { setPaddockCall(true);  fetchNextRace(); });
+    socket.on('select-session',    () => fetchNextRace());
+    socket.on('race-started',      () => { setIsRaceInProgress(true);  fetchNextRace(); });
+    socket.on('end-race-session',  () => { setIsRaceInProgress(false); fetchNextRace(); });
+    socket.on('race-mode-changed', () => fetchNextRace());
+    socket.on('full-state', (state) => {
+      const occupied = state.raceSessions.some(
+        s => s.status === 'in-progress' || s.status === 'Finished'
+      );
+      setIsRaceInProgress(occupied);
+      fetchNextRace();
+    })
 
     fetchNextRace();
 
@@ -67,6 +73,8 @@ const NextRace = () => {
     }
   };
 
+  const paddockCall = nextRace !== null && !isRaceInProgress;
+
   return (
     <div className={`nr-page ${paddockCall ? 'nr-page--paddock' : ''}`}>
 
@@ -87,7 +95,6 @@ const NextRace = () => {
       <div className="nr-content">
 
         <header className="nr-header">
-          <p className="nr-eyebrow rc-label">Up next</p>
           <h1 className="nr-title">Next Race</h1>
         </header>
 
