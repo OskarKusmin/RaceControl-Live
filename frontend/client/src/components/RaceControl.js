@@ -22,13 +22,7 @@ const FLAG_MODES = [
     label:   'Danger',
     variant: 'red',
     desc:    'Red flag — stop immediately',
-  },
-  {
-    mode:    'Finish',
-    label:   'Finish',
-    variant: 'chequered',
-    desc:    'Chequered flag — race complete',
-  },
+  }
 ];
 
 const MODE_BADGE = {
@@ -83,7 +77,13 @@ const RaceControl = () => {
     };
 
     socket.on('fetch-sessions-response', handleSessionsUpdate);
-    socket.on('race-mode-changed', (mode) => setRaceMode(mode));
+    socket.on('race-mode-changed', (mode) => {
+      setRaceMode(mode);
+      if (mode === 'Finish') {
+        setIsRaceActive(false);
+        setIsRaceFinished(true);
+      };
+    });
     socket.on('countdown-update',  (t)    => setCountdown(t));
 
     socket.emit('fetch-sessions');
@@ -208,14 +208,7 @@ const RaceControl = () => {
                 Start race
               </button>
             )}
-            {isRaceActive && (
-              <button
-                className="rc-btn rc-btn--warning rc-btn--lg rc-ctrl-action-btn"
-                onClick={finishRace}
-              >
-                Finish race
-              </button>
-            )}
+            
             {isRaceFinished && (
               <button
                 className="rc-btn rc-btn--ghost rc-btn--lg rc-ctrl-action-btn"
@@ -244,6 +237,15 @@ const RaceControl = () => {
                   <span className="rc-ctrl-flag-btn__desc">{desc}</span>
                 </button>
               ))}
+              <button
+                className="rc-ctrl-flag-btn rc-ctrl-flag-btn--chequered rc-ctrl-flag-btn--finish-action"
+                onClick={finishRace}
+                title="Chequered flag — end the race"
+              >
+                <span className="rc-ctrl-flag-btn__swatch" aria-hidden="true" />
+                <span className="rc-ctrl-flag-btn__label">Finish</span>
+                <span className="rc-ctrl-flag-btn__desc">Chequered flag — end the race</span>
+              </button>
             </div>
           </div>
         )}

@@ -176,7 +176,7 @@
 
 .rc-ctrl-flag-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
 }
 
@@ -308,6 +308,19 @@
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.5);
     box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+}
+
+.rc-ctrl-flag-btn--finish-action {
+    grid-column: 1 / -1;
+    border-color: rgba(255, 255, 255, 0.3);
+    border-style: dashed;
+    min-height: 100px;
+}
+
+.rc-ctrl-flag-btn--finish-action:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.5);
+    border-style: solid;
 }
     
 @keyframes rc-ctrl-fade-up {
