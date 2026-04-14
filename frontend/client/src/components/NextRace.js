@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useContext, useCallback, useRef } from "react";
 import { SocketContext } from "../App";
 import { RaceSessionContext } from "../contexts/RaceSessionContext";
 import './css/NextRace.css';
+import chimeSound from './sounds/chime.mp3';
 
 const NextRace = () => {
   const socket = useContext(SocketContext);
@@ -10,6 +11,7 @@ const NextRace = () => {
   const [nextRace,    setNextRace]    = useState(null);
   const [loading,     setLoading]     = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const chimeRef = useRef(new Audio(chimeSound));
 
   const fetchNextRace = useCallback(() => {
     const next = raceSessions.find(
@@ -74,6 +76,13 @@ const NextRace = () => {
   };
 
   const paddockCall = nextRace !== null && !isRaceInProgress;
+
+  useEffect(() => {
+    if (paddockCall) {
+      chimeRef.current.currentTime = 0;
+      chimeRef.current.play().catch(() => {});
+    }
+  }, [paddockCall]);
 
   return (
     <div className={`nr-page ${paddockCall ? 'nr-page--paddock' : ''}`}>
