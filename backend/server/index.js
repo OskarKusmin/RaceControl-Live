@@ -62,6 +62,11 @@ async function initializeData() {
             currentSelectSession = nextAvailable ? nextAvailable.id : null;
         }
 
+        const hasRunningRace = raceSessions.some(s => s.status === 'in-progress');
+        if (!hasRunningRace) {
+            currentRaceMode = 'Danger';
+        }
+
         //Iterating over each session to check if any were in progress when the server was last stopped
         raceSessions.forEach(session => {
             if (session.status === 'in-progress' && raceTimers[session.id]) {
@@ -278,6 +283,7 @@ io.on('connection', (socket) => {
 
         if(sessionIndex !== -1) { 
             raceSessions.splice(sessionIndex, 1); //removing the ended race session from the raceSessions array
+            currentRaceMode = 'Danger';
             saveState();
             const nextSession = raceSessions.find( //checking if there is another session to queue up
                 session => session.status === 'upcoming' || session.status === 'confirmed'

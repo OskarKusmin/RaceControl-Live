@@ -73,6 +73,7 @@ const LeaderBoard = () => {
       setCountdown(0);
       setRaceInfo(prev => ({ ...prev, sessionName: 'Awaiting session…' }));
     });
+    
     socket.on('full-state', (state) => {
       setRaceInfo(prev => ({ ...prev, mode: state.currentRaceMode }));
       setCountdown(state.countdown);
@@ -80,6 +81,8 @@ const LeaderBoard = () => {
         socket.emit('request-session-data', state.currentSelectSession);
       };
     });
+
+    socket.emit('request-full-state');
 
     return () => {
       socket.off('select-session');
