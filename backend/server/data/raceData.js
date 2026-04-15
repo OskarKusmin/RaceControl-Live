@@ -24,7 +24,7 @@ const RaceData = {
 
     //method that writes provided data to races.json
     async save(data) {
-        await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2));
+        await fs.writeFile(DATA_FILE, JSON.stringify(data));
     }
 };
 
