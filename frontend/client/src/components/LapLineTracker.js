@@ -32,7 +32,11 @@ const LapLineTracker = () => {
         setCars(data.initialCars);
         const initialTimers = {};
         data.initialCars.forEach(car => {
-          initialTimers[car.id] = { startTime: null, currentTime: 0, lapTimes: [] };
+          initialTimers[car.id] = { 
+            startTime: car.currentLapStart || null,
+            currentTime: car.currentTime || 0,
+            lapTimes: car.lapTimes || []
+          };
         });
         setLapTimers(initialTimers);
       }

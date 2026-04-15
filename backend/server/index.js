@@ -32,6 +32,7 @@ let raceSessions = []; //Array of raceSession objects containing drivers, race s
 let currentSelectSession = null; // race session currently selected (appearing in RaceControl now)
 let activeTimers = {}; // active countdown timer
 let raceTimers = {}; // timers and duration of sessions needed in case of server restart
+let lapData = {};
 let currentRaceMode = 'Danger'
 let startingCountdown = null;
 
@@ -175,16 +176,20 @@ function getCurrentCountdown() {
 }
 
 function buildSessionData(session) {
+    const sessionLapData = lapData[session.id] || {};
     return {
         session,
-        initialCars: session.drivers.map((driver, index) => ({
-            id: driver.id,
-            name: driver.name,
-            carNumber: `${index + 1}`,
-            lapTimes: [],
-            currentLapStart: null,
-            currentTime: 0
-        }))
+        initialCars: session.drivers.map((driver, index) => {
+            const stored = sessionLapData[driver.id];
+            return {
+                id: driver.id,
+                name: driver.name,
+                carNumber: `${index + 1}`,
+                lapTimes: stored?.lapTimes || [],
+                currentLapStart: stored?.startTime || null,
+                currentTime: stored?.currentTime || 0
+            };
+        })
     };
 };
 
@@ -297,6 +302,8 @@ io.on('connection', (socket) => {
                 io.emit('select-session', nextSession.id); //Emitting this to inform Leaderboard and LapLineTracker to switch their display to the new race session
             }
         }
+
+        delete lapData[sessionId];
     });
 
     //Handler for 'validate-key' which is emited by AccessKeyPrompt when an access key is submitted
@@ -335,6 +342,19 @@ io.on('connection', (socket) => {
     //Handler for car lap timers which is emitted by LapLineTracker and then broadcased to be detected by LeaderBoard so it can display them
     socket.on('current-lap-times', (data) => {
         if (!authorize(socket, 'observer', null)) return;
+
+        if (currentSelectSession && Array.isArray(data)) {
+            if(!lapData[currentSelectSession]) {
+                lapData[currentSelectSession] = {};
+            }
+            data.forEach(car => {
+                lapData[currentSelectSession][car.id] = {
+                    startTime: car.startTime,
+                    currentTime: car.currentTime,
+                    lapTimes: car.lapTimes
+                };
+            });
+        }
         socket.broadcast.emit('current-lap-times', data);
     });
 
@@ -411,7 +431,8 @@ io.on('connection', (socket) => {
         }
     
         const deletedSession = raceSessions.splice(sessionIndex, 1)[0];
-    
+        delete lapData[sessionId];
+
         // Ensure deletedSession is not null before emitting
         if (deletedSession) {
             io.emit('session-deleted', deletedSession);
