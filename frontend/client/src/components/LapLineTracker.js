@@ -80,12 +80,26 @@ const LapLineTracker = () => {
     socket.on('race-mode-changed', handleRaceModeChange);
     socket.on('countdown-update',  (t) => setCountdown(t));
     socket.on('end-race-session',  handleEndSession);
+    
     socket.on('full-state', (state) => {
       setCountdown(state.countdown);
+
       if (state.currentSelectSession) {
         socket.emit('request-session-data', state.currentSelectSession);
+
+        const session = state.raceSessions.find(s => s.id === state.currentSelectSession);
+
+        if (session?.status === 'in-progress') {
+          setIsRaceActive(true);
+          setIsRaceFinished(false);
+        } else if (session?.status === 'Finished') {
+          setIsRaceActive(false);
+          setIsRaceFinished(true);
+        }
       }
     });
+
+    socket.emit('request-full-state');
 
     return () => {
       socket.off('select-session');

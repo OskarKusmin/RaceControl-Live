@@ -197,7 +197,6 @@ const RaceControl = () => {
         )}
 
         <div className="rc-card rc-ctrl-lifecycle">
-          <h2 className="rc-ctrl-section-title">Race controls</h2>
           <div className="rc-ctrl-lifecycle-row">
             {!isRaceActive && !isRaceFinished && (
               <button

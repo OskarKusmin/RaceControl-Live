@@ -197,6 +197,16 @@ io.on('connection', (socket) => {
         socket.emit('fetch-sessions-response', raceSessions);
     });
 
+    socket.on('request-full-state', () => {
+        socket.emit('full-state', {
+            raceSessions,
+            currentSelectSession,
+            currentRaceMode,
+            countdown: getCurrentCountdown(),
+            startingCountdown
+        });
+    });
+
     // change-mode is emitted by RaceControl when the official clicks the flag buttons. Then emits race-mode-change to update RaceFlags and Leaderboard
     socket.on('change-mode', ({mode}) => {
         if (!authorize(socket, 'safety', null)) return;
