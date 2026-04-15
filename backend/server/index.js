@@ -88,18 +88,21 @@ async function initializeData() {
 }
 
 // Function for saving the current state of the application to storage
+let saveTimeout = null;
 async function saveState() {
-    try {
-        const stateToSave = {
-            raceSessions,
-            currentSelectSession,
-            raceTimers,
-            currentRaceMode
-        };
-        await RaceData.save(stateToSave);
-    } catch (error) {
-        console.error('Error saving race data:', error);
-    }
+    if (saveTimeout) clearTimeout(saveTimeout);
+    saveTimeout = setInterval(async () => {
+        try {
+            await RaceData.save({
+                raceSessions,
+                currentSelectSession,
+                raceTimers,
+                currentRaceMode
+            });
+        } catch (error) {
+            console.error('Error saving race data: ', error);
+        }
+    }, 200);
 }
 
 //simple function to clear timers
