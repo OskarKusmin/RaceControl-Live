@@ -1,14 +1,13 @@
 const express = require('express'); 
 const http = require('http');
-const { Server } = require('socket.io'); // Importing server class from Socket.IO to handle websocket connections
-const dotenv = require('dotenv'); // Importing dotenv. Used for loading environtment variables from the .env file to process.env
-const cors = require('cors'); // 
-const RaceData = require('./data/raceData'); // Importing the raceData module as it is needed to persist data if server restarts
+const { Server } = require('socket.io');
+const dotenv = require('dotenv'); 
+const cors = require('cors');
+const RaceData = require('./data/raceData');
 
+dotenv.config(); //load environment variables from .env file to process.env
 
-dotenv.config(); // This call loads environment variables from the .env file to process.env
-
-// Checking to make sure access keys have been defined in .env otherwise application should not work
+// access keys must be defined in .env
 if (!process.env.RECEPTIONIST_KEY || !process.env.OBSERVER_KEY || !process.env.SAFETY_KEY) {
     console.error('Error: Required environment variables are not set!');
     process.exit(1);
@@ -27,19 +26,19 @@ const io = new Server(server, {
 });
 
 app.use(cors({ origin: '*' }));
-app.use(express.json()); // enabling the application to parse json requests. Needed for the system persistence requirement.
+app.use(express.json()); // enabling the application to parse json requests. Needed for state persistence.
 
-let raceSessions = []; //Array for storing race sessions (objects containing drivers, race state, status, etc)
-let currentSelectSession = null; //variable to hold ID for the race session currently selected (Appearing in RaceControl now)
-let activeTimers = {}; // variable to store the active countdown timer
-let raceTimers = {}; // variable for storing timers and duration of sessions needed in case of server restart
+let raceSessions = []; //Array of raceSession objects containing drivers, race state, etc
+let currentSelectSession = null; // race session currently selected (appearing in RaceControl now)
+let activeTimers = {}; // active countdown timer
+let raceTimers = {}; // timers and duration of sessions needed in case of server restart
 let currentRaceMode = 'Danger'
 let startingCountdown = null;
 
-//This function loads the persisted race sesson data from storage if the server restarts.
+//This function loads the race session data from storage if the server restarts.
 async function initializeData() {
     try {
-        const data = await RaceData.load(); //Loading the saved race session data
+        const data = await RaceData.load();
         raceSessions = data.raceSessions;
         currentSelectSession = data.currentSelectSession;
         raceTimers = data.raceTimers || {};
@@ -65,7 +64,7 @@ async function initializeData() {
 
         //Iterating over each session to check if any were in progress when the server was last stopped
         raceSessions.forEach(session => {
-            if (session.status === 'in-progress' && raceTimers[session.id]) { //Checking if session was in progress and had a timer
+            if (session.status === 'in-progress' && raceTimers[session.id]) {
                 const timer = raceTimers[session.id]; //retrieving the timing information for the current session from raceTimers
                 if (timer.status === 'running') { //checking if countdown timer was running
                     const elapsedTime = Date.now() - timer.startTime; //calculating the time that has elapsed since the server last stopped
@@ -97,7 +96,7 @@ async function saveState() {
             raceTimers,
             currentRaceMode
         };
-        await RaceData.save(stateToSave); //calling the save method from RaceData module. This weites the state data to a json file 
+        await RaceData.save(stateToSave);
     } catch (error) {
         console.error('Error saving race data:', error);
     }
@@ -113,7 +112,6 @@ function clearRaceTimer(sessionId) {
 
 function startRaceTimer(session, duration) {
     if (!session) return;
-    
     clearRaceTimer(session.id);
 
     const startTime = Date.now(); //Storing the current time as the start time for a race session. This is used to count elapsed time
@@ -123,7 +121,7 @@ function startRaceTimer(session, duration) {
         status: 'running'
     };
 
-    const timer = setInterval(() => { //starting new interval timer. 10 milisecond increments
+    const timer = setInterval(() => { //starting new interval timer. 100 milisecond increments
         const elapsedTime = Date.now() - startTime;
         const remainingTime = duration - elapsedTime;
 
@@ -138,12 +136,12 @@ function startRaceTimer(session, duration) {
             io.emit('fetch-sessions-response', raceSessions); //updating list of sessions for clients
             saveState();//saving the current state to json
         }    
-    }, 10); 
+    }, 100); 
 
     activeTimers[session.id] = timer;
     
     io.emit('countdown-update', duration);
-    io.emit('race-started', session.id); //Informing connected clients that the race has begun (detected by LapLineTracker, LeaderBoard and NextRace)
+    io.emit('race-started', session.id); //Informing connected clients that the race has begun
     currentRaceMode = 'Safe'
     io.emit('race-mode-changed', 'Safe'); //Race mode changes to safe upon a race being started
     io.emit('fetch-sessions-response', raceSessions);
@@ -168,9 +166,21 @@ function getCurrentCountdown() {
     return Math.max(0, remaining);
 }
 
-//socket event listeners
-io.on('connection', (socket) => {
+function buildSessionData(session) {
+    return {
+        session,
+        initialCars: session.drivers.map((driver, index) => ({
+            id: driver.id,
+            name: driver.name,
+            carNumber: `${index + 1}`,
+            lapTimes: [],
+            currentLapStart: null,
+            currentTime: 0
+        }))
+    };
+};
 
+io.on('connection', (socket) => {
     socket.emit('full-state', {
         raceSessions,
         currentSelectSession,
@@ -205,7 +215,7 @@ io.on('connection', (socket) => {
             return;
         }
         
-        //this variable checks which duration is provided for the timer which would depend on if the server is started in development mode or normal mode
+        //this checks which duration is provided for the timer which would depend on if the server is started in development mode or normal mode
         const initialDuration = (duration || (process.env.NODE_ENV === 'development' ? 60 : 600)) * 1000;
 
         let count = 3;
@@ -254,9 +264,9 @@ io.on('connection', (socket) => {
         const sessionIndex = raceSessions.findIndex((s) => s.id === Number(sessionId));
 
         if(sessionIndex !== -1) { 
-            raceSessions.splice(sessionIndex, 1); //Removing the ended race session from the raceSessions array
+            raceSessions.splice(sessionIndex, 1); //removing the ended race session from the raceSessions array
             saveState();
-            const nextSession = raceSessions.find( // checking if there is another session to queue up
+            const nextSession = raceSessions.find( //checking if there is another session to queue up
                 session => session.status === 'upcoming' || session.status === 'confirmed'
             );
 
@@ -270,7 +280,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    //Handler for 'validate-key' which is emiter by AccessKeyPrompt when an access key is submitted
+    //Handler for 'validate-key' which is emited by AccessKeyPrompt when an access key is submitted
     socket.on('validate-key', ({ key, role }) => {
         let isValid = false; //Initialising key validity to false
 
@@ -312,22 +322,13 @@ io.on('connection', (socket) => {
     // Handler for which session is selected in RaceControl
     socket.on('select-session', (sessionId, callback) => {
         if (!authorize(socket, 'safety', callback)) return;
-        currentSelectSession = sessionId; //updating the local variable with the session ID
-        io.emit('select-session', sessionId); // Emitting the selected session ID to other clients
+        currentSelectSession = sessionId;
+        io.emit('select-session', sessionId);
 
         const session = raceSessions.find(s => s.id === sessionId);
         if (session) {
-            socket.emit('session-data', { //Emitting the session data for LeaderBoard and LapLinetracker to populate their displays with drivers
-                session,
-                initialCars: session.drivers.map((driver, index) => ({
-                    id: driver.id,
-                    name: driver.name,
-                    carNumber: `${index + 1}`,
-                    lapTimes: [],
-                    currentLapStart: null,
-                    currentTime: 0
-                }))
-            });
+            //Emitting the session data for LeaderBoard and LapLinetracker to populate their displays with drivers
+            socket.emit('session-data', buildSessionData(session));
         }
 
         if (typeof callback === 'function')  {
@@ -337,23 +338,9 @@ io.on('connection', (socket) => {
 
     // Handler for race session data requests 
     socket.on('request-session-data', (sessionId, callback) => {
-        const session = raceSessions.find(s => s.id === Number(sessionId));
-        if (session) {
-            const sessionData = {
-                session,
-                initialCars: session.drivers.map((driver, index) => ({
-                    id: driver.id,
-                    name: driver.name,
-                    carNumber: `${index + 1}`,
-                    lapTimes: [],
-                    currentLapStart: null,
-                    currentTime: 0
-                }))
-            };
-            socket.emit('session-data', sessionData);
-        } else {
-            socket.emit('session-data', null);
-        }
+        const session = raceSessions.find(s => s.id === Number(sessionId));            
+        socket.emit('session-data', session ? buildSessionData(session) : null);
+
 
         if (typeof callback === 'function') {
             callback({ success: true });
@@ -418,7 +405,7 @@ io.on('connection', (socket) => {
     });
     
 
-    // Confirming a session when receptionist is done editing ('Confirm button in FrontDesk)
+    // Confirming a session when receptionist is done editing ('Confirm' button in FrontDesk)
     socket.on('confirm-session', async (data, callback) => {
         if (!authorize(socket, 'receptionist', callback)) return;
         const { sessionId, drivers } = data;
@@ -429,7 +416,7 @@ io.on('connection', (socket) => {
             return;
         }
 
-        // Making sure driver names in each session are uniqu
+        // Making sure driver names in each session are unique
         const uniqueDrivers = [...new Set(drivers.filter((name) => name.trim() !== ''))];
         if (uniqueDrivers.length !== drivers.length) {
             callback({ success: false, error: 'Driver names must be unique and non-empty' });
