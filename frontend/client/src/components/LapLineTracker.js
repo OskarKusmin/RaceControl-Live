@@ -11,6 +11,7 @@ const LapLineTracker = () => {
   const [countdown, setCountdown]             = useState(0);
   const [lapTimers, setLapTimers]             = useState({});
   const [flashCarId, setFlashCarId]           = useState(null); // visual tap feedback
+  const [isRaceFinished, setIsRaceFinished]   = useState(false);
 
   useEffect(() => {
     if (!socket) return;
@@ -39,6 +40,7 @@ const LapLineTracker = () => {
 
     const handleRaceStart = () => {
       setIsRaceActive(true);
+      setIsRaceFinished(false);
       setLapTimers(prev => {
         const next = { ...prev };
         Object.keys(next).forEach(id => {
@@ -51,6 +53,7 @@ const LapLineTracker = () => {
     const handleRaceModeChange = (mode) => {
       if (mode === 'Finish') {
         setIsRaceActive(false);
+        setIsRaceFinished(true);
         setLapTimers(prev => {
           const next = { ...prev };
           Object.keys(next).forEach(id => {
@@ -64,6 +67,7 @@ const LapLineTracker = () => {
     const handleEndSession = () => {
       setCars([]);
       setIsRaceActive(false);
+      setIsRaceFinished(false);
       setLapTimers({});
       setSelectedSession(null);
       setCountdown(0);
@@ -178,6 +182,8 @@ const LapLineTracker = () => {
               <span className="rc-live-dot" />
               Race active
             </span>
+          ) : isRaceFinished ? (
+            <span className="rc-badge rc-badge--blue">Finished</span>
           ) : (
             <span className="rc-badge rc-badge--amber">Standby</span>
           )}
