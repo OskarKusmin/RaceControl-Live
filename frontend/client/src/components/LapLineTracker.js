@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SocketContext } from '../App';
 import './css/LapLineTracker.css';
 import { formatTime } from './utils';
@@ -6,26 +6,19 @@ import { formatTime } from './utils';
 const LapLineTracker = () => {
   const socket = useContext(SocketContext);
   const [selectedSession, setSelectedSession] = useState(null);
-  const [cars, setCars]                       = useState([]);
-  const [isRaceActive, setIsRaceActive]       = useState(false);
-  const [countdown, setCountdown]             = useState(0);
-  const [lapTimers, setLapTimers]             = useState({});
-  const [flashCarId, setFlashCarId]           = useState(null); // visual tap feedback
-  const [isRaceFinished, setIsRaceFinished]   = useState(false);
+  const [cars,            setCars]            = useState([]);
+  const [isRaceActive,    setIsRaceActive]    = useState(false);
+  const [lapTimers,       setLapTimers]       = useState({});
+  const [flashCarId,      setFlashCarId]      = useState(null); // visual tap feedback
+  const [isRaceFinished,  setIsRaceFinished]  = useState(false);
+  const prevSessionRef                        = useRef(null);
+  const [raceTimer,       setRaceTimer]       = useState(null);
+  const [countdown,       setCountdown]       = useState(null);
 
   useEffect(() => {
     if (!socket) return;
     setCars([]);
     setIsRaceActive(false);
-
-    const handleSessionSelected = (sessionId) => {
-      if (selectedSession?.id === sessionId) return;
-      setSelectedSession(sessionId);
-      setCars([]);
-      setIsRaceActive(false);
-      setLapTimers({});
-      socket.emit('request-session-data', sessionId);
-    };
 
     const handleSessionData = (data) => {
       if (data?.session) {
@@ -63,8 +56,30 @@ const LapLineTracker = () => {
       });
     };
 
-    const handleRaceModeChange = (mode) => {
-      if (mode === 'Finish') {
+    socket.on('session-data', handleSessionData);
+    socket.on('race-started', handleRaceStart);
+
+    socket.on('state-update', (state) => {
+      setRaceTimer(state.raceTImer ?? null);
+
+      const session = state.currentSelectSession ? state.raceSessions.find(s => s.id === state.currentSelectSession) : null;
+
+      //If session changes, request new session data
+      if (state.currentSelectSession !== prevSessionRef.current) {
+        prevSessionRef.current = state.currentSelectSession;
+        if (state.currentSelectSession) {
+          socket.emit('request-session-data', state.currentSelectSession);
+        } else {
+          setCars([]);
+          setLapTimers({});
+          setSelectedSession(null);
+        }
+      }
+
+      if (session?.status === 'in-progress') {
+        setIsRaceActive(true);
+        setIsRaceFinished(false);
+      } else if (session?.status === 'Finished') {
         setIsRaceActive(false);
         setIsRaceFinished(true);
         setLapTimers(prev => {
@@ -74,56 +89,36 @@ const LapLineTracker = () => {
           });
           return next;
         });
-      }
-    };
-
-    const handleEndSession = () => {
-      setCars([]);
-      setIsRaceActive(false);
-      setIsRaceFinished(false);
-      setLapTimers({});
-      setSelectedSession(null);
-      setCountdown(0);
-      socket.emit('lap-line-tracker-opened');
-    };
-
-    socket.on('select-session',    handleSessionSelected);
-    socket.on('session-data',      handleSessionData);
-    socket.on('race-started',      handleRaceStart);
-    socket.on('race-mode-changed', handleRaceModeChange);
-    socket.on('countdown-update',  (t) => setCountdown(t));
-    socket.on('end-race-session',  handleEndSession);
-    
-    socket.on('full-state', (state) => {
-      setCountdown(state.countdown);
-
-      if (state.currentSelectSession) {
-        socket.emit('request-session-data', state.currentSelectSession);
-
-        const session = state.raceSessions.find(s => s.id === state.currentSelectSession);
-
-        if (session?.status === 'in-progress') {
-          setIsRaceActive(true);
-          setIsRaceFinished(false);
-        } else if (session?.status === 'Finished') {
-          setIsRaceActive(false);
-          setIsRaceFinished(true);
-        }
+      } else {
+        setIsRaceActive(false);
+        setIsRaceFinished(false);
       }
     });
-
+    
     socket.emit('request-full-state');
 
     return () => {
-      socket.off('select-session');
       socket.off('session-data');
       socket.off('race-started');
-      socket.off('race-mode-changed');
-      socket.off('countdown-update');
-      socket.off('end-race-session');
-      socket.off('full-state');
+      socket.off('state-update');
     };
   }, [socket]);
+
+  useEffect(() => {
+    if (!raceTimer) {
+      setCountdown(0);
+      return;
+    }
+
+    const tick = () => {
+      const remaining = raceTimer.duration - (Date.now() - raceTimer.startTime);
+      setCountdown(Math.max(0, remaining));
+    };
+
+    tick();
+    const id = setInterval(tick, 100);
+    return () => clearInterval(id);
+  }, [raceTimer]);
 
   useEffect(() => {
     if (!isRaceActive) return;
