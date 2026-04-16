@@ -24,35 +24,15 @@ const App = () => {
     useEffect(() => {
         const serverUrl = `${window.location.protocol}//${window.location.hostname}:5001`
         const newSocket = io(serverUrl, { transports: ["polling", "websocket"] });
-
         setSocket(newSocket);
 
-        newSocket.on('full-state', (state) => {
-            setRaceSessions(state.raceSessions);
-        });
-
-        newSocket.on('connect_error', (err) => {
-            console.error('Socket connection failed:', err);
-        });
-
-        newSocket.on('fetch-sessions-response', (sessions) => {
-            setRaceSessions(sessions);
-        });
-
-        newSocket.on('session-deleted', (deletedSession) => {
-            if (deletedSession && deletedSession.id) {
-                setRaceSessions(prev =>
-                    prev.filter(session => session.id !== deletedSession.id)
-                );
-            }
-        });
+        newSocket.on('state-update', state => setRaceSessions(state.raceSessions));
+        newSocket.on('connect_error', err => console.error('Socket connection failed:', err));
 
         // Clean up the socket connection on unmount
         return () => {
             newSocket.disconnect();
-            newSocket.off('full-state');
-            newSocket.off('fetch-sessions-response');
-            newSocket.off('session-deleted');
+            newSocket.off('state-update');
         }
     }, []);
 
@@ -63,12 +43,7 @@ const App = () => {
 
     return (
         <SocketContext.Provider value={socket}>
-            <RaceSessionContext.Provider value={{
-                raceSessions,
-                setRaceSessions,
-                currentSession,
-                setCurrentSession
-            }}>
+            <RaceSessionContext.Provider value={{ raceSessions, setRaceSessions }}>
             <Router>
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
