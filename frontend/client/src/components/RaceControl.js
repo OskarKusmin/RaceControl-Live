@@ -42,12 +42,11 @@ const RaceControl = () => {
   const [isRaceActive,   setIsRaceActive]   = useState(false);
   const [isRaceFinished, setIsRaceFinished] = useState(false);
   const [error,          setError]          = useState('');
+  const [isStarting,     setIsStarting]     = useState(false);
 
   useEffect(() => {
     if (raceSessions.length > 0 && !currentSession) {
-      const first = raceSessions.find(
-        s => s.status === 'upcoming' || s.status === 'confirmed'
-      );
+      const first = raceSessions.find(s => s.status === 'in-progress') || raceSessions.find(s => s.status === 'upcoming' || s.status === 'confirmed');
       if (first) {
         setCurrentSession(first);
         socket.emit('select-session', first.id);
@@ -59,11 +58,7 @@ const RaceControl = () => {
     if (!socket) return;
 
     const handleSessionsUpdate = (sessions) => {
-      const next = sessions.find(
-        s => s.id === currentSession?.id ||
-             s.status === 'upcoming'     ||
-             s.status === 'confirmed'
-      );
+      const next = sessions.find(s => s.id === currentSession?.id) || sessions.find(s => s.status === 'in-progress') || sessions.find(s => s.status === 'upcoming' || s.status === 'confirmed');
       if (next) {
         setCurrentSession(next);
         if (!currentSession || next.id !== currentSession.id) {
@@ -86,12 +81,44 @@ const RaceControl = () => {
     });
     socket.on('countdown-update',  (t)    => setCountdown(t));
 
+    socket.on('full-state', (state) => {
+      setRaceMode(state.currentRaceMode);
+      setCountdown(state.countdown);
+
+      if (state.startingCountdown) {
+        setIsStarting(true);
+      }
+
+      if (state.currentSelectSession) {
+        const session = state.raceSessions.find(s => s.id === state.currentSelectSession);
+        if (session) {
+          setCurrentSession(session);
+          if (session.status === 'in-progress') {
+            setIsRaceActive(true);
+            setIsRaceFinished(false);
+          } else if (session.status === 'Finished') {
+            setIsRaceActive(false);
+            setIsRaceFinished(true);
+          }
+        }
+      }
+    });
+    socket.emit('request-full-state');
+
     socket.emit('fetch-sessions');
+
+    socket.on('race-started', () => {
+      setIsStarting(false);
+      setIsRaceActive(true);
+      setIsRaceFinished(false);
+    });
 
     return () => {
       socket.off('fetch-sessions-response', handleSessionsUpdate);
       socket.off('race-mode-changed');
       socket.off('countdown-update');
+      socket.off('full-state');
+      socket.off('race-started');
     };
   }, [socket, currentSession]);
 
@@ -107,8 +134,7 @@ const RaceControl = () => {
     setError('');
     socket.emit('start-race', { sessionId: currentSession.id }, (response) => {
       if (response.success) {
-        setIsRaceActive(true);
-        setIsRaceFinished(false);
+        setIsStarting(true);
       } else {
         setError(response.error || 'Failed to start race.');
       }
@@ -198,13 +224,22 @@ const RaceControl = () => {
 
         <div className="rc-card rc-ctrl-lifecycle">
           <div className="rc-ctrl-lifecycle-row">
-            {!isRaceActive && !isRaceFinished && (
+            {!isRaceActive && !isRaceFinished && !isStarting && (
               <button
                 className="rc-btn rc-btn--success rc-btn--lg rc-ctrl-action-btn"
                 onClick={startRace}
                 disabled={!currentSession}
               >
                 Start race
+              </button>
+            )}
+
+            {isStarting && (
+              <button
+                className="rc-btn rc-btn--success rc-btn--lg rc-ctrl-action-btn"
+                disabled
+              >
+                Starting...
               </button>
             )}
             
