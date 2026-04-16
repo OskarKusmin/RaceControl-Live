@@ -29,20 +29,12 @@ const RaceFlags = () => {
   const socket = useContext(SocketContext);
   const [raceMode,    setRaceMode]    = useState('Danger');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  socket.emit('request-full-state');
 
   useEffect(() => {
     if (!socket) return;
-    socket.on('race-mode-changed', (mode) => setRaceMode(mode));
-    socket.on('full-state', (state) => setRaceMode(state.currentRaceMode));
-    return () => {
-      socket.off('race-mode-changed');
-      socket.off('full-state');
-    };
-  }, [socket]);
-
-  useEffect(() => {
-    if (!socket) return;
-    
+    socket.on('state-update', state => setRaceMode(state.currentRaceMode));
+    return () => socket.off('race-mode-changed');
   }, [socket]);
 
   useEffect(() => { document.title = 'Flags — RaceControl Live'; }, []);
