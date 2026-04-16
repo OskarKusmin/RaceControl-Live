@@ -26,15 +26,14 @@ const RaceCountdown = () => {
   const [countdown,   setCountdown]     = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [startCount, setStartCount]     = useState(null);
+  const [raceTimer, setRaceTimer]       = useState(null);
   const countRef                        = useRef(new Audio(countSound));
   const goRef                           = useRef(new Audio(goSound));
 
   useEffect(() => {
     if (!socket) return;
-    socket.on('countdown-update', (t) => setCountdown(t));
-    
-    socket.on('full-state', (state) => setCountdown(state.countdown));
-    
+    socket.on('state-update', state => setRaceTimer(state.raceTimer ?? null));    
+
     socket.on('race-starting', ({ count }) => {
       setStartCount(count);
       countRef.current.currentTime = 0;
@@ -47,14 +46,31 @@ const RaceCountdown = () => {
       goRef.current.play().catch(() => {});
     });
 
+    socket.emit('request-full-state');
+
     return () => {
-      socket.off('countdown-update');
-      socket.off('full-state');
+      socket.off('state-update');
       socket.off('race-starting');
       socket.off('race-started');
     } 
 
   }, [socket]);
+
+  useEffect(() => {
+    if (!raceTimer) {
+      setCountdown(0);
+      return;
+    }
+
+    const tick = () => {
+      const remaining = raceTimer.duration - (Date.now() - raceTimer.startTime);
+      setCountdown(Math.max(0, remaining));
+    }
+
+    tick();
+    const id = setInterval(tick, 100);
+    return () => clearInterval(id);
+  }, [raceTimer]);
 
   useEffect(() => { document.title = 'Countdown — RaceControl Live'; }, []);
 

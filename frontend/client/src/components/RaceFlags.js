@@ -29,11 +29,13 @@ const RaceFlags = () => {
   const socket = useContext(SocketContext);
   const [raceMode,    setRaceMode]    = useState('Danger');
   const [isFullscreen, setIsFullscreen] = useState(false);
-  socket.emit('request-full-state');
-
+  
   useEffect(() => {
     if (!socket) return;
     socket.on('state-update', state => setRaceMode(state.currentRaceMode));
+
+    socket.emit('request-full-state');
+
     return () => socket.off('state-update');
   }, [socket]);
 
