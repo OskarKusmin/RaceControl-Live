@@ -239,7 +239,7 @@ io.on('connection', (socket) => {
         }
         
         //this checks which duration is provided for the timer which would depend on if the server is started in development mode or normal mode
-        const initialDuration = (duration || (process.env.NODE_ENV === 'development' ? 60 : 600)) * 1000;
+        const initialDuration = (duration || (process.env.NODE_ENV === 'development' ? 120 : 600)) * 1000;
 
         let count = 3;
         startingCountdown = { sessionId: session.id};

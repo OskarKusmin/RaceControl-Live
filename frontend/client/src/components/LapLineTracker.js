@@ -19,6 +19,7 @@ const LapLineTracker = () => {
     setIsRaceActive(false);
 
     const handleSessionSelected = (sessionId) => {
+      if (selectedSession?.id === sessionId) return;
       setSelectedSession(sessionId);
       setCars([]);
       setIsRaceActive(false);
@@ -39,6 +40,14 @@ const LapLineTracker = () => {
           };
         });
         setLapTimers(initialTimers);
+
+        if (data.session.status === 'in-progress') {
+          setIsRaceActive(true);
+          setIsRaceFinished(false);
+        } else if (data.session.status === 'Finished') {
+          setIsRaceActive(false);
+          setIsRaceFinished(true);
+        }
       }
     };
 
