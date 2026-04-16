@@ -1,63 +1,51 @@
-import React, { useState, useEffect, useContext, useCallback, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { SocketContext } from "../App";
-import { RaceSessionContext } from "../contexts/RaceSessionContext";
 import './css/NextRace.css';
 import chimeSound from './sounds/chime.mp3';
 
 const NextRace = () => {
   const socket = useContext(SocketContext);
-  const { raceSessions } = useContext(RaceSessionContext);
   const [isRaceInProgress, setIsRaceInProgress] = useState(false);
   const [nextRace,    setNextRace]    = useState(null);
   const [loading,     setLoading]     = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const chimeRef = useRef(new Audio(chimeSound));
 
-  const fetchNextRace = useCallback(() => {
-    const next = raceSessions.find(
-      s => (s.status === 'upcoming' || s.status === 'confirmed') &&
-            s.status !== 'in-progress'
-    );
-    setLoading(false);
-    if (next) {
-      setNextRace({
-        sessionName: next.sessionName,
-        drivers: next.drivers
-          .filter(d => d.name?.trim())
-          .map((driver, index) => ({
-            ...driver,
-            carNumber: index + 1,
-          })),
-      });
-    } else {
-      setNextRace(null);
-    }
-  }, [raceSessions]);
-
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('select-session',    () => fetchNextRace());
-    socket.on('race-started',      () => { setIsRaceInProgress(true);  fetchNextRace(); });
-    socket.on('end-race-session',  () => { setIsRaceInProgress(false); fetchNextRace(); });
-    socket.on('race-mode-changed', () => fetchNextRace());
-    socket.on('full-state', (state) => {
+    socket.on('state-update', (state) => {
       const occupied = state.raceSessions.some(
         s => s.status === 'in-progress' || s.status === 'Finished'
       );
       setIsRaceInProgress(occupied);
-      fetchNextRace();
-    })
+      setLoading(false);
 
-    fetchNextRace();
+      const next = state.raceSessions.find(
+        s => s.status === 'upcoming' || s.status === 'confirmed'
+      );
+
+      if (next) {
+        setNextRace({
+          sessionName: next.sessionName,
+          drivers: next.drivers
+            .filter(d => d.name?.trim())
+            .map((driver, index) => ({
+              ...driver,
+              carNumber: index + 1,
+            })),
+        });
+      } else {
+        setNextRace(null);
+      }
+    });
+
+    socket.emit('request-full-state');
 
     return () => {
-      socket.off('select-session');
-      socket.off('race-started');
-      socket.off('race-mode-changed');
-      socket.off('end-race-session');
+      socket.off('state-update');
     };
-  }, [socket, fetchNextRace]);
+  }, [socket]);
 
   useEffect(() => { document.title = 'Next Race — RaceControl Live'; }, []);
 
