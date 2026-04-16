@@ -36,6 +36,22 @@ let lapData = {};
 let currentRaceMode = 'Danger'
 let startingCountdown = null;
 
+function getStateSnapshot() {
+    return {
+        raceSessions,
+        currentSelectSession,
+        currentRaceMode,
+        raceTimer: getCurrentRaceTimer(),
+        startingCountdown,
+        lapData: lapData[currentSelectSession] || {}
+    };
+};
+
+function broadcastState() {
+    io.emit('state-update', getStateSnapshot());
+    saveState();
+}
+
 //This function loads the race session data from storage if the server restarts.
 async function initializeData() {
     try {
@@ -81,8 +97,6 @@ async function initializeData() {
                     } else { // Setting race session to finished if timer was zero
                         session.status = 'Finished';
                         timer.status = 'finished';
-                        io.emit('race-mode-changed', 'Finish');
-                        io.emit('countdown-update', 0);
                     }
                 }
             }
@@ -111,10 +125,9 @@ async function saveState() {
     }, 200);
 }
 
-//simple function to clear timers
 function clearRaceTimer(sessionId) {
     if (activeTimers[sessionId]) {
-        clearInterval(activeTimers[sessionId]);
+        clearTimeout(activeTimers[sessionId]);
         activeTimers[sessionId] = null;
     }
 }
@@ -122,39 +135,21 @@ function clearRaceTimer(sessionId) {
 function startRaceTimer(session, duration) {
     if (!session) return;
     clearRaceTimer(session.id);
+    const startTime = Date.now(); 
+    raceTimers[session.id] = { startTime, duration, status: 'running' };
 
-    const startTime = Date.now(); //Storing the current time as the start time for a race session. This is used to count elapsed time
-    raceTimers[session.id] = {
-        startTime,
-        duration,
-        status: 'running'
-    };
-
-    const timer = setInterval(() => { //starting new interval timer. 100 milisecond increments
-        const elapsedTime = Date.now() - startTime;
-        const remainingTime = duration - elapsedTime;
-
-        io.emit('countdown-update', Math.max(0, remainingTime)); //emitting the countdown update to connected clients
-
-        if (remainingTime <= 0) {
-            clearRaceTimer(session.id);
-            session.status = 'Finished';
-            raceTimers[session.id].status = 'finished';
-            currentRaceMode = 'Finish';
-            io.emit('race-mode-changed', 'Finish'); //emitting race mode change to other clients when race ends
-            io.emit('fetch-sessions-response', raceSessions); //updating list of sessions for clients
-            saveState();//saving the current state to json
-        }    
-    }, 100); 
+    const timer = setTimeout(() => {
+        session.status = 'Finished';
+        raceTimers[session.id].status = 'finished';
+        currentRaceMode = 'Finish';
+        broadcastState();
+    }, duration);
 
     activeTimers[session.id] = timer;
     
-    io.emit('countdown-update', duration);
-    io.emit('race-started', session.id); //Informing connected clients that the race has begun
+    io.emit('race-started', session.id);
     currentRaceMode = 'Safe'
-    io.emit('race-mode-changed', 'Safe'); //Race mode changes to safe upon a race being started
-    io.emit('fetch-sessions-response', raceSessions);
-    saveState();
+    broadcastState();
 }
 
 function authorize(socket, requiredRole, callback) {
@@ -167,12 +162,11 @@ function authorize(socket, requiredRole, callback) {
     return false;
 }
 
-function getCurrentCountdown() {
-    if (!currentSelectSession) return 0;
+function getCurrentRaceTimer() {
+    if (!currentSelectSession) return null;
     const timer = raceTimers[currentSelectSession];
-    if (!timer || timer.status !== 'running') return 0;
-    const remaining = timer.duration - (Date.now() - timer.startTime);
-    return Math.max(0, remaining);
+    if (!timer || timer.status !== 'running') return null;
+    return { startTime: timer.startTime, duration: timer.duration };
 }
 
 function buildSessionData(session) {
@@ -194,34 +188,17 @@ function buildSessionData(session) {
 };
 
 io.on('connection', (socket) => {
-    socket.emit('full-state', {
-        raceSessions,
-        currentSelectSession,
-        currentRaceMode,
-        countdown: getCurrentCountdown(),
-        startingCountdown
-    });
+    socket.emit('state-update', getStateSnapshot());
     
-    //this one is for updating the clients with the latest race sessions
-    socket.on('fetch-sessions', () => { 
-        socket.emit('fetch-sessions-response', raceSessions);
-    });
-
     socket.on('request-full-state', () => {
-        socket.emit('full-state', {
-            raceSessions,
-            currentSelectSession,
-            currentRaceMode,
-            countdown: getCurrentCountdown(),
-            startingCountdown
-        });
+        socket.emit('state-update', getStateSnapshot());
     });
 
-    // change-mode is emitted by RaceControl when the official clicks the flag buttons. Then emits race-mode-change to update RaceFlags and Leaderboard
+    //change-mode is emitted by RaceControl when flag buttons are clicked
     socket.on('change-mode', ({mode}) => {
         if (!authorize(socket, 'safety', null)) return;
         currentRaceMode = mode;
-        io.emit('race-mode-changed', mode);
+        broadcastState();
     });
 
     //Handler for 'start-race' which is emitted by RaceControl when the Start Race button is clicked by the safety official
@@ -243,6 +220,7 @@ io.on('connection', (socket) => {
 
         let count = 3;
         startingCountdown = { sessionId: session.id};
+        broadcastState();
         io.emit('race-starting', { count });
 
         const countdownInterval = setInterval(() => {
@@ -273,11 +251,7 @@ io.on('connection', (socket) => {
         clearRaceTimer(session.id); //clearing the timer
         session.status = 'Finished';
         currentRaceMode = 'Finish';
-        io.emit('race-mode-changed', 'Finish'); //Updating connected clients on race mode update to 'Finish'
-        io.emit('countdown-update', 0); //Updating clients to zero the couintdown
-        io.emit('fetch-sessions-response', raceSessions); //Updating the clients on the current race sessions
-        
-        saveState(); //Saving data to json for data persistence
+        broadcastState();
         callback({ success: true });
     });
 
@@ -289,21 +263,16 @@ io.on('connection', (socket) => {
         if(sessionIndex !== -1) { 
             raceSessions.splice(sessionIndex, 1); //removing the ended race session from the raceSessions array
             currentRaceMode = 'Danger';
-            saveState();
             const nextSession = raceSessions.find( //checking if there is another session to queue up
                 session => session.status === 'upcoming' || session.status === 'confirmed'
             );
 
-            io.emit('session-deleted', { id: sessionId }); //Updating clients that session has been deleted (FrontDesk, LeaderBoard and NextRace)
-            io.emit('end-race-session'); //Emitting this to inform LapLineTracker that this session has ended and to update to next one
-
-            if (nextSession) { // Setting the selected session in RaceControl and other clients if another one is found. 
+            if (nextSession) {
                 currentSelectSession = nextSession.id;
-                io.emit('select-session', nextSession.id); //Emitting this to inform Leaderboard and LapLineTracker to switch their display to the new race session
             }
         }
-
         delete lapData[sessionId];
+        broadcastState();
     });
 
     //Handler for 'validate-key' which is emited by AccessKeyPrompt when an access key is submitted
@@ -362,7 +331,7 @@ io.on('connection', (socket) => {
     socket.on('select-session', (sessionId, callback) => {
         if (!authorize(socket, 'safety', callback)) return;
         currentSelectSession = sessionId;
-        io.emit('select-session', sessionId);
+        broadcastState();
 
         const session = raceSessions.find(s => s.id === sessionId);
         if (session) {
@@ -379,7 +348,6 @@ io.on('connection', (socket) => {
     socket.on('request-session-data', (sessionId, callback) => {
         const session = raceSessions.find(s => s.id === Number(sessionId));            
         socket.emit('session-data', session ? buildSessionData(session) : null);
-
 
         if (typeof callback === 'function') {
             callback({ success: true });
@@ -408,13 +376,9 @@ io.on('connection', (socket) => {
         // Setting the local currentSelectSession variable if this is the first race
         if (raceSessions.length === 1) {
             currentSelectSession = newSession.id;
-            io.emit('select-session', currentSelectSession);
         }
 
-        io.emit('fetch-sessions-response', raceSessions);
-
-        await saveState();
-
+        broadcastState();
         callback({success: true});
     });
 
@@ -433,11 +397,8 @@ io.on('connection', (socket) => {
         const deletedSession = raceSessions.splice(sessionIndex, 1)[0];
         delete lapData[sessionId];
 
-        // Ensure deletedSession is not null before emitting
         if (deletedSession) {
-            io.emit('session-deleted', deletedSession);
-            io.emit('fetch-sessions-response', raceSessions);
-            await saveState();
+            broadcastState();
             callback({ success: true });
         } else {
             callback({ success: false, error: 'Failed to delete session' });
@@ -468,9 +429,7 @@ io.on('connection', (socket) => {
             name,
         }));
         session.status = 'confirmed';
-
-        io.emit('fetch-sessions-response', raceSessions);
-        await saveState();
+        broadcastState();
         callback({ success: true });
     });
     
