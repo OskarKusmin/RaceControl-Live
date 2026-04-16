@@ -34,7 +34,7 @@ const RaceFlags = () => {
   useEffect(() => {
     if (!socket) return;
     socket.on('state-update', state => setRaceMode(state.currentRaceMode));
-    return () => socket.off('race-mode-changed');
+    return () => socket.off('state-update');
   }, [socket]);
 
   useEffect(() => { document.title = 'Flags — RaceControl Live'; }, []);
