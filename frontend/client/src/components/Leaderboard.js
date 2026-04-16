@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SocketContext } from '../App';
 import './css/LeaderBoard.css';
 import { formatTime } from './utils';
@@ -14,27 +14,24 @@ const sortByFastest = (cars) =>
 const POS_COLOURS = ['lb-pos--gold', 'lb-pos--silver', 'lb-pos--bronze'];
 
 const MODE_META = {
-  Safe:   { label: 'Safe',   cls: 'lb-mode--safe',   textCls: 'lb-mode-text--safe' },
+  Safe:   { label: 'Safe',   cls: 'lb-mode--safe',    textCls: 'lb-mode-text--safe' },
   Hazard: { label: 'Hazard', cls: 'lb-mode--hazard',  textCls: 'lb-mode-text--hazard' },
   Danger: { label: 'Danger', cls: 'lb-mode--danger',  textCls: 'lb-mode-text--danger' },
   Finish: { label: 'Finish', cls: 'lb-mode--finish',  textCls: 'lb-mode-text--finish' },
 };
 
 const LeaderBoard = () => {
-  const socket = useContext(SocketContext);
-  const [cars,      setCars]      = useState([]);
-  const [raceInfo,  setRaceInfo]  = useState({ mode: 'Danger', sessionName: 'Awaiting session…' });
-  const [countdown, setCountdown] = useState(0);
+  const socket =       useContext(SocketContext);
+  const [cars,         setCars]         = useState([]);
+  const [raceInfo,     setRaceInfo]     = useState({ mode: 'Danger', sessionName: 'Awaiting session…' });
+  const [raceTimer,    setRaceTimer]    = useState(null);
+  const [countdown,    setCountdown]    = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const prevSessionRef                  = useRef(null);
 
   useEffect(() => {
     if (!socket) return;
     setCars([]);
-
-    const handleSessionSelected = (sessionId) => {
-      setCars([]);
-      socket.emit('request-session-data', sessionId);
-    };
 
     const handleSessionData = (data) => {
       if (data?.session) {
@@ -60,41 +57,54 @@ const LeaderBoard = () => {
       }));
     };
 
-    socket.on('select-session',     handleSessionSelected);
     socket.on('session-data',       handleSessionData);
     socket.on('current-lap-times',  handleCurrentLapTimes);
-    socket.on('race-mode-changed',  (mode) => setRaceInfo(prev => ({ ...prev, mode })));
-    socket.on('countdown-update',   (t)    => setCountdown(t));
     socket.on('race-started', () =>
       setCars(prev => prev.map(car => ({ ...car, currentTime: 0, startTime: Date.now(), lapTimes: [] })))
     );
-    socket.on('session-deleted', () => {
-      setCars([]);
-      setCountdown(0);
-      setRaceInfo(prev => ({ ...prev, sessionName: 'Awaiting session…' }));
-    });
-    
-    socket.on('full-state', (state) => {
+
+    socket.on('state-update', (state) => {
       setRaceInfo(prev => ({ ...prev, mode: state.currentRaceMode }));
-      setCountdown(state.countdown);
-      if (state.currentSelectSession) {
+      setRaceTimer(state.raceTimer ?? null);
+      
+      if (state.currentSelectSession && state.currentSelectSession !== prevSessionRef.current) {
+        prevSessionRef.current = state.currentSelectSession;
         socket.emit('request-session-data', state.currentSelectSession);
       };
+
+      if (!state.currentSelectSession) {
+        prevSessionRef.current = null;
+        setCars([]);
+        setRaceInfo(prev => ({ ...prev, sessionName: 'Awaiting session…' }));
+      }
+
     });
 
     socket.emit('request-full-state');
 
     return () => {
-      socket.off('select-session');
       socket.off('session-data');
       socket.off('current-lap-times');
-      socket.off('race-mode-changed');
-      socket.off('countdown-update');
       socket.off('race-started');
-      socket.off('session-deleted');
-      socket.off('full-state');
+      socket.off('state-update');
     };
   }, [socket]);
+
+  useEffect(() => {
+    if (!raceTimer) {
+      setCountdown(0);
+      return;
+    }
+
+    const tick = () => {
+      const remaining = raceTimer.duration - (Date.now() - raceTimer.startTime);
+      setCountdown(Math.max(0, remaining));
+    };
+
+    tick();
+    const id = setInterval(tick, 100);
+    return () => clearInterval(id);
+  }, [raceTimer]);
 
   useEffect(() => { document.title = 'Leaderboard — RaceControl Live'; }, []);
 
