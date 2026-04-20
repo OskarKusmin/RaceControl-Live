@@ -10,7 +10,6 @@ import NextRace from './components/NextRace';
 import LapLineTracker from './components/LapLineTracker';
 import RaceCountdown from './components/RaceCountdown';
 import LandingPage from './components/LandingPage';
-import { RaceSessionContext } from './contexts/RaceSessionContext';
 
 export const SocketContext = React.createContext();
 
@@ -43,7 +42,6 @@ const App = () => {
 
     return (
         <SocketContext.Provider value={socket}>
-            <RaceSessionContext.Provider value={{ raceSessions, setRaceSessions }}>
             <Router>
                 <Routes>
                     <Route path="/" element={<LandingPage />} />
@@ -93,7 +91,6 @@ const App = () => {
                     <Route path="*" element={<p>404: Page Not Found</p>} />
                 </Routes>
             </Router>
-            </RaceSessionContext.Provider>
         </SocketContext.Provider>
     );
 };

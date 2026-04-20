@@ -327,23 +327,6 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('current-lap-times', data);
     });
 
-    // Handler for which session is selected in RaceControl
-    socket.on('select-session', (sessionId, callback) => {
-        if (!authorize(socket, 'safety', callback)) return;
-        currentSelectSession = sessionId;
-        broadcastState();
-
-        const session = raceSessions.find(s => s.id === sessionId);
-        if (session) {
-            //Emitting the session data for LeaderBoard and LapLinetracker to populate their displays with drivers
-            socket.emit('session-data', buildSessionData(session));
-        }
-
-        if (typeof callback === 'function')  {
-            callback({ success: true});
-        }
-    });
-
     // Handler for race session data requests 
     socket.on('request-session-data', (sessionId, callback) => {
         const session = raceSessions.find(s => s.id === Number(sessionId));            
