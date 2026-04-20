@@ -8,6 +8,12 @@
     overscroll-behavior: none;
 }
 
+.llt-statusbar__right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .llt-statusbar {
     position: sticky;
     top: 0;

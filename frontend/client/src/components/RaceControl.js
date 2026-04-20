@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { SocketContext } from '../App';
 import './css/RaceControl.css';
 import { formatTime } from './utils';
+import { useTheme } from './useTheme.js';
 
 const FLAG_MODES = [
   { mode: 'Safe',   label: 'Safe',   variant: 'green',  desc: 'Green flag - Safe/Go' },
@@ -21,6 +22,7 @@ const RaceControl = () => {
   const [isRaceFinished, setIsRaceFinished] = useState(false);
   const [error,          setError]          = useState('');
   const [isStarting,     setIsStarting]     = useState(false);
+  const [theme,          toggleTheme]       = useTheme('rc-ctrl-theme-lp');
 
   useEffect(() => {
     if (!socket) return;
@@ -130,7 +132,10 @@ const RaceControl = () => {
   const badgeVariant = MODE_BADGE[raceMode] ?? 'blue';
 
   return (
-    <div className="rc-ctrl-page">
+    <div className="rc-ctrl-page" data-theme={theme}>
+      <button className="rc-btn rc-btn--ghost rc-btn--sm lp-theme-toggle" onClick={toggleTheme}>
+        {theme === 'dark' ? '🔆' : '🌗'}
+      </button>
       <div className="lp-grid-bg" aria-hidden="true" />
 
       <div className="rc-ctrl-content">

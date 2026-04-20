@@ -2,14 +2,16 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import { SocketContext } from "../App";
 import './css/NextRace.css';
 import chimeSound from './sounds/chime.mp3';
+import { useTheme } from './useTheme.js';
 
 const NextRace = () => {
   const socket = useContext(SocketContext);
   const [isRaceInProgress, setIsRaceInProgress] = useState(false);
-  const [nextRace,    setNextRace]    = useState(null);
-  const [loading,     setLoading]     = useState(true);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const chimeRef = useRef(new Audio(chimeSound));
+  const [nextRace,         setNextRace]         = useState(null);
+  const [loading,          setLoading]          = useState(true);
+  const [isFullscreen,     setIsFullscreen]     = useState(false);
+  const [theme,            toggleTheme]         = useTheme('rc-theme-nr');
+  const chimeRef                                = useRef(new Audio(chimeSound));
 
   useEffect(() => {
     if (!socket) return;
@@ -73,10 +75,11 @@ const NextRace = () => {
   }, [paddockCall]);
 
   return (
-    <div className={`nr-page ${paddockCall ? 'nr-page--paddock' : ''}`}>
+    <div className={`nr-page ${paddockCall ? 'nr-page--paddock' : ''}`} data-theme={theme}>
 
       <div className="lp-grid-bg" aria-hidden="true" />
 
+      <div className="nr-btn__right">
       <button className="nr-fs-btn" onClick={toggleFullScreen} title="Toggle fullscreen">
         {isFullscreen ? (
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -88,6 +91,12 @@ const NextRace = () => {
           </svg>
         )}
       </button>
+
+      <button className="rc-btn rc-btn--ghost rc-btn--sm" onClick={toggleTheme}>
+        {theme === 'dark' ? '🔆' : '🌗'}
+      </button>
+      </div>
+      
 
       <div className="nr-content">
 

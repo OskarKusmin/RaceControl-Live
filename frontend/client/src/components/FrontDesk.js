@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { SocketContext } from "../App";
 import './css/FrontDesk.css';
+import { useTheme } from './useTheme.js';
 
 const FrontDesk = () => {
   const socket = useContext(SocketContext);
@@ -9,6 +10,7 @@ const FrontDesk = () => {
   const [editingSessionId, setEditingSessionId] = useState(null);
   const [sessionError, setSessionError] = useState("");
   const [confirmError, setConfirmError] = useState("");
+  const [theme, toggleTheme] = useTheme('rc-theme-fd');
 
   useEffect(() => {
     if (!socket) return;
@@ -108,7 +110,10 @@ const FrontDesk = () => {
   };
 
   return (
-    <div className="fd-page">
+    <div className="fd-page" data-theme={theme}>
+      <button className="rc-btn rc-btn--ghost rc-btn--sm lp-theme-toggle" onClick={toggleTheme}>
+        {theme === 'dark' ? '🔆' : '🌗'}
+      </button>
       <div className="lp-grid-bg" aria-hidden="true" />
 
       <div className="fd-content">

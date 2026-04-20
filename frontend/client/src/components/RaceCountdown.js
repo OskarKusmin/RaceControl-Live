@@ -16,17 +16,17 @@ const formatCountdown = (ms) => {
 
 const getUrgency = (ms) => {
   if (ms <= 0)      return 'finished';
-  if (ms <= 30000)  return 'critical';   // under 30 s — red
-  if (ms <= 60000)  return 'warning';    // under 60 s — amber
+  if (ms <= 30000)  return 'critical';
+  if (ms <= 60000)  return 'warning';
   return 'normal';
 };
 
 const RaceCountdown = () => {
   const socket = useContext(SocketContext);
-  const [countdown,   setCountdown]     = useState(0);
+  const [countdown,    setCountdown]    = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [startCount, setStartCount]     = useState(null);
-  const [raceTimer, setRaceTimer]       = useState(null);
+  const [startCount,   setStartCount]   = useState(null);
+  const [raceTimer,    setRaceTimer]    = useState(null);
   const countRef                        = useRef(new Audio(countSound));
   const goRef                           = useRef(new Audio(goSound));
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SocketContext } from '../App';
 import './css/LapLineTracker.css';
 import { formatTime } from './utils';
+import { useTheme } from './useTheme.js';
 
 const LapLineTracker = () => {
   const socket = useContext(SocketContext);
@@ -14,6 +15,7 @@ const LapLineTracker = () => {
   const [isRaceFinished,  setIsRaceFinished]  = useState(false);
   const [raceTimer,       setRaceTimer]       = useState(null);
   const [countdown,       setCountdown]       = useState(null);
+  const [theme,           toggleTheme]        = useTheme('rc-theme-llt');
 
   useEffect(() => {
     if (!socket) return;
@@ -183,8 +185,8 @@ const LapLineTracker = () => {
   };
 
   return (
-    <div className="llt-page">
-
+    <div className="llt-page" data-theme={theme}>
+      
       <header className="llt-statusbar">
         <div className="llt-statusbar__session">
           <span className="rc-label">Session</span>
@@ -206,20 +208,25 @@ const LapLineTracker = () => {
           )}
         </div>
 
-        <div className="llt-statusbar__countdown">
-          <span className="rc-label">Countdown</span>
-          <span className={`llt-countdown ${countdown < 30000 && countdown > 0 ? 'llt-countdown--warning' : ''}`}>
-            {formatTime(countdown)}
-          </span>
+        <div className='llt-statusbar__right'>
+          <div className="llt-statusbar__countdown">
+            <span className="rc-label">Countdown</span>
+            <span className={`llt-countdown ${countdown < 30000 && countdown > 0 ? 'llt-countdown--warning' : ''}`}>
+              {formatTime(countdown)}
+            </span>
+          </div>
+          <button className="rc-btn rc-btn--ghost rc-btn--sm" onClick={toggleTheme}>
+            {theme === 'dark' ? '🔆' : '🌗'}
+          </button>
         </div>
+        
       </header>
-
+      
       {selectedSession && cars.length === 0 && (
         <div className="llt-no-drivers">
           <p>No drivers assigned to this session. Ask the front desk to add drivers and refresh.</p>
         </div>
       )}
-
       <main className="llt-cars-grid">
         {cars.map((car) => {
           const timer    = lapTimers[car.id] ?? { currentTime: 0, lapTimes: [] };
