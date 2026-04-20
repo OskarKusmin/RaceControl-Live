@@ -1,41 +1,19 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { SocketContext } from '../App';
-import { RaceSessionContext } from '../contexts/RaceSessionContext';
 import './css/RaceControl.css';
 import { formatTime } from './utils';
 
 const FLAG_MODES = [
-  {
-    mode:    'Safe',
-    label:   'Safe',
-    variant: 'green',
-    desc:    'Green flag — track clear',
-  },
-  {
-    mode:    'Hazard',
-    label:   'Hazard',
-    variant: 'yellow',
-    desc:    'Yellow flag — caution, no overtaking',
-  },
-  {
-    mode:    'Danger',
-    label:   'Danger',
-    variant: 'red',
-    desc:    'Red flag — stop immediately',
-  }
+  { mode: 'Safe',   label: 'Safe',   variant: 'green',  desc: 'Green flag - Safe/Go' },
+  { mode: 'Hazard', label: 'Hazard', variant: 'yellow', desc: 'Yellow flag - caution, no overtaking' },
+  { mode: 'Danger', label: 'Danger', variant: 'red',    desc: 'Red flag - stop immediately' }
 ];
 
-const MODE_BADGE = {
-  Safe:    'green',
-  Hazard:  'amber',
-  Danger:  'red',
-  Finish:  'blue',
-};
+const MODE_BADGE = { Safe: 'green', Hazard:  'amber', Danger:  'red', Finish:  'blue' };
 
 const RaceControl = () => {
   const socket = useContext(SocketContext);
-  const { raceSessions } = useContext(RaceSessionContext);
-
+  const [raceTimer,      setRaceTimer]      = useState(null);
   const [raceMode,       setRaceMode]       = useState('Danger');
   const [countdown,      setCountdown]      = useState(0);
   const [currentSession, setCurrentSession] = useState(null);
@@ -45,67 +23,37 @@ const RaceControl = () => {
   const [isStarting,     setIsStarting]     = useState(false);
 
   useEffect(() => {
-    if (raceSessions.length > 0 && !currentSession) {
-      const first = raceSessions.find(s => s.status === 'in-progress') || raceSessions.find(s => s.status === 'upcoming' || s.status === 'confirmed');
-      if (first) {
-        setCurrentSession(first);
-        socket.emit('select-session', first.id);
-      }
-    }
-  }, [raceSessions, currentSession, socket]);
-
-  useEffect(() => {
     if (!socket) return;
 
-    const handleSessionsUpdate = (sessions) => {
-      const next = sessions.find(s => s.id === currentSession?.id) || sessions.find(s => s.status === 'in-progress') || sessions.find(s => s.status === 'upcoming' || s.status === 'confirmed');
-      if (next) {
-        setCurrentSession(next);
-        if (!currentSession || next.id !== currentSession.id) {
-          socket.emit('change-mode', { mode: 'Danger' });
+    socket.on('state-update', (state) => {
+      setRaceMode(state.currentRaceMode);
+      setRaceTimer(state.raceTimer ?? null);
+      setIsStarting(!!state.startingCountdown);
+
+      const session = state.currentSelectSession
+          ? state.raceSessions.find(s => s.id === state.currentSelectSession)
+          : state.raceSessions.find(s => s.status === 'in-progress')
+          || state.raceSessions.find(s => s.status === 'upcoming' || s.status === 'confirmed');
+
+      if (session) { 
+        setCurrentSession(session);
+        if (session.status === 'in-progress') {
+          setIsRaceActive(true);
+          setIsRaceFinished(false);
+        } else if (session.status === 'Finished') {
+          setIsRaceActive(false);
+          setIsRaceFinished(true);
+        } else {
+          setIsRaceActive(false);
+          setIsRaceFinished(false);
         }
       } else {
         setCurrentSession(null);
         setIsRaceActive(false);
         setIsRaceFinished(false);
       }
-    };
 
-    socket.on('fetch-sessions-response', handleSessionsUpdate);
-    socket.on('race-mode-changed', (mode) => {
-      setRaceMode(mode);
-      if (mode === 'Finish') {
-        setIsRaceActive(false);
-        setIsRaceFinished(true);
-      };
     });
-    socket.on('countdown-update',  (t)    => setCountdown(t));
-
-    socket.on('full-state', (state) => {
-      setRaceMode(state.currentRaceMode);
-      setCountdown(state.countdown);
-
-      if (state.startingCountdown) {
-        setIsStarting(true);
-      }
-
-      if (state.currentSelectSession) {
-        const session = state.raceSessions.find(s => s.id === state.currentSelectSession);
-        if (session) {
-          setCurrentSession(session);
-          if (session.status === 'in-progress') {
-            setIsRaceActive(true);
-            setIsRaceFinished(false);
-          } else if (session.status === 'Finished') {
-            setIsRaceActive(false);
-            setIsRaceFinished(true);
-          }
-        }
-      }
-    });
-    socket.emit('request-full-state');
-
-    socket.emit('fetch-sessions');
 
     socket.on('race-started', () => {
       setIsStarting(false);
@@ -113,14 +61,27 @@ const RaceControl = () => {
       setIsRaceFinished(false);
     });
 
+    socket.emit('request-full-state');
+
     return () => {
-      socket.off('fetch-sessions-response', handleSessionsUpdate);
-      socket.off('race-mode-changed');
-      socket.off('countdown-update');
-      socket.off('full-state');
+      socket.off('state-update');
       socket.off('race-started');
     };
-  }, [socket, currentSession]);
+  }, [socket]);
+
+  useEffect(() => {
+    if (!raceTimer) {
+      setCountdown(0);
+      return;
+    }
+    const tick = () => {
+      const remaining = raceTimer.duration - (Date.now() - raceTimer.startTime);
+      setCountdown(Math.max(0, remaining));
+    };
+    tick();
+    const id = setInterval(tick, 100);
+    return () => clearInterval(id);
+  }, [raceTimer]);
 
   useEffect(() => { document.title = 'Race Control — RaceControl Live'; }, []);
 
@@ -163,7 +124,6 @@ const RaceControl = () => {
     socket.emit('end-race-session', { sessionId: currentSession.id });
     setIsRaceFinished(false);
     setIsRaceActive(false);
-    setCountdown(0);
   };
 
   const raceStatus = isRaceActive ? 'In Progress' : isRaceFinished ? 'Finished' : 'Not Started';
