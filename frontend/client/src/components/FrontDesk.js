@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import { SocketContext } from "../App";
-import { RaceSessionContext } from "../contexts/RaceSessionContext";
 import './css/FrontDesk.css';
 
 const FrontDesk = () => {
   const socket = useContext(SocketContext);
-  const { raceSessions, setRaceSessions } = useContext(RaceSessionContext);
   const [newSessionName, setNewSessionName] = useState("");
   const [editingSessionId, setEditingSessionId] = useState(null);
   const [sessionError, setSessionError] = useState("");
@@ -14,30 +12,27 @@ const FrontDesk = () => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleSessionsUpdate = (sessions) => {
-      const updatedSessions = sessions
-        .filter(s => s.status !== 'in-progress' && s.status !== 'Finished')
-        .map((session) => ({
-          ...session,
-          drivers: session.drivers.concat(
-            Array.from({ length: 8 - session.drivers.length }).map(() => ({
-              id: Date.now() + Math.random(),
-              name: "",
-            }))
-          ),
+    socket.on('state-update', (state) => {
+      const updatedSessions = state.raceSessions
+          .filter(s => s.status !== 'in-progress' && s.status !== 'Finished')
+          .map((session) => ({
+            ...session,
+            drivers: session.drivers.concat(
+              Array.from({ length: 8 - session.drivers.length }).map(() => ({
+                id: Date.now() + Math.random(),
+                name: "",
+              }))
+            ),
         }));
       setRaceSessions(updatedSessions);
-    };
+    });
 
-    socket.emit("fetch-sessions");
-    socket.on("fetch-sessions-response", handleSessionsUpdate);
-    socket.on("session-deleted", () => socket.emit("fetch-sessions"));
+    socket.emit('request-full-state');
 
     return () => {
-      socket.off("fetch-sessions-response");
-      socket.off("session-deleted");
+      socket.off("state-update");
     };
-  }, [socket, setRaceSessions]);
+  }, [socket]);
 
   useEffect(() => { document.title = "Front Desk — RaceControl Live"; }, []);
 
