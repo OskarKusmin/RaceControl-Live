@@ -4,6 +4,7 @@ import './css/FrontDesk.css';
 
 const FrontDesk = () => {
   const socket = useContext(SocketContext);
+  const [raceSessions, setRaceSessions] = useState({});
   const [newSessionName, setNewSessionName] = useState("");
   const [editingSessionId, setEditingSessionId] = useState(null);
   const [sessionError, setSessionError] = useState("");
