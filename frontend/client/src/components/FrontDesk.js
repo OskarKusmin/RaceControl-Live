@@ -4,7 +4,7 @@ import './css/FrontDesk.css';
 
 const FrontDesk = () => {
   const socket = useContext(SocketContext);
-  const [raceSessions, setRaceSessions] = useState({});
+  const [raceSessions, setRaceSessions] = useState([]);
   const [newSessionName, setNewSessionName] = useState("");
   const [editingSessionId, setEditingSessionId] = useState(null);
   const [sessionError, setSessionError] = useState("");
@@ -120,7 +120,6 @@ const FrontDesk = () => {
           </div>
         </header>
 
-        {/* Add session panel */}
         <section className="rc-card fd-add-panel" aria-label="Add new race session">
           <h2 className="fd-section-title">New Race Session</h2>
           <div className="fd-add-row">
@@ -150,7 +149,6 @@ const FrontDesk = () => {
           )}
         </section>
 
-        {/* Session list */}
         <section aria-label="Race sessions">
           <div className="fd-sessions-header">
             <h2 className="fd-section-title">Race Sessions</h2>
@@ -172,7 +170,6 @@ const FrontDesk = () => {
                     key={session.id}
                     className={`fd-session-card ${isEditing ? 'fd-session-card--editing' : ''}`}
                   >
-                    {/* Session card header */}
                     <div className="fd-session-card__header">
                       <div>
                         <h3 className="fd-session-name">{session.sessionName}</h3>
@@ -213,12 +210,10 @@ const FrontDesk = () => {
                       </div>
                     </div>
 
-                    {/* Confirm error (scoped to the editing session) */}
                     {isEditing && confirmError && (
                       <p className="fd-inline-error" role="alert">{confirmError}</p>
                     )}
 
-                    {/* Driver grid */}
                     <div className="fd-driver-grid">
                       {session.drivers.map((driver, index) => (
                         <div key={driver.id || index} className="fd-driver-row">
