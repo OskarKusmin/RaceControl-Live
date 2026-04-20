@@ -1,5 +1,4 @@
 
-/* ======== Page shell ======== */
 .lp-page {
   position: relative;
   display: flex;
@@ -12,7 +11,6 @@
   background-color: var(--rc-bg);
 }
 
-/* ======== Grid background ======== */
 .lp-grid-bg {
   position: absolute;
   inset: 0;
@@ -45,7 +43,6 @@
   );
 }
 
-/* ======== All content sits above the background layers ======== */
 .lp-header,
 .lp-main,
 .lp-footer {
@@ -55,7 +52,6 @@
   max-width: 680px;
 }
 
-/* ======== Header / wordmark ======== */
 .lp-header {
   text-align: center;
   margin-bottom: 48px;
@@ -106,14 +102,19 @@
   text-transform: uppercase;
 }
 
-/* ======== Main layout (two section cards) ======== */
 .lp-main {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* ======== Section cards ======== */
+.lp-theme-toggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+}
+
 .lp-section {
   background: var(--rc-surface);
   border: 1px solid var(--rc-border);
@@ -139,7 +140,6 @@
   margin-bottom: 20px;
 }
 
-/* Icon blobs */
 .lp-section__title {
   font-size: 16px;
   font-weight: 600;
@@ -151,9 +151,6 @@
   font-size: 12px;
   color: var(--rc-text-muted);
 }
-
-
-/* ======== Navigation button group ======== */
 
 .lp-btn-group {
   display: flex;
@@ -188,7 +185,6 @@
   transform: translateY(0) scale(0.97);
 }
 
-/* Staff button — red accent */
 .lp-nav-btn--staff {
   background: var(--rc-red-dim);
   color: var(--rc-red);
@@ -206,7 +202,6 @@
   border-color: var(--rc-red);
 }
 
-/* Display button — blue accent */
 .lp-nav-btn--display {
   background: var(--rc-accent-dim);
   color: var(--rc-accent);
@@ -224,8 +219,6 @@
   border-color: var(--rc-accent);
 }
 
-/* ======== Entrance animation ======== */
-
 @keyframes lp-fade-up {
   from {
     opacity: 0;
@@ -237,8 +230,6 @@
   }
 }
 
-
-/* ======== Responsive ======== */
 @media (max-width: 480px) {
   .lp-wordmark {
     flex-direction: column;

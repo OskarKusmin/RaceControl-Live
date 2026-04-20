@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import './css/LandingPage.css';
+import { useTheme } from './useTheme.js';
 
 const STAFF_LINKS = [
   { to: '/front-desk',       label: 'Front Desk' },
@@ -16,17 +17,15 @@ const DISPLAY_LINKS = [
 ];
 
 const LandingPage = () => {
-  useEffect(() => {
-    document.title = 'RaceControl Live';
-  }, []);
-
+  const [theme, toggleTheme] = useTheme('rc-theme-lp');
+  useEffect(() => { document.title = 'RaceControl Live' }, []);
   return (
-    <div className="lp-page">
-
-      {/* Decorative grid background */}
+    <div className="lp-page" data-theme={theme}>
+      <button className="rc-btn rc-btn--ghost rc-btn--sm lp-theme-toggle" onClick={toggleTheme}>
+        {theme === 'dark' ? '🔆' : '🌗'}
+      </button>
       <div className="lp-grid-bg" aria-hidden="true" />
 
-      {/* Header */}
       <header className="lp-header">
         <div className="lp-wordmark">
           <span className="lp-wordmark__race">Race</span>
@@ -39,10 +38,8 @@ const LandingPage = () => {
         <p className="lp-tagline">Race track management suite</p>
       </header>
 
-      {/* Navigation groups */}
       <main className="lp-main">
 
-        {/* Staff Tools */}
         <section className="lp-section lp-section--staff">
           <div className="lp-section__header">
             <span>🔧</span>
@@ -60,7 +57,6 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Displays */}
         <section className="lp-section lp-section--display">
           <div className="lp-section__header">
             <span>🖥️</span>
@@ -77,7 +73,6 @@ const LandingPage = () => {
             ))}
           </div>
         </section>
-
       </main>
     </div>
   );

@@ -1,64 +1,62 @@
 /* ======== 1. Design tokens ======== */
 :root {
-/* --- Backgrounds --- */
---rc-bg:           #0e0f11;   /* page / outermost background      */
---rc-surface:      #161820;   /* cards, panels, primary surfaces  */
---rc-surface-2:    #1e2029;   /* inset areas, table rows, inputs  */
---rc-surface-3:    #252730;   /* hover states, active rows        */
-
-/* --- Borders --- */
---rc-border:       rgba(255, 255, 255, 0.08);   /* default border            */
---rc-border-md:    rgba(255, 255, 255, 0.14);   /* slightly stronger border  */
---rc-border-strong:rgba(255, 255, 255, 0.22);   /* emphasis / focus rings    */
-
-/* --- Text --- */
---rc-text:         #f0f1f3;   /* primary text                     */
---rc-text-muted:   #8b8f9a;   /* labels, secondary info           */
---rc-text-faint:   #55586a;   /* placeholder, disabled            */
-
-/* --- Brand / accent (interactive, selected) --- */
+--rc-bg:           #0e0f11;
+--rc-surface:      #161820;
+--rc-surface-2:    #1e2029;
+--rc-surface-3:    #252730;
+--rc-border:       rgba(255, 255, 255, 0.08);
+--rc-border-md:    rgba(255, 255, 255, 0.14);
+--rc-border-strong:rgba(255, 255, 255, 0.22);
+--rc-text:         #f0f1f3;
+--rc-text-muted:   #8b8f9a;
+--rc-text-faint:   #55586a;
 --rc-accent:       #3d8ef0;
 --rc-accent-dim:   rgba(61, 142, 240, 0.15);
 --rc-accent-border:rgba(61, 142, 240, 0.35);
-
-/* --- Semantic: go / safe (green flag) --- */
 --rc-green:        #22c55e;
 --rc-green-dim:    rgba(34, 197, 94, 0.15);
 --rc-green-border: rgba(34, 197, 94, 0.35);
-
-/* --- Semantic: caution / safety car (yellow flag) --- */
 --rc-amber:        #f59e0b;
 --rc-amber-dim:    rgba(245, 158, 11, 0.15);
 --rc-amber-border: rgba(245, 158, 11, 0.35);
-
-/* --- Semantic: danger / stop (red flag) --- */
 --rc-red:          #ef4444;
 --rc-red-dim:      rgba(239, 68, 68, 0.15);
 --rc-red-border:   rgba(239, 68, 68, 0.35);
-
-/* --- Podium positions --- */
 --rc-gold:         #f5c518;
 --rc-silver:       #a8b2c0;
 --rc-bronze:       #cd7f32;
-
-/* --- Typography --- */
 --rc-font-ui:   system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;
 --rc-font-mono: 'Courier New', Courier, monospace;
-
-/* --- Spacing scale --- */
 --rc-space-xs:  4px;
 --rc-space-sm:  8px;
 --rc-space-md:  16px;
 --rc-space-lg:  24px;
 --rc-space-xl:  32px;
-
-/* --- Radii --- */
 --rc-radius-sm: 4px;
 --rc-radius-md: 8px;
 --rc-radius-lg: 12px;
-
-/* --- Transitions --- */
 --rc-transition: 0.15s ease;
+}
+
+[data-theme="light"] {
+  --rc-bg:           #f4f5f7;
+  --rc-surface:      #ffffff;
+  --rc-surface-2:    #edeff2;
+  --rc-surface-3:    #e3e5ea;
+
+  --rc-border:       rgba(0, 0, 0, 0.08);
+  --rc-border-md:    rgba(0, 0, 0, 0.14);
+  --rc-border-strong:rgba(0, 0, 0, 0.22);
+
+  --rc-text:         #0e0f11;
+  --rc-text-muted:   #5a5f6a;
+  --rc-text-faint:   #a0a4ad;
+
+  --rc-accent-dim:   rgba(61, 142, 240, 0.12);
+
+  --rc-green-dim:    rgba(34, 197, 94, 0.12);
+  --rc-amber-dim:    rgba(245, 158, 11, 0.14);
+  --rc-red-dim:      rgba(239, 68, 68, 0.12);
 }
   
 /* ======== 2. RESET & BASE ======== */
@@ -98,7 +96,6 @@ a:hover {
 }
   
 /* ======== 3. TYPOGRAPHY ======== */
-/* Page / section title */
 h1 {
   font-size: 24px;
   font-weight: 700;
@@ -107,7 +104,6 @@ h1 {
   line-height: 1.2;
 }
 
-/* Panel / card title */
 h2 {
   font-size: 18px;
   font-weight: 600;
@@ -116,7 +112,6 @@ h2 {
   line-height: 1.3;
 }
 
-/* Sub-section heading */
 h3 {
   font-size: 15px;
   font-weight: 600;
@@ -129,7 +124,6 @@ p {
   line-height: 1.7;
 }
 
-/* Overline / eyebrow label — use on <span> or <p> */
 .rc-label {
   font-size: 11px;
   font-weight: 500;
@@ -138,7 +132,6 @@ p {
   color: var(--rc-text-muted);
 }
 
-/* Large display number — race time, countdown, lap count */
 .rc-display {
   font-family: var(--rc-font-mono);
   font-size: 48px;
@@ -146,11 +139,9 @@ p {
   color: var(--rc-text);
   letter-spacing: -0.02em;
   line-height: 1;
-  /* tabular-nums prevents digits from shifting width as values update */
   font-variant-numeric: tabular-nums;
 }
 
-/* Medium timing value — lap time cells, leaderboard */
 .rc-timing {
   font-family: var(--rc-font-mono);
   font-size: 14px;
@@ -159,13 +150,11 @@ p {
   color: var(--rc-text);
 }
 
-/* Fastest lap highlight */
 .rc-timing--fastest {
   color: var(--rc-green);
   font-weight: 700;
 }
 
-/* Car number pill */
 .rc-car-num {
   display: inline-flex;
   align-items: center;
@@ -213,7 +202,6 @@ p {
   gap: var(--rc-space-md);
 }
 
-/* Divider */
 .rc-divider {
   border: none;
   border-top: 1px solid var(--rc-border);
@@ -221,7 +209,6 @@ p {
 }
 
 /* ======== 5. CARDS & PANELS ======== */
-/* Standard surface card */
 .rc-card {
   background: var(--rc-surface);
   border: 1px solid var(--rc-border);
@@ -229,7 +216,6 @@ p {
   padding: var(--rc-space-md);
 }
 
-/* Compact stat card — large number with label */
 .rc-stat-card {
   background: var(--rc-surface);
   border: 1px solid var(--rc-border);
@@ -263,7 +249,6 @@ p {
   margin-top: 2px;
 }
 
-/* Panel header — card title row */
 .rc-panel-header {
   display: flex;
   align-items: center;
@@ -272,10 +257,8 @@ p {
   padding-bottom: var(--rc-space-md);
   border-bottom: 1px solid var(--rc-border);
 }
-  
-  
-/* ======== 6. BUTTONS ======== */
 
+/* ======== 6. BUTTONS ======== */
 .rc-btn {
   display: inline-flex;
   align-items: center;
@@ -304,7 +287,6 @@ p {
   transform: none;
 }
 
-/* Variants */
 .rc-btn--primary {
   background: var(--rc-accent);
   color: #fff;
@@ -346,7 +328,6 @@ p {
   background: var(--rc-surface-2);
 }
 
-/* Size modifier */
 .rc-btn--sm {
   padding: 6px 14px;
   font-size: 13px;
@@ -358,7 +339,6 @@ p {
   border-radius: var(--rc-radius-lg);
 }
 
-/* Full width */
 .rc-btn--block {
   width: 100%;
 }
@@ -399,7 +379,6 @@ p {
   border: 1px solid var(--rc-accent-border);
 }
 
-/* Pulsing live dot — use inside a badge or standalone */
 .rc-live-dot {
   width: 7px;
   height: 7px;
@@ -455,7 +434,6 @@ p {
   color: #0e0f11;
 }
 
-/* Chequered finish flag */
 .rc-flag--chequered {
   background-image: repeating-conic-gradient(
     #f0f1f3 0% 25%,
@@ -464,14 +442,12 @@ p {
   background-size: 12px 12px;
 }
 
-/* Active / currently raised flag */
 .rc-flag--active {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
   
 /* ======== 9. LEADERBOARD TABLE ======== */
-
 .rc-table-wrap {
   overflow-x: auto;
   border-radius: var(--rc-radius-lg);
@@ -514,7 +490,6 @@ p {
   background: var(--rc-surface-3);
 }
 
-/* Position number cells */
 .rc-pos {
   font-family: var(--rc-font-mono);
   font-size: 15px;
@@ -544,7 +519,6 @@ p {
 }
 
 .rc-input,
-.rc-select,
 .rc-textarea {
   background: var(--rc-surface-2);
   border: 1px solid var(--rc-border-md);
@@ -566,18 +540,9 @@ p {
 }
 
 .rc-input:focus,
-.rc-select:focus,
 .rc-textarea:focus {
   border-color: var(--rc-accent);
   box-shadow: 0 0 0 3px rgba(61, 142, 240, 0.18);
-}
-
-.rc-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b8f9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 36px;
-  cursor: pointer;
 }
 
 .rc-textarea {
@@ -586,7 +551,6 @@ p {
   line-height: 1.6;
 }
 
-/* Monospace input — for lap times, car numbers */
 .rc-input--mono {
   font-family: var(--rc-font-mono);
   font-size: 16px;
@@ -622,7 +586,6 @@ p {
   color: var(--rc-text-muted);
 }
 
-/* State colour modifiers for the countdown time value */
 .rc-countdown__time--warning {
   color: var(--rc-amber);
 }
@@ -651,23 +614,18 @@ p {
 }
 
 /* ======== 13. UTILITY CLASSES ======== */
-/* Text colours */
 .rc-text-muted    { color: var(--rc-text-muted); }
 .rc-text-faint    { color: var(--rc-text-faint); }
 .rc-text-green    { color: var(--rc-green); }
 .rc-text-amber    { color: var(--rc-amber); }
 .rc-text-red      { color: var(--rc-red); }
 .rc-text-accent   { color: var(--rc-accent); }
-
-/* Spacing helpers */
 .rc-mt-sm  { margin-top: var(--rc-space-sm); }
 .rc-mt-md  { margin-top: var(--rc-space-md); }
 .rc-mt-lg  { margin-top: var(--rc-space-lg); }
 .rc-mb-sm  { margin-bottom: var(--rc-space-sm); }
 .rc-mb-md  { margin-bottom: var(--rc-space-md); }
 .rc-mb-lg  { margin-bottom: var(--rc-space-lg); }
-
-/* Visibility */
 .rc-hidden { display: none !important; }
 .rc-sr-only {
   position: absolute;

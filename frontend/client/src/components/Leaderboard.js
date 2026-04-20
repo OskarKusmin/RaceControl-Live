@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SocketContext } from '../App';
 import './css/LeaderBoard.css';
 import { formatTime } from './utils';
+import { useTheme } from './useTheme.js'
 
 const sortByFastest = (cars) =>
   [...cars].sort((a, b) => {
@@ -28,6 +29,7 @@ const LeaderBoard = () => {
   const [countdown,    setCountdown]    = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const prevSessionRef                  = useRef(null);
+  const [theme,        toggleTheme]     = useTheme('rc-theme-leadeboard');
 
   useEffect(() => {
     if (!socket) return;
@@ -133,7 +135,7 @@ const LeaderBoard = () => {
   }, null);
 
   return (
-    <div className={`lb-page ${modeMeta.cls}`}>
+    <div className={`lb-page ${modeMeta.cls}`} data-theme={theme}>
 
       <header className="lb-topbar">
 
@@ -157,6 +159,9 @@ const LeaderBoard = () => {
               {formatTime(countdown)}
             </span>
           </div>
+          <button className="rc-btn rc-btn--ghost rc-btn--sm" onClick={toggleTheme}>
+            {theme === 'dark' ? '🔆' : '🌗'} 
+          </button>
           <button className="lb-fs-btn" onClick={toggleFullScreen} title="Toggle fullscreen">
             {isFullscreen ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -235,7 +240,7 @@ const LeaderBoard = () => {
           {modeMeta.label}
         </span>
       </footer>
-
+      
     </div>
   );
 };
