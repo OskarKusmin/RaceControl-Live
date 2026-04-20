@@ -169,24 +169,6 @@ function getCurrentRaceTimer() {
     return { startTime: timer.startTime, duration: timer.duration };
 }
 
-function buildSessionData(session) {
-    const sessionLapData = lapData[session.id] || {};
-    return {
-        session,
-        initialCars: session.drivers.map((driver, index) => {
-            const stored = sessionLapData[driver.id];
-            return {
-                id: driver.id,
-                name: driver.name,
-                carNumber: `${index + 1}`,
-                lapTimes: stored?.lapTimes || [],
-                currentLapStart: stored?.startTime || null,
-                currentTime: stored?.currentTime || 0
-            };
-        })
-    };
-};
-
 io.on('connection', (socket) => {
     socket.emit('state-update', getStateSnapshot());
     
@@ -325,16 +307,6 @@ io.on('connection', (socket) => {
             });
         }
         socket.broadcast.emit('current-lap-times', data);
-    });
-
-    // Handler for race session data requests 
-    socket.on('request-session-data', (sessionId, callback) => {
-        const session = raceSessions.find(s => s.id === Number(sessionId));            
-        socket.emit('session-data', session ? buildSessionData(session) : null);
-
-        if (typeof callback === 'function') {
-            callback({ success: true });
-        }
     });
 
     //Listener for race sessions being added in FrontDesk

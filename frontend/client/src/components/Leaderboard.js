@@ -33,15 +33,6 @@ const LeaderBoard = () => {
     if (!socket) return;
     setCars([]);
 
-    const handleSessionData = (data) => {
-      if (data?.session) {
-        setRaceInfo(prev => ({ ...prev, sessionName: data.session.sessionName }));
-        setCars(data.initialCars.map(car => ({
-          ...car, currentTime: 0, lapTimes: [], fastestLap: null,
-        })));
-      }
-    };
-
     const handleCurrentLapTimes = (incoming) => {
       if (!Array.isArray(incoming)) return;
       setCars(prev => prev.map(car => {
@@ -57,7 +48,6 @@ const LeaderBoard = () => {
       }));
     };
 
-    socket.on('session-data',       handleSessionData);
     socket.on('current-lap-times',  handleCurrentLapTimes);
     socket.on('race-started', () =>
       setCars(prev => prev.map(car => ({ ...car, currentTime: 0, startTime: Date.now(), lapTimes: [] })))
@@ -69,7 +59,21 @@ const LeaderBoard = () => {
       
       if (state.currentSelectSession && state.currentSelectSession !== prevSessionRef.current) {
         prevSessionRef.current = state.currentSelectSession;
-        socket.emit('request-session-data', state.currentSelectSession);
+        const session = state.raceSessions.find(s => s.id === state.currentSelectSession);
+        if (session) {
+          setRaceInfo(prev => ({ ...prev, sessionName: session.sessionName }));
+          setCars(session.drivers.map((driver, index) => {
+            const stored = state.lapData[driver.id];
+            return {
+              id: driver.id,
+              name: driver.name,
+              carNumber: `${index + 1}`,
+              currentTime: stored?.currentTime || 0,
+              lapTimes: stored?.lapTimes || [],
+              fastestLap: stored?.lapTimes?.length ? Math.min(...stored.lapTimes) : null
+            }
+          }));
+        }
       };
 
       if (!state.currentSelectSession) {
@@ -83,7 +87,6 @@ const LeaderBoard = () => {
     socket.emit('request-full-state');
 
     return () => {
-      socket.off('session-data');
       socket.off('current-lap-times');
       socket.off('race-started');
       socket.off('state-update');

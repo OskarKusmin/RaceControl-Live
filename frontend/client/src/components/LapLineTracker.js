@@ -5,13 +5,13 @@ import { formatTime } from './utils';
 
 const LapLineTracker = () => {
   const socket = useContext(SocketContext);
+  const prevSessionRef                        = useRef(null);
   const [selectedSession, setSelectedSession] = useState(null);
   const [cars,            setCars]            = useState([]);
   const [isRaceActive,    setIsRaceActive]    = useState(false);
   const [lapTimers,       setLapTimers]       = useState({});
   const [flashCarId,      setFlashCarId]      = useState(null); // visual tap feedback
   const [isRaceFinished,  setIsRaceFinished]  = useState(false);
-  const prevSessionRef                        = useRef(null);
   const [raceTimer,       setRaceTimer]       = useState(null);
   const [countdown,       setCountdown]       = useState(null);
 
@@ -20,31 +20,7 @@ const LapLineTracker = () => {
     setCars([]);
     setIsRaceActive(false);
 
-    const handleSessionData = (data) => {
-      if (data?.session) {
-        setSelectedSession(data.session);
-        setCars(data.initialCars);
-        const initialTimers = {};
-        data.initialCars.forEach(car => {
-          initialTimers[car.id] = { 
-            startTime: car.currentLapStart || null,
-            currentTime: car.currentTime || 0,
-            lapTimes: car.lapTimes || []
-          };
-        });
-        setLapTimers(initialTimers);
-
-        if (data.session.status === 'in-progress') {
-          setIsRaceActive(true);
-          setIsRaceFinished(false);
-        } else if (data.session.status === 'Finished') {
-          setIsRaceActive(false);
-          setIsRaceFinished(true);
-        }
-      }
-    };
-
-    const handleRaceStart = () => {
+    socket.on('race-started', () => {
       setIsRaceActive(true);
       setIsRaceFinished(false);
       setLapTimers(prev => {
@@ -54,21 +30,41 @@ const LapLineTracker = () => {
         });
         return next;
       });
-    };
-
-    socket.on('session-data', handleSessionData);
-    socket.on('race-started', handleRaceStart);
+    });
 
     socket.on('state-update', (state) => {
-      setRaceTimer(state.raceTImer ?? null);
+      setRaceTimer(state.raceTimer ?? null);
 
       const session = state.currentSelectSession ? state.raceSessions.find(s => s.id === state.currentSelectSession) : null;
 
-      //If session changes, request new session data
       if (state.currentSelectSession !== prevSessionRef.current) {
         prevSessionRef.current = state.currentSelectSession;
         if (state.currentSelectSession) {
-          socket.emit('request-session-data', state.currentSelectSession);
+          const session = state.raceSessions.find(s => s.id === state.currentSelectSession);
+          if (session) {
+            setSelectedSession(session);
+            const initialCars = session.drivers.map((driver, index) => {
+              const stored = state.lapData[driver.id];
+              return {
+                id: driver.id,
+                name: driver.name,
+                carNumber: `${index + 1}`,
+                lapTimes: stored?.lapTimes || [],
+                currentLapStart: stored?.startTime || null,
+                currentTime: stored?.currentTime || 0,
+              };
+            });
+            setCars(initialCars);
+            const initialTimers = {};
+            initialCars.forEach(car => {
+              initialTimers[car.id] = {
+                startTime: car.currentLapStart || null,
+                currentTime: car.currentTime || 0,
+                lapTimes: car.lapTimes || []
+              };
+            });
+            setLapTimers(initialTimers);
+          }
         } else {
           setCars([]);
           setLapTimers({});
@@ -98,7 +94,6 @@ const LapLineTracker = () => {
     socket.emit('request-full-state');
 
     return () => {
-      socket.off('session-data');
       socket.off('race-started');
       socket.off('state-update');
     };
