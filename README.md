@@ -32,9 +32,9 @@ The app is a single system with multiple role-specific interfaces, accessed from
 - Socket.IO
 
 **Frontend**
-- React 18 (Create React App / `react-scripts` 5)
-- React Router 7
-- Socket.IO client 4
+- React
+- React Router
+- Socket.IO client
 - Plain CSS (component-scoped stylesheets, CSS custom properties for theming)
 
 **Tooling**

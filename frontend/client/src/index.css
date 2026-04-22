@@ -43,17 +43,13 @@
   --rc-surface:      #ffffff;
   --rc-surface-2:    #edeff2;
   --rc-surface-3:    #e3e5ea;
-
   --rc-border:       rgba(0, 0, 0, 0.08);
   --rc-border-md:    rgba(0, 0, 0, 0.14);
   --rc-border-strong:rgba(0, 0, 0, 0.22);
-
   --rc-text:         #0e0f11;
   --rc-text-muted:   #5a5f6a;
   --rc-text-faint:   #a0a4ad;
-
   --rc-accent-dim:   rgba(61, 142, 240, 0.12);
-
   --rc-green-dim:    rgba(34, 197, 94, 0.12);
   --rc-amber-dim:    rgba(245, 158, 11, 0.14);
   --rc-red-dim:      rgba(239, 68, 68, 0.12);
@@ -341,6 +337,38 @@ p {
 
 .rc-btn--block {
   width: 100%;
+}
+
+.rc-fs-btn {
+  display: flex;
+  top: 16px;
+  z-index: 3;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--rc-border-strong);
+  border-radius: var(--rc-radius-md);
+  color: var(--rc-text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.rc-fs-btn:hover {
+  background: var(--rc-surface-2);
+  color: var(--rc-text);
+}
+
+.rc-corner-actions {
+  position: absolute;
+  top: var(--rc-space-md);
+  right: var(--rc-space-md);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ======== 7. BADGES & STATUS INDICATORS ======== */
