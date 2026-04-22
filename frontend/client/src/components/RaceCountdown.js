@@ -93,7 +93,7 @@ const RaceCountdown = () => {
   return (
     <div className={`rcd-page rcd-page--${urgency}`}>
 
-      <div className="lp-grid-bg" aria-hidden="true" />
+      <div className="grid-bg" />
 
       <div className='rc-corner-actions'>
         <button className="rc-fs-btn" onClick={toggleFullScreen} title="Toggle fullscreen">
@@ -109,23 +109,23 @@ const RaceCountdown = () => {
         </button>
       </div>
 
-      <main className="rcd-main" aria-live="polite" aria-label="Race countdown">
+      <main className="rcd-main">
         {startCount !== null ? (
           <>
             <p className='rcd-label rc-label'>Race starting in</p>
-            <div className='rcd-time rcd-time--starting' aria-atomic='true'>
+            <div className='rcd-time rcd-time--starting'>
               {startCount}
             </div>
           </>
         ) : (
           <>
             <p className='rcd-label rc-label'>Time remaining</p>
-            <div className={`rcd-time rcd-time--${urgency}`} aria-atomic='true'>
+            <div className={`rcd-time rcd-time--${urgency}`}>
               {urgency === 'finished' ? 'Time up' : formatCountdown(countdown)}
             </div>
           </>
         )}
-        <div className={`rcd-strip rcd-strip--${startCount !== null ? 'starting' : urgency}`} aria-hidden="true" />
+        <div className={`rcd-strip rcd-strip--${startCount !== null ? 'starting' : urgency}`} />
       </main>
 
     </div>

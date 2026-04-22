@@ -77,7 +77,7 @@ const NextRace = () => {
   return (
     <div className={`nr-page ${paddockCall ? 'nr-page--paddock' : ''}`} data-theme={theme}>
 
-      <div className="lp-grid-bg" aria-hidden="true" />
+      <div className="grid-bg"/>
 
       <div className="nr-btn__right">
       <button className="rc-fs-btn" onClick={toggleFullScreen} title="Toggle fullscreen">
@@ -106,14 +106,14 @@ const NextRace = () => {
 
         {loading && (
           <div className="nr-state-block">
-            <div className="nr-spinner" aria-label="Loading…" />
+            <div className="nr-spinner"/>
             <p className="nr-state-text">Loading session data…</p>
           </div>
         )}
 
         {paddockCall && (
-          <div className="nr-paddock-banner" role="alert" aria-live="assertive">
-            <svg className="nr-paddock-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <div className="nr-paddock-banner" role="alert">
+            <svg className="nr-paddock-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
             </svg>
             <p className="nr-paddock-text">Proceed to paddock</p>

@@ -47,9 +47,9 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
   if (isLoading) {
     return (
       <div className="akp-page">
-        <div className="lp-grid-bg" aria-hidden="true" />
+        <div className="grid-bg" />
         <div className="akp-card">
-          <div className="akp-spinner" aria-label="Connecting…" />
+          <div className="akp-spinner" />
           <p className="akp-connecting">Connecting to server…</p>
         </div>
       </div>
@@ -58,10 +58,10 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
 
   return (
     <div className="akp-page">
-      <div className="lp-grid-bg" aria-hidden="true" />
+      <div className="grid-bg"/>
 
       <div className="akp-card" role="main">
-        <div className="akp-icon" aria-hidden="true">
+        <div className="akp-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2"
             strokeLinecap="round" strokeLinejoin="round">
@@ -87,7 +87,6 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
             onKeyDown={handleKeyDown}
             autoFocus
             autoComplete="current-password"
-            aria-describedby={error ? 'akp-error' : undefined}
           />
         </div>
 
@@ -96,7 +95,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2.5"
               strokeLinecap="round" strokeLinejoin="round"
-              aria-hidden="true" style={{ flexShrink: 0 }}>
+              style={{ flexShrink: 0 }}>
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -112,7 +111,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
         >
           {isSubmitting ? (
             <>
-              <span className="akp-btn-spinner" aria-hidden="true" />
+              <span className="akp-btn-spinner"/>
               Verifying…
             </>
           ) : 'Submit'}

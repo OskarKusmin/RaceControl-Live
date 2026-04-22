@@ -21,11 +21,13 @@ const LandingPage = () => {
   useEffect(() => { document.title = 'RaceControl Live' }, []);
   return (
     <div className="lp-page" data-theme={theme}>
+      
       <button className="rc-btn rc-btn--ghost rc-btn--sm lp-theme-toggle" onClick={toggleTheme}>
         {theme === 'dark' ? '🔆' : '🌗'}
       </button>
-      <div className="lp-grid-bg" aria-hidden="true" />
-
+      
+      <div className="grid-bg"/>
+      
       <header className="lp-header">
         <div className="lp-wordmark">
           <span className="lp-wordmark__race">Race</span>

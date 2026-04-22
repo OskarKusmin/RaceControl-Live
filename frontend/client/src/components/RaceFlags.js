@@ -3,27 +3,11 @@ import { SocketContext } from '../App';
 import './css/RaceFlags.css';
 
 const FLAG_CONFIG = {
-  Safe: {
-    label:      'Safe',
-    cls:        'rf-flag--safe',
-    textCls:    'rf-flag-text--safe',
-  },
-  Hazard: {
-    label:      'Hazard',
-    cls:        'rf-flag--hazard',
-    textCls:    'rf-flag-text--hazard',
-  },
-  Danger: {
-    label:      'Danger',
-    cls:        'rf-flag--danger',
-    textCls:    'rf-flag-text--danger',
-  },
-  Finish: {
-    cls:        'rf-flag--finish',
-  },
+  Safe:   { label: 'Safe',   cls: 'rf-flag--safe',   textCls:    'rf-flag-text--safe'   },
+  Hazard: { label: 'Hazard', cls: 'rf-flag--hazard', textCls:    'rf-flag-text--hazard' },
+  Danger: { label: 'Danger', cls: 'rf-flag--danger', textCls:    'rf-flag-text--danger' },
+  Finish: { cls: 'rf-flag--finish' }
 };
-
-const DEFAULT_FLAG = FLAG_CONFIG.Danger;
 
 const RaceFlags = () => {
   const socket = useContext(SocketContext);
@@ -55,7 +39,7 @@ const RaceFlags = () => {
     }
   };
 
-  const flag = FLAG_CONFIG[raceMode] ?? DEFAULT_FLAG;
+  const flag = FLAG_CONFIG[raceMode] ?? FLAG_CONFIG.Danger;
 
   return (
     <div className={`rf-page ${flag.cls}`}>
@@ -74,8 +58,8 @@ const RaceFlags = () => {
         </button>
       </div>
 
-      <main className="rf-main" aria-live="assertive" aria-atomic="true">
-        <span className={`rf-flag-text ${flag.textCls}`} aria-label={`Flag status: ${flag.label}`}>
+      <main className="rf-main" >
+        <span className={`rf-flag-text ${flag.textCls}`} >
           {flag.label}
         </span>
       </main>

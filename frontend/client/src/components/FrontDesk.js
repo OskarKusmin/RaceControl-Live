@@ -114,7 +114,7 @@ const FrontDesk = () => {
       <button className="rc-btn rc-btn--ghost rc-btn--sm lp-theme-toggle" onClick={toggleTheme}>
         {theme === 'dark' ? '🔆' : '🌗'}
       </button>
-      <div className="lp-grid-bg" aria-hidden="true" />
+      <div className="grid-bg"/>
 
       <div className="fd-content">
 
@@ -125,7 +125,7 @@ const FrontDesk = () => {
           </div>
         </header>
 
-        <section className="rc-card fd-add-panel" aria-label="Add new race session">
+        <section className="rc-card fd-add-panel">
           <h2 className="fd-section-title">New Race Session</h2>
           <div className="fd-add-row">
             <div className="rc-form-group fd-add-field">
@@ -154,7 +154,7 @@ const FrontDesk = () => {
           )}
         </section>
 
-        <section aria-label="Race sessions">
+        <section>
           <div className="fd-sessions-header">
             <h2 className="fd-section-title">Race Sessions</h2>
             <span className="rc-label">{raceSessions.length} queued</span>
@@ -230,7 +230,6 @@ const FrontDesk = () => {
                             disabled={!isEditing}
                             onChange={(e) => handleDriverEdit(session.id, index, e.target.value)}
                             placeholder={`Driver ${index + 1}`}
-                            aria-label={`Car ${index + 1} driver name`}
                           />
                         </div>
                       ))}

@@ -136,7 +136,7 @@ const RaceControl = () => {
       <button className="rc-btn rc-btn--ghost rc-btn--sm lp-theme-toggle" onClick={toggleTheme}>
         {theme === 'dark' ? '🔆' : '🌗'}
       </button>
-      <div className="lp-grid-bg" aria-hidden="true" />
+      <div className="grid-bg"/>
 
       <div className="rc-ctrl-content">
 
@@ -228,10 +228,9 @@ const RaceControl = () => {
                   key={mode}
                   className={`rc-ctrl-flag-btn rc-ctrl-flag-btn--${variant} ${raceMode === mode ? 'rc-ctrl-flag-btn--active' : ''}`}
                   onClick={() => changeMode(mode)}
-                  aria-pressed={raceMode === mode}
                   title={desc}
                 >
-                  <span className="rc-ctrl-flag-btn__swatch" aria-hidden="true" />
+                  <span className="rc-ctrl-flag-btn__swatch" />
                   <span className="rc-ctrl-flag-btn__label">{label}</span>
                   <span className="rc-ctrl-flag-btn__desc">{desc}</span>
                 </button>
@@ -241,7 +240,7 @@ const RaceControl = () => {
                 onClick={finishRace}
                 title="Chequered flag — end the race"
               >
-                <span className="rc-ctrl-flag-btn__swatch" aria-hidden="true" />
+                <span className="rc-ctrl-flag-btn__swatch" />
                 <span className="rc-ctrl-flag-btn__label">Finish</span>
                 <span className="rc-ctrl-flag-btn__desc">Chequered flag — end the race</span>
               </button>

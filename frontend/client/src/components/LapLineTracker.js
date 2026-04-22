@@ -240,7 +240,6 @@ const LapLineTracker = () => {
               className={`llt-car-btn ${!isRaceActive ? 'llt-car-btn--disabled' : ''} ${isFlash ? 'llt-car-btn--flash' : ''}`}
               onClick={() => handleLapComplete(car.id)}
               disabled={!isRaceActive}
-              aria-label={`Record lap for car ${car.carNumber}, driver ${car.name}`}
             >
 
               <div className="llt-car-number">

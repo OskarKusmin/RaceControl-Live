@@ -11,38 +11,6 @@
   background-color: var(--rc-bg);
 }
 
-.lp-grid-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
-  background-size: 48px 48px;
-}
-
-.lp-grid-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 192px 192px;
-}
-
-.lp-page::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: radial-gradient(
-    ellipse 80% 70% at 50% 40%,
-    transparent 25%,
-    var(--rc-bg) 100%
-  );
-}
-
 .lp-header,
 .lp-main,
 .lp-footer {
