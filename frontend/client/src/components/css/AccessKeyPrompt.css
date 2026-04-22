@@ -1,28 +1,3 @@
-.akp-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-}
-
-@keyframes akp-grid-drift {
-    from { background-position: 0 0, 0 0; }
-    to   { background-position: 0 48px, 0 0; }
-}
-
-.akp-page::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: radial-gradient(
-    ellipse 70% 70% at 50% 50%,
-    transparent 0%,
-    var(--rc-bg) 100%
-    );
-    pointer-events: none;
-}
-
 .akp-card {
     position: relative;
     z-index: 2;

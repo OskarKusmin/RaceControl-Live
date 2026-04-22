@@ -75,11 +75,11 @@ const NextRace = () => {
   }, [paddockCall]);
 
   return (
-    <div className={`nr-page ${paddockCall ? 'nr-page--paddock' : ''}`} data-theme={theme}>
+    <div className={`screen ${paddockCall ? 'nr-page--paddock' : ''}`} data-theme={theme}>
 
       <div className="grid-bg"/>
 
-      <div className="nr-btn__right">
+      <div className="corner-btn-wrapper">
       <button className="rc-fs-btn" onClick={toggleFullScreen} title="Toggle fullscreen">
         {isFullscreen ? (
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

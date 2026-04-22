@@ -20,7 +20,7 @@ const LandingPage = () => {
   const [theme, toggleTheme] = useTheme('rc-theme-lp');
   useEffect(() => { document.title = 'RaceControl Live' }, []);
   return (
-    <div className="lp-page" data-theme={theme}>
+    <div className="screen" data-theme={theme}>
       
       <button className="rc-btn rc-btn--ghost rc-btn--sm lp-theme-toggle" onClick={toggleTheme}>
         {theme === 'dark' ? '🔆' : '🌗'}

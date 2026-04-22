@@ -185,7 +185,7 @@ const LapLineTracker = () => {
   };
 
   return (
-    <div className="llt-page" data-theme={theme}>
+    <div data-theme={theme}>
       
       <header className="llt-statusbar">
         <div className="llt-statusbar__session">

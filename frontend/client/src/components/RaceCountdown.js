@@ -91,11 +91,11 @@ const RaceCountdown = () => {
   const urgency = getUrgency(countdown);
 
   return (
-    <div className={`rcd-page rcd-page--${urgency}`}>
+    <div className={`screen rcd-page--${urgency}`}>
 
       <div className="grid-bg" />
 
-      <div className='rc-corner-actions'>
+      <div className='corner-btn-wrapper'>
         <button className="rc-fs-btn" onClick={toggleFullScreen} title="Toggle fullscreen">
           {isFullscreen ? (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

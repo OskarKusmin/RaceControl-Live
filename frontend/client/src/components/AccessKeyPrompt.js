@@ -46,7 +46,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
 
   if (isLoading) {
     return (
-      <div className="akp-page">
+      <div className="screen">
         <div className="grid-bg" />
         <div className="akp-card">
           <div className="akp-spinner" />
@@ -57,7 +57,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
   }
 
   return (
-    <div className="akp-page">
+    <div className="screen">
       <div className="grid-bg"/>
 
       <div className="akp-card" role="main">
