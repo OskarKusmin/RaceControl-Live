@@ -91,7 +91,7 @@ const RaceCountdown = () => {
   const urgency = getUrgency(countdown);
 
   return (
-    <div className={`screen rcd-page--${urgency}`}>
+    <div className='screen'>
 
       <div className="grid-bg" />
 

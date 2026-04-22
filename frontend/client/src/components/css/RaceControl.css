@@ -22,7 +22,7 @@
     justify-content: space-between;
     gap: 16px;
     margin-bottom: 4px;
-    animation: rc-ctrl-fade-up 0.4s ease both;
+    animation: fade-up-animation 0.4s ease both;
 }
 
 .rc-ctrl-title {
@@ -47,7 +47,7 @@
     gap: 6px;
     padding: 24px;
     border-top: 3px solid var(--rc-accent);
-    animation: rc-ctrl-fade-up 0.4s ease 0.05s both;
+    animation: fade-up-animation 0.4s ease 0.05s both;
 }
 
 .rc-ctrl-timer {
@@ -65,7 +65,7 @@
 }
 
 .rc-ctrl-session-card {
-    animation: rc-ctrl-fade-up 0.4s ease 0.1s both;
+    animation: fade-up-animation 0.4s ease 0.1s both;
 }
 
 .rc-ctrl-session-row {
@@ -102,7 +102,7 @@
     font-size: 14px;
     font-weight: 500;
     text-align: center;
-    animation: rc-ctrl-fade-up 0.4s ease 0.1s both;
+    animation: fade-up-animation 0.4s ease 0.1s both;
 }
 
 .rc-ctrl-error {
@@ -135,7 +135,7 @@
 
 .rc-ctrl-lifecycle {
     border-left: 3px solid var(--rc-border-md);
-    animation: rc-ctrl-fade-up 0.4s ease 0.15s both;
+    animation: fade-up-animation 0.4s ease 0.15s both;
 }
 
 .rc-ctrl-lifecycle-row {
@@ -150,7 +150,7 @@
 }
 
 .rc-ctrl-flags {
-    animation: rc-ctrl-fade-up 0.4s ease 0.2s both;
+    animation: fade-up-animation 0.4s ease 0.2s both;
 }
 
 .rc-ctrl-flag-grid {
@@ -300,11 +300,6 @@
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.5);
     border-style: solid;
-}
-    
-@keyframes rc-ctrl-fade-up {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 480px) {

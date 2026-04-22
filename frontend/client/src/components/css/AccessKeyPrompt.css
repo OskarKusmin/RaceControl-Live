@@ -12,7 +12,7 @@
     flex-direction: column;
     align-items: center;
     gap: 0;
-    animation: akp-fade-up 0.4s ease both;
+    animation: fade-up-animation 0.4s ease both;
 }
 
 .akp-icon {
@@ -103,11 +103,6 @@
 
 @keyframes akp-spin {
     to { transform: rotate(360deg); }
-}
-
-@keyframes akp-fade-up {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 440px) {
