@@ -24,22 +24,6 @@
   animation: fade-up-animation 0.4s ease both;
 }
 
-.fd-title {
-  font-size: 36px;
-  font-weight: 700;
-  color: var(--rc-text);
-  letter-spacing: -0.01em;
-  line-height: 1;
-  margin-bottom: 6px;
-}
-
-.fd-section-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--rc-text);
-  margin-bottom: 14px;
-}
-
 .fd-sessions-header {
   display: flex;
   align-items: baseline;
@@ -130,13 +114,6 @@
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 18px;
-}
-
-.fd-session-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--rc-text);
-  margin-bottom: 4px;
 }
 
 .fd-session-card__actions {

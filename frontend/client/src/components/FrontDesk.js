@@ -120,13 +120,13 @@ const FrontDesk = () => {
 
         <header className="fd-header">
           <div className="fd-header__titles">
-            <h1 className="fd-title">Front Desk</h1>
+            <h1>Front Desk</h1>
             <p className="rc-label">Session &amp; driver management</p>
           </div>
         </header>
 
         <section className="rc-card fd-add-panel">
-          <h2 className="fd-section-title">New Race Session</h2>
+          <h2>New Race Session</h2>
           <div className="fd-add-row">
             <div className="rc-form-group fd-add-field">
               <label htmlFor="fd-session-name" className="rc-form-label">Session name</label>
@@ -156,7 +156,7 @@ const FrontDesk = () => {
 
         <section>
           <div className="fd-sessions-header">
-            <h2 className="fd-section-title">Race Sessions</h2>
+            <h2>Race Sessions</h2>
             <span className="rc-label">{raceSessions.length} queued</span>
           </div>
 
@@ -177,7 +177,7 @@ const FrontDesk = () => {
                   >
                     <div className="fd-session-card__header">
                       <div>
-                        <h3 className="fd-session-name">{session.sessionName}</h3>
+                        <h3>{session.sessionName}</h3>
                         <span className="rc-label">
                           {filledCount} / 8 drivers assigned
                         </span>

@@ -195,7 +195,6 @@
 
 .llt-history__title {
     font-size: 14px;
-    font-weight: 600;
     color: var(--rc-text-muted);
     letter-spacing: 0.04em;
     text-transform: uppercase;

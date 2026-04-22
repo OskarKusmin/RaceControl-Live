@@ -25,15 +25,6 @@
     animation: fade-up-animation 0.4s ease both;
 }
 
-.rc-ctrl-title {
-    font-size: 36px;
-    font-weight: 700;
-    color: var(--rc-text);
-    letter-spacing: -0.01em;
-    line-height: 1;
-    margin-bottom: 6px;
-}
-
 .rc-ctrl-header__right {
     display: flex;
     align-items: center;
@@ -126,7 +117,6 @@
 
 .rc-ctrl-section-title {
     font-size: 12px;
-    font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--rc-text-muted);
@@ -221,13 +211,13 @@
     background: var(--rc-green);
 }
 .rc-ctrl-flag-btn--green:hover {
-    background: rgba(34, 197, 94, 0.15);
+    background: var(--rc-green-dim);
     border-color: rgba(34, 197, 94, 0.4);
 }
 .rc-ctrl-flag-btn--green.rc-ctrl-flag-btn--active {
     background: rgba(34, 197, 94, 0.18);
     border-color: var(--rc-green);
-    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+    box-shadow: 0 0 0 4px var(--rc-green-dim);
 }
 
 .rc-ctrl-flag-btn--yellow {
@@ -239,13 +229,13 @@
     background: var(--rc-amber);
 }
 .rc-ctrl-flag-btn--yellow:hover {
-    background: rgba(245, 158, 11, 0.15);
+    background: var(--rc-amber-dim);
     border-color: rgba(245, 158, 11, 0.4);
 }
 .rc-ctrl-flag-btn--yellow.rc-ctrl-flag-btn--active {
     background: rgba(245, 158, 11, 0.18);
     border-color: var(--rc-amber);
-    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+    box-shadow: 0 0 0 4px var(--rc-amber-dim);
 }
 
 .rc-ctrl-flag-btn--red {
@@ -257,13 +247,13 @@
     background: var(--rc-red);
 }
 .rc-ctrl-flag-btn--red:hover {
-    background: rgba(239, 68, 68, 0.15);
+    background: var(--rc-red-dim);
     border-color: rgba(239, 68, 68, 0.4);
 }
 .rc-ctrl-flag-btn--red.rc-ctrl-flag-btn--active {
     background: rgba(239, 68, 68, 0.18);
     border-color: var(--rc-red);
-    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+    box-shadow: 0 0 0 4px var(--rc-red-dim);
 }
 
 .rc-ctrl-flag-btn--chequered {
@@ -273,8 +263,8 @@
 }
 .rc-ctrl-flag-btn--chequered .rc-ctrl-flag-btn__swatch {
     background-image: repeating-conic-gradient(
-    #f0f1f3 0% 25%,
-    #1e2029 0% 50%
+    var(--rc-text) 0% 25%,
+    var(--rc-surface-2) 0% 50%
     );
     background-size: 12px 12px;
     border: 1px solid rgba(255,255,255,0.2);

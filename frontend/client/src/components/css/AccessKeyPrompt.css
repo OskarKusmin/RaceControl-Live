@@ -28,15 +28,6 @@
     margin-bottom: 20px;
 }
 
-.akp-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--rc-text);
-    letter-spacing: -0.01em;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
 .akp-field {
     width: 100%;
     margin-bottom: 12px;
@@ -71,7 +62,7 @@
 
 .akp-submit {
     width: 100%;
-    margin-top: 4px;
+    margin-top: var(--rc-space-xs);
     font-size: 15px;
     padding: 12px;
 }

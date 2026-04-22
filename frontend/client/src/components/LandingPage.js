@@ -46,7 +46,7 @@ const LandingPage = () => {
           <div className="lp-section__header">
             <span>🔧</span>
             <div>
-              <h2 className="lp-section__title">Staff Tools</h2>
+              <h2>Staff Tools</h2>
               <p className="lp-section__desc">Operational interfaces</p>
             </div>
           </div>
@@ -63,7 +63,7 @@ const LandingPage = () => {
           <div className="lp-section__header">
             <span>🖥️</span>
             <div>
-              <h2 className="lp-section__title">Displays</h2>
+              <h2>Displays</h2>
               <p className="lp-section__desc">Public-facing screens for drivers and spectators</p>
             </div>
           </div>

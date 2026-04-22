@@ -70,11 +70,9 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
           </svg>
         </div>
 
-        <h1 className="akp-title">Staff Access</h1>
+        <h1>Staff Access</h1>
 
-        <p className="akp-instruction">
-          Enter the access key to continue to <strong>{roleLabel}</strong>.
-        </p>
+        <p>Enter the access key to continue to <strong>{roleLabel}</strong>.</p>
 
         <div className="rc-form-group akp-field">
           <input
@@ -91,7 +89,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
         </div>
 
         {error && (
-          <p id="akp-error" className="akp-error" role="alert">
+          <p className="akp-error" role="alert">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2.5"
               strokeLinecap="round" strokeLinejoin="round"

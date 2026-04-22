@@ -23,9 +23,6 @@
 
 .nr-title {
   font-size: clamp(40px, 7vw, 64px);
-  font-weight: 700;
-  color: var(--rc-text);
-  letter-spacing: -0.01em;
   line-height: 1;
 }
 
@@ -89,11 +86,9 @@
 }
 
 .nr-paddock-sub {
-  font-size: 15px;
   color: var(--rc-amber);
   opacity: 0.8;
   max-width: 380px;
-  line-height: 1.5;
 }
 
 .nr-card {
@@ -117,17 +112,12 @@
 
 .nr-session-name {
   font-size: clamp(22px, 4vw, 32px);
-  font-weight: 700;
-  color: var(--rc-text);
-  letter-spacing: -0.01em;
-  line-height: 1.1;
 }
 
 .nr-no-drivers {
   padding: 32px 24px;
   text-align: center;
   color: var(--rc-text-muted);
-  font-size: 16px;
 }
 
 .nr-driver-list {

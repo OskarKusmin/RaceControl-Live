@@ -142,7 +142,7 @@ const RaceControl = () => {
 
         <header className="rc-ctrl-header">
           <div>
-            <h1 className="rc-ctrl-title">Race Control</h1>
+            <h1>Race Control</h1>
             <p className="rc-label">Safety &amp; race management</p>
           </div>
           <div className="rc-ctrl-header__right">

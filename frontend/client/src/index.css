@@ -1,4 +1,3 @@
-/* ======== 1. Design tokens ======== */
 :root {
 --rc-bg:           #0e0f11;
 --rc-surface:      #161820;
@@ -46,7 +45,7 @@
   --rc-border:       rgba(0, 0, 0, 0.08);
   --rc-border-md:    rgba(0, 0, 0, 0.14);
   --rc-border-strong:rgba(0, 0, 0, 0.22);
-  --rc-text:         #0e0f11;
+  --rc-text:         var(--rc-bg);
   --rc-text-muted:   #5a5f6a;
   --rc-text-faint:   #a0a4ad;
   --rc-accent-dim:   rgba(61, 142, 240, 0.12);
@@ -54,8 +53,7 @@
   --rc-amber-dim:    rgba(245, 158, 11, 0.14);
   --rc-red-dim:      rgba(239, 68, 68, 0.12);
 }
-  
-/* ======== 2. RESET & BASE ======== */
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -77,18 +75,9 @@ body {
   min-height: 100vh;
 }
   
-img, svg {
+svg {
   display: block;
   max-width: 100%;
-}
-  
-a {
-  color: var(--rc-accent);
-  text-decoration: none;
-}
-  
-a:hover {
-  text-decoration: underline;
 }
 
 .screen {
@@ -122,10 +111,9 @@ a:hover {
     linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px);
   background-size: 192px 192px;
 }
-  
-/* ======== 3. TYPOGRAPHY ======== */
+
 h1 {
-  font-size: 24px;
+  font-size: 30px;
   font-weight: 700;
   color: var(--rc-text);
   letter-spacing: -0.01em;
@@ -160,27 +148,12 @@ p {
   color: var(--rc-text-muted);
 }
 
-.rc-display {
-  font-family: var(--rc-font-mono);
-  font-size: 48px;
-  font-weight: 700;
-  color: var(--rc-text);
-  letter-spacing: -0.02em;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
 .rc-timing {
   font-family: var(--rc-font-mono);
   font-size: 14px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   color: var(--rc-text);
-}
-
-.rc-timing--fastest {
-  color: var(--rc-green);
-  font-weight: 700;
 }
 
 .rc-car-num {
@@ -197,46 +170,7 @@ p {
   font-weight: 700;
   color: var(--rc-accent);
 }
-  
-/* ======== 4. LAYOUT UTILITIES ======== */
-.rc-page {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: var(--rc-space-lg);
-}
 
-.rc-stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--rc-space-md);
-}
-
-.rc-row {
-  display: flex;
-  align-items: center;
-  gap: var(--rc-space-sm);
-}
-
-.rc-row--spread {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--rc-space-md);
-}
-
-.rc-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--rc-space-md);
-}
-
-.rc-divider {
-  border: none;
-  border-top: 1px solid var(--rc-border);
-  margin: var(--rc-space-md) 0;
-}
-
-/* ======== 5. CARDS & PANELS ======== */
 .rc-card {
   background: var(--rc-surface);
   border: 1px solid var(--rc-border);
@@ -244,49 +178,6 @@ p {
   padding: var(--rc-space-md);
 }
 
-.rc-stat-card {
-  background: var(--rc-surface);
-  border: 1px solid var(--rc-border);
-  border-radius: var(--rc-radius-lg);
-  padding: var(--rc-space-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--rc-space-xs);
-}
-
-.rc-stat-card__label {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--rc-text-muted);
-}
-
-.rc-stat-card__value {
-  font-family: var(--rc-font-mono);
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--rc-text);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.rc-stat-card__sub {
-  font-size: 12px;
-  color: var(--rc-text-muted);
-  margin-top: 2px;
-}
-
-.rc-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--rc-space-md);
-  padding-bottom: var(--rc-space-md);
-  border-bottom: 1px solid var(--rc-border);
-}
-
-/* ======== 6. BUTTONS ======== */
 .rc-btn {
   display: inline-flex;
   align-items: center;
@@ -325,17 +216,9 @@ p {
 
 .rc-btn--success {
   background: var(--rc-green);
-  color: #0e0f11;
+  color: var(--rc-bg);
 }
 .rc-btn--success:hover:not(:disabled) {
-  opacity: 0.88;
-}
-
-.rc-btn--warning {
-  background: var(--rc-amber);
-  color: #0e0f11;
-}
-.rc-btn--warning:hover:not(:disabled) {
   opacity: 0.88;
 }
 
@@ -403,7 +286,6 @@ p {
   gap: 8px;
 }
 
-/* ======== 7. BADGES & STATUS INDICATORS ======== */
 .rc-badge {
   display: inline-flex;
   align-items: center;
@@ -427,12 +309,6 @@ p {
   border: 1px solid var(--rc-amber-border);
 }
 
-.rc-badge--red {
-  background: var(--rc-red-dim);
-  color: var(--rc-red);
-  border: 1px solid var(--rc-red-border);
-}
-
 .rc-badge--blue {
   background: var(--rc-accent-dim);
   color: var(--rc-accent);
@@ -452,118 +328,7 @@ p {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.25; }
 }
-  
-/* ======== 8. FLAG BUTTONS ======== */
-.rc-flag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 36px;
-  border-radius: var(--rc-radius-sm);
-  border: 1px solid transparent;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  transition: opacity var(--rc-transition), transform var(--rc-transition);
-  text-decoration: none;
-}
 
-.rc-flag:active {
-  transform: scale(0.96);
-}
-
-.rc-flag--green {
-  background: var(--rc-green);
-  color: #0a1f12;
-}
-
-.rc-flag--yellow {
-  background: var(--rc-amber);
-  color: #1f1500;
-}
-
-.rc-flag--red {
-  background: var(--rc-red);
-  color: #fff;
-}
-
-.rc-flag--white {
-  background: #f0f1f3;
-  color: #0e0f11;
-}
-
-.rc-flag--chequered {
-  background-image: repeating-conic-gradient(
-    #f0f1f3 0% 25%,
-    #1e2029 0% 50%
-  );
-  background-size: 12px 12px;
-}
-
-.rc-flag--active {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
-}
-  
-/* ======== 9. LEADERBOARD TABLE ======== */
-.rc-table-wrap {
-  overflow-x: auto;
-  border-radius: var(--rc-radius-lg);
-  border: 1px solid var(--rc-border);
-}
-
-.rc-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--rc-surface);
-}
-
-.rc-table thead th {
-  padding: 10px 14px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--rc-text-muted);
-  border-bottom: 1px solid var(--rc-border);
-  text-align: left;
-  white-space: nowrap;
-  background: var(--rc-surface);
-}
-
-.rc-table tbody td {
-  padding: 10px 14px;
-  font-size: 13px;
-  color: var(--rc-text);
-  border-bottom: 1px solid var(--rc-border);
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-.rc-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.rc-table tbody tr:hover td {
-  background: var(--rc-surface-3);
-}
-
-.rc-pos {
-  font-family: var(--rc-font-mono);
-  font-size: 15px;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  min-width: 32px;
-}
-
-.rc-pos--1 { color: var(--rc-gold); }
-.rc-pos--2 { color: var(--rc-silver); }
-.rc-pos--3 { color: var(--rc-bronze); }
-.rc-pos--n { color: var(--rc-text-muted); }
-
-/* ======== 10. FORM ELEMENTS ======== */
 .rc-form-group {
   display: flex;
   flex-direction: column;
@@ -578,8 +343,7 @@ p {
   color: var(--rc-text-muted);
 }
 
-.rc-input,
-.rc-textarea {
+.rc-input {
   background: var(--rc-surface-2);
   border: 1px solid var(--rc-border-md);
   border-radius: var(--rc-radius-md);
@@ -594,21 +358,13 @@ p {
   appearance: none;
 }
 
-.rc-input::placeholder,
-.rc-textarea::placeholder {
+.rc-input::placeholder {
   color: var(--rc-text-faint);
 }
 
-.rc-input:focus,
-.rc-textarea:focus {
+.rc-input:focus {
   border-color: var(--rc-accent);
   box-shadow: 0 0 0 3px rgba(61, 142, 240, 0.18);
-}
-
-.rc-textarea {
-  resize: vertical;
-  min-height: 80px;
-  line-height: 1.6;
 }
 
 .rc-input--mono {
@@ -618,43 +374,6 @@ p {
   letter-spacing: 0.04em;
 }
 
-/* ======== 11. COUNTDOWN DISPLAY: Full-width centred block for the race countdown / timer panel. ======== */
-.rc-countdown {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--rc-space-xl) var(--rc-space-lg);
-  gap: var(--rc-space-xs);
-}
-
-.rc-countdown__time {
-  font-family: var(--rc-font-mono);
-  font-size: 72px;
-  font-weight: 700;
-  color: var(--rc-text);
-  letter-spacing: -0.03em;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.rc-countdown__label {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--rc-text-muted);
-}
-
-.rc-countdown__time--warning {
-  color: var(--rc-amber);
-}
-
-.rc-countdown__time--danger {
-  color: var(--rc-red);
-}
-
-/* ======== 12. SCROLLBAR (Slim dark scrollbar consistent across panels) ======== */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -676,28 +395,4 @@ p {
 @keyframes fade-up-animation {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-.rc-text-muted    { color: var(--rc-text-muted); }
-.rc-text-faint    { color: var(--rc-text-faint); }
-.rc-text-green    { color: var(--rc-green); }
-.rc-text-amber    { color: var(--rc-amber); }
-.rc-text-red      { color: var(--rc-red); }
-.rc-text-accent   { color: var(--rc-accent); }
-.rc-mt-sm  { margin-top: var(--rc-space-sm); }
-.rc-mt-md  { margin-top: var(--rc-space-md); }
-.rc-mt-lg  { margin-top: var(--rc-space-lg); }
-.rc-mb-sm  { margin-bottom: var(--rc-space-sm); }
-.rc-mb-md  { margin-bottom: var(--rc-space-md); }
-.rc-mb-lg  { margin-bottom: var(--rc-space-lg); }
-.rc-hidden { display: none !important; }
-.rc-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
 }

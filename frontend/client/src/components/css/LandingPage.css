@@ -92,13 +92,6 @@
   margin-bottom: 20px;
 }
 
-.lp-section__title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--rc-text);
-  margin-bottom: 2px;
-}
-
 .lp-section__desc {
   font-size: 12px;
   color: var(--rc-text-muted);
@@ -145,7 +138,7 @@
 
 .lp-nav-btn--staff:hover {
   background: rgba(239, 68, 68, 0.25);
-  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 4px 16px var(--rc-red-dim);
 }
 
 .lp-nav-btn--staff.active {
@@ -162,7 +155,7 @@
 
 .lp-nav-btn--display:hover {
   background: rgba(61, 142, 240, 0.25);
-  box-shadow: 0 4px 16px rgba(61, 142, 240, 0.15);
+  box-shadow: 0 4px 16px var(--rc-accent-dim);
 }
 
 .lp-nav-btn--display.active {
