@@ -1,8 +1,4 @@
 .akp-card {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    max-width: 400px;
     background: var(--rc-surface);
     border: 1px solid var(--rc-border-md);
     border-top: 3px solid var(--rc-red);
@@ -11,7 +7,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    gap: var(--rc-space-sm);
     animation: fade-up-animation 0.4s ease both;
 }
 
@@ -25,7 +21,6 @@
     border: 1px solid var(--rc-red-border);
     border-radius: var(--rc-radius-md);
     color: var(--rc-red);
-    margin-bottom: 20px;
 }
 
 .akp-field {

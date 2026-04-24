@@ -1,10 +1,7 @@
 .lp-header,
-.lp-main,
-.lp-footer {
-  position: relative;
-  z-index: 2;
+.lp-main {
   width: 100%;
-  max-width: 680px;
+  max-width: 650px;
 }
 
 .lp-header {
@@ -16,18 +13,11 @@
 .lp-wordmark {
   font-size: clamp(42px, 8vw, 72px);
   font-weight: 700;
-  letter-spacing: -0.01em;
   line-height: 1;
   display: flex;
-  align-items: baseline;
   justify-content: center;
   gap: 10px;
   flex-wrap: wrap;
-}
-
-.lp-wordmark__race,
-.lp-wordmark__control {
-  color: var(--rc-text);
 }
 
 .lp-wordmark__live {
@@ -36,9 +26,7 @@
   gap: 8px;
   color: var(--rc-red);
   font-size: 0.65em;
-  font-weight: 700;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
   align-self: center;
   padding: 4px 12px;
   border: 1px solid var(--rc-red-border);
@@ -47,11 +35,8 @@
 }
 
 .lp-tagline {
-  margin-top: 12px;
-  font-size: 14px;
   color: var(--rc-text-muted);
   letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 .lp-main {
@@ -71,18 +56,18 @@
   background: var(--rc-surface);
   border: 1px solid var(--rc-border);
   border-radius: var(--rc-radius-lg);
-  padding: 24px;
+  padding: var(--rc-space-lg);
   animation: fade-up-animation 0.5s ease both;
 }
 
 .lp-section--staff {
-  animation-delay: 0.08s;
   border-left: 3px solid var(--rc-red);
+  border-right: 3px solid var(--rc-red);
 }
 
 .lp-section--display {
-  animation-delay: 0.16s;
   border-left: 3px solid var(--rc-accent);
+  border-right: 3px solid var(--rc-accent);
 }
 
 .lp-section__header {
@@ -104,12 +89,8 @@
 }
 
 .lp-nav-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   padding: 10px 20px;
   border-radius: var(--rc-radius-md);
-  font-size: 14px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -117,17 +98,10 @@
     background-color 0.15s ease,
     transform 0.15s ease,
     box-shadow 0.15s ease;
-  white-space: nowrap;
-  letter-spacing: 0.01em;
 }
 
 .lp-nav-btn:hover {
   transform: translateY(-2px);
-  text-decoration: none;
-}
-
-.lp-nav-btn:active {
-  transform: translateY(0) scale(0.97);
 }
 
 .lp-nav-btn--staff {

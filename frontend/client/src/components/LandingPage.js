@@ -22,7 +22,7 @@ const LandingPage = () => {
   return (
     <div className="screen" data-theme={theme}>
       
-      <button className="rc-btn rc-btn--ghost rc-btn--sm lp-theme-toggle" onClick={toggleTheme}>
+      <button className="rc-btn rc-btn--ghost lp-theme-toggle" onClick={toggleTheme}>
         {theme === 'dark' ? '🔆' : '🌗'}
       </button>
       
@@ -30,14 +30,13 @@ const LandingPage = () => {
       
       <header className="lp-header">
         <div className="lp-wordmark">
-          <span className="lp-wordmark__race">Race</span>
-          <span className="lp-wordmark__control">Control</span>
+          <span>RaceControl</span>
           <span className="lp-wordmark__live">
             <span className="rc-live-dot" />
-            Live
+            LIVE
           </span>
         </div>
-        <p className="lp-tagline">Race track management suite</p>
+        <p className="lp-tagline">RACE TRACK MANAGEMENT SUITE</p>
       </header>
 
       <main className="lp-main">

@@ -112,7 +112,7 @@ const NextRace = () => {
         )}
 
         {paddockCall && (
-          <div className="nr-paddock-banner" role="alert">
+          <div className="nr-paddock-banner">
             <svg className="nr-paddock-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
             </svg>
@@ -140,9 +140,9 @@ const NextRace = () => {
             {nextRace.drivers.length === 0 ? (
               <p className="nr-no-drivers">Drivers not yet assigned. Check back shortly.</p>
             ) : (
-              <ul className="nr-driver-list" role="list">
+              <ul className="nr-driver-list">
                 {nextRace.drivers.map((driver) => (
-                  <li key={driver.id} className="nr-driver-row" role="listitem">
+                  <li key={driver.id} className="nr-driver-row">
                     <span className="nr-car-badge">
                       <span className="nr-car-badge__hash">#</span>
                       {driver.carNumber}

@@ -195,7 +195,7 @@ const LapLineTracker = () => {
           </span>
         </div>
 
-        <div className="llt-statusbar__center">
+        <div>
           {isRaceActive ? (
             <span className="rc-badge rc-badge--green">
               <span className="rc-live-dot" />

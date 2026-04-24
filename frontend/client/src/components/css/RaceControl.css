@@ -1,14 +1,10 @@
 .rc-ctrl-page {
-    position: relative;
     min-height: 100vh;
-    background-color: var(--rc-bg);
     padding: 28px 20px 64px;
     overflow-x: hidden;
 }
 
 .rc-ctrl-content {
-    position: relative;
-    z-index: 1;
     max-width: 640px;
     margin: 0 auto;
     display: flex;
@@ -20,23 +16,13 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 4px;
     animation: fade-up-animation 0.4s ease both;
-}
-
-.rc-ctrl-header__right {
-    display: flex;
-    align-items: center;
-    padding-top: 4px;
 }
 
 .rc-ctrl-timer-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    padding: 24px;
     border-top: 3px solid var(--rc-accent);
     animation: fade-up-animation 0.4s ease 0.05s both;
 }
@@ -44,11 +30,8 @@
 .rc-ctrl-timer {
     font-size: 72px;
     font-weight: 700;
-    color: var(--rc-text);
-    letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
     line-height: 1;
-    transition: color 0.3s ease;
 }
 
 .rc-ctrl-timer--warning {
@@ -61,27 +44,18 @@
 
 .rc-ctrl-session-row {
     display: flex;
-    align-items: flex-start;
     gap: 24px;
     flex-wrap: wrap;
 }
 
-.rc-ctrl-session-name {
+.rc-ctrl-session-name,
+.rc-ctrl-session-status {
     font-size: 18px;
     font-weight: 600;
-    color: var(--rc-text);
-    margin-top: 4px;
 }
 
 .rc-ctrl-session-meta {
     flex-shrink: 0;
-}
-
-.rc-ctrl-session-status {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--rc-text);
-    margin-top: 4px;
 }
 
 .rc-ctrl-no-session {
@@ -90,7 +64,6 @@
     border-radius: var(--rc-radius-lg);
     padding: 16px 20px;
     color: var(--rc-amber);
-    font-size: 14px;
     font-weight: 500;
     text-align: center;
     animation: fade-up-animation 0.4s ease 0.1s both;
@@ -104,28 +77,13 @@
     color: var(--rc-red);
     font-size: 13px;
     font-weight: 500;
-    animation: rc-ctrl-shake 0.35s ease;
-}
-
-@keyframes rc-ctrl-shake {
-    0%, 100% { transform: translateX(0); }
-    20%       { transform: translateX(-5px); }
-    40%       { transform: translateX(5px); }
-    60%       { transform: translateX(-3px); }
-    80%       { transform: translateX(3px); }
 }
 
 .rc-ctrl-section-title {
     font-size: 12px;
     letter-spacing: 0.08em;
-    text-transform: uppercase;
     color: var(--rc-text-muted);
     margin-bottom: 16px;
-}
-
-.rc-ctrl-lifecycle {
-    border-left: 3px solid var(--rc-border-md);
-    animation: fade-up-animation 0.4s ease 0.15s both;
 }
 
 .rc-ctrl-lifecycle-row {
@@ -136,11 +94,7 @@
 .rc-ctrl-action-btn {
     min-width: 200px;
     font-size: 18px;
-    padding: 16px 32px;
-}
-
-.rc-ctrl-flags {
-    animation: fade-up-animation 0.4s ease 0.2s both;
+    z-index: 2;
 }
 
 .rc-ctrl-flag-grid {
@@ -150,8 +104,6 @@
 }
 
 .rc-ctrl-flag-btn {
-    appearance: none;
-    -webkit-appearance: none;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -165,10 +117,7 @@
     background-color 0.15s ease,
     border-color 0.15s ease,
     transform 0.1s ease;
-    font-family: var(--rc-font-ui);
     touch-action: manipulation;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
     min-height: 140px;
 }
 

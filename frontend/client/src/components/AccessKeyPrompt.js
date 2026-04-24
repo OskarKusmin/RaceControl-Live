@@ -60,7 +60,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
     <div className="screen">
       <div className="grid-bg"/>
 
-      <div className="akp-card" role="main">
+      <div className="akp-card">
         <div className="akp-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2"
@@ -74,10 +74,8 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
 
         <p>Enter the access key to continue to <strong>{roleLabel}</strong>.</p>
 
-        <div className="rc-form-group akp-field">
-          <input
-            id="akp-input"
-            className="rc-input rc-input--mono akp-input"
+        <div className="akp-field">
+          <input className="rc-input rc-input--mono akp-input"
             type="password"
             placeholder="••••••••"
             value={accessKey}
@@ -89,7 +87,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
         </div>
 
         {error && (
-          <p className="akp-error" role="alert">
+          <p className="akp-error">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2.5"
               strokeLinecap="round" strokeLinejoin="round"
@@ -103,7 +101,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
         )}
 
         <button
-          className="rc-btn rc-btn--danger rc-btn--block akp-submit"
+          className="rc-btn rc-btn--danger akp-submit"
           onClick={handleAccess}
           disabled={isSubmitting || !accessKey.trim()}
         >

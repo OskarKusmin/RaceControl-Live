@@ -145,7 +145,7 @@ const RaceControl = () => {
             <h1>Race Control</h1>
             <p className="rc-label">Safety &amp; race management</p>
           </div>
-          <div className="rc-ctrl-header__right">
+          <div>
             <span className={`rc-badge rc-badge--${badgeVariant}`}>
               {isRaceActive && <span className="rc-live-dot" />}
               {raceMode}
@@ -184,10 +184,10 @@ const RaceControl = () => {
         )}
 
         {error && (
-          <p className="rc-ctrl-error" role="alert">{error}</p>
+          <p className="rc-ctrl-error">{error}</p>
         )}
 
-        <div className="rc-card rc-ctrl-lifecycle">
+        <div className="rc-card">
           <div className="rc-ctrl-lifecycle-row">
             {!isRaceActive && !isRaceFinished && !isStarting && (
               <button
@@ -220,8 +220,8 @@ const RaceControl = () => {
         </div>
 
         {isRaceActive && (
-          <div className="rc-card rc-ctrl-flags">
-            <h2 className="rc-ctrl-section-title">Flag controls</h2>
+          <div className="rc-card">
+            <h2 className="rc-ctrl-section-title">FLAG CONTROLS</h2>
             <div className="rc-ctrl-flag-grid">
               {FLAG_MODES.map(({ mode, label, variant, desc }) => (
                 <button

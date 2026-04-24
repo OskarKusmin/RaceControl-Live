@@ -11,8 +11,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 10px 20px;
+    padding: 10px 10px;
     background: var(--rc-surface);
     border-bottom: 1px solid var(--rc-border-md);
 }
@@ -21,21 +20,14 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
-    min-width: 0;
 }
 
 .llt-statusbar__name {
     font-size: 15px;
     font-weight: 600;
-    color: var(--rc-text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 220px;
-}
-
-.llt-statusbar__center {
-    flex-shrink: 0;
 }
 
 .llt-statusbar__countdown {
@@ -65,7 +57,6 @@
     border: 1px solid var(--rc-amber-border);
     border-radius: var(--rc-radius-md);
     color: var(--rc-amber);
-    font-size: 14px;
     font-weight: 500;
     text-align: center;
 }
@@ -108,10 +99,6 @@
 
 .llt-car-btn:not(.llt-car-btn--disabled) {
     border-color: var(--rc-accent);
-}
-
-.llt-car-btn:not(.llt-car-btn--disabled):hover {
-    background: var(--rc-surface-2);
 }
 
 .llt-car-btn--disabled {
@@ -195,6 +182,7 @@
 
 .llt-history__title {
     font-size: 14px;
+    font-weight: 600;
     color: var(--rc-text-muted);
     letter-spacing: 0.04em;
     text-transform: uppercase;

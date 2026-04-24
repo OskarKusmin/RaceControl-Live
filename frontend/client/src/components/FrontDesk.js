@@ -111,27 +111,24 @@ const FrontDesk = () => {
 
   return (
     <div className="fd-page" data-theme={theme}>
-      <button className="rc-btn rc-btn--ghost rc-btn--sm lp-theme-toggle" onClick={toggleTheme}>
+      <button className="rc-btn rc-btn--ghost lp-theme-toggle" onClick={toggleTheme}>
         {theme === 'dark' ? '🔆' : '🌗'}
       </button>
       <div className="grid-bg"/>
 
       <div className="fd-content">
 
-        <header className="fd-header">
-          <div className="fd-header__titles">
-            <h1>Front Desk</h1>
-            <p className="rc-label">Session &amp; driver management</p>
-          </div>
-        </header>
+        <div>
+          <h1>Front Desk</h1>
+          <p className="rc-label">Session &amp; driver management</p>
+        </div>
 
         <section className="rc-card fd-add-panel">
           <h2>New Race Session</h2>
           <div className="fd-add-row">
-            <div className="rc-form-group fd-add-field">
+            <div className="fd-add-field">
               <label htmlFor="fd-session-name" className="rc-form-label">Session name</label>
               <input
-                id="fd-session-name"
                 className="rc-input"
                 type="text"
                 value={newSessionName}
@@ -150,7 +147,7 @@ const FrontDesk = () => {
             </button>
           </div>
           {sessionError && (
-            <p className="fd-inline-error" role="alert">{sessionError}</p>
+            <p className="fd-inline-error">{sessionError}</p>
           )}
         </section>
 
@@ -216,7 +213,7 @@ const FrontDesk = () => {
                     </div>
 
                     {isEditing && confirmError && (
-                      <p className="fd-inline-error" role="alert">{confirmError}</p>
+                      <p className="fd-inline-error">{confirmError}</p>
                     )}
 
                     <div className="fd-driver-grid">
