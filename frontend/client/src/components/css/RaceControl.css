@@ -2,6 +2,8 @@
     min-height: 100vh;
     padding: 28px 20px 64px;
     overflow-x: hidden;
+    background-color: var(--rc-bg);
+    color: var(--rc-text);
 }
 
 .rc-ctrl-content {
@@ -230,7 +232,7 @@
 
 .rc-ctrl-flag-btn--finish-action {
     grid-column: 1 / -1;
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: var(--rc-border-strong);
     border-style: dashed;
     min-height: 100px;
 }
