@@ -10,7 +10,7 @@ const NextRace = () => {
   const [nextRace,         setNextRace]         = useState(null);
   const [loading,          setLoading]          = useState(true);
   const [isFullscreen,     setIsFullscreen]     = useState(false);
-  const [theme,            toggleTheme]         = useTheme('rc-theme-nr');
+  const [theme,            toggleTheme]         = useTheme('rc-theme');
   const chimeRef                                = useRef(new Audio(chimeSound));
 
   useEffect(() => {

@@ -15,7 +15,7 @@ const LapLineTracker = () => {
   const [isRaceFinished,  setIsRaceFinished]  = useState(false);
   const [raceTimer,       setRaceTimer]       = useState(null);
   const [countdown,       setCountdown]       = useState(null);
-  const [theme,           toggleTheme]        = useTheme('rc-theme-llt');
+  const [theme,           toggleTheme]        = useTheme('rc-theme');
 
   useEffect(() => {
     if (!socket) return;

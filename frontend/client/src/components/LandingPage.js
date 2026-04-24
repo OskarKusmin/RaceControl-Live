@@ -17,7 +17,7 @@ const DISPLAY_LINKS = [
 ];
 
 const LandingPage = () => {
-  const [theme, toggleTheme] = useTheme('rc-theme-lp');
+  const [theme, toggleTheme] = useTheme('rc-theme');
   useEffect(() => { document.title = 'RaceControl Live' }, []);
   return (
     <div className="screen" data-theme={theme}>

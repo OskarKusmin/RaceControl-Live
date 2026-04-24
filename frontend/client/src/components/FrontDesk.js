@@ -10,7 +10,7 @@ const FrontDesk = () => {
   const [editingSessionId, setEditingSessionId] = useState(null);
   const [sessionError, setSessionError] = useState("");
   const [confirmError, setConfirmError] = useState("");
-  const [theme, toggleTheme] = useTheme('rc-theme-fd');
+  const [theme, toggleTheme] = useTheme('rc-theme');
 
   useEffect(() => {
     if (!socket) return;

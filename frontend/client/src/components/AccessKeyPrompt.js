@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { SocketContext } from '../App';
 import './css/AccessKeyPrompt.css';
+import { useTheme } from './useTheme';
 
 const ROLE_LABELS = {
   receptionist: 'Front Desk',
@@ -14,6 +15,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
   const [error, setError]           = useState('');
   const [isLoading, setIsLoading]   = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [theme, toggleTheme] = useTheme('rc-theme');
 
   useEffect(() => {
     if (!socket) { setIsLoading(true); return; }
@@ -57,7 +59,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
   }
 
   return (
-    <div className="screen">
+    <div className="screen" data-theme={theme}>
       <div className="grid-bg"/>
 
       <div className="akp-card">

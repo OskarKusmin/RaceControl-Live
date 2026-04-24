@@ -29,7 +29,7 @@ const LeaderBoard = () => {
   const [countdown,    setCountdown]    = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const prevSessionRef                  = useRef(null);
-  const [theme,        toggleTheme]     = useTheme('rc-theme-leadeboard');
+  const [theme,        toggleTheme]     = useTheme('rc-theme');
 
   useEffect(() => {
     if (!socket) return;

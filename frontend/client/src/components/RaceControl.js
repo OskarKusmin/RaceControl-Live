@@ -22,7 +22,7 @@ const RaceControl = () => {
   const [isRaceFinished, setIsRaceFinished] = useState(false);
   const [error,          setError]          = useState('');
   const [isStarting,     setIsStarting]     = useState(false);
-  const [theme,          toggleTheme]       = useTheme('rc-ctrl-theme-lp');
+  const [theme,          toggleTheme]       = useTheme('rc-theme');
 
   useEffect(() => {
     if (!socket) return;
