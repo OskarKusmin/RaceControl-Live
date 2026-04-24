@@ -60,6 +60,11 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
 
   return (
     <div className="screen" data-theme={theme}>
+
+      <button className="rc-btn rc-btn--ghost lp-theme-toggle" onClick={toggleTheme}>
+        {theme === 'dark' ? '🔆' : '🌗'}
+      </button>
+
       <div className="grid-bg"/>
 
       <div className="akp-card">
