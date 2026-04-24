@@ -1,5 +1,7 @@
 :root {
 --rc-bg:           #0e0f11;
+--bg-grid-line: rgba(255, 255, 255, 0.035);
+--bg-grid-line-strong: rgba(255, 255, 255, 0.055);
 --rc-surface:      #161820;
 --rc-surface-2:    #1e2029;
 --rc-surface-3:    #252730;
@@ -39,19 +41,21 @@
 
 [data-theme="light"] {
   --rc-bg:           #f4f5f7;
+  --bg-grid-line: rgba(0, 0, 0, 0.04);
+  --bg-grid-line-strong: rgba(0, 0, 0, 0.06);
   --rc-surface:      #ffffff;
   --rc-surface-2:    #edeff2;
   --rc-surface-3:    #e3e5ea;
   --rc-border:       rgba(0, 0, 0, 0.08);
   --rc-border-md:    rgba(0, 0, 0, 0.14);
   --rc-border-strong:rgba(0, 0, 0, 0.22);
-  --rc-text:         var(--rc-bg);
+  --rc-text:         #0e0f11;
   --rc-text-muted:   #5a5f6a;
   --rc-text-faint:   #a0a4ad;
-  --rc-accent-dim:   rgba(61, 142, 240, 0.12);
-  --rc-green-dim:    rgba(34, 197, 94, 0.12);
-  --rc-amber-dim:    rgba(245, 158, 11, 0.14);
-  --rc-red-dim:      rgba(239, 68, 68, 0.12);
+  --rc-accent-dim:   rgba(61, 142, 240, 0.22);
+  --rc-green-dim:    rgba(34, 197, 94, 0.18);
+  --rc-amber-dim:    rgba(245, 158, 11, 0.22);
+  --rc-red-dim:      rgba(239, 68, 68, 0.22);
 }
 
 *, *::before, *::after {
@@ -90,6 +94,7 @@ svg {
   padding: 40px 24px;
   overflow: hidden;
   background-color: var(--rc-bg);
+  color: var(--rc-text); 
 }
 
 .grid-bg {
@@ -97,8 +102,8 @@ svg {
   inset: 0;
   z-index: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    linear-gradient(var(--bg-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid-line) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 
@@ -107,8 +112,8 @@ svg {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px);
+  linear-gradient(var(--bg-grid-line-strong) 1px, transparent 1px),
+  linear-gradient(90deg, var(--bg-grid-line-strong) 1px, transparent 1px);
   background-size: 192px 192px;
 }
 
