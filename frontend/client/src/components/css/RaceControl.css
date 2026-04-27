@@ -40,10 +40,6 @@
     color: var(--rc-amber);
 }
 
-.rc-ctrl-session-card {
-    animation: fade-up-animation 0.4s ease 0.1s both;
-}
-
 .rc-ctrl-session-row {
     display: flex;
     gap: 24px;
@@ -195,26 +191,26 @@
 
 @media (max-width: 480px) {
     .rc-ctrl-timer {
-    font-size: 56px;
+        font-size: 56px;
     }
 
     .rc-ctrl-flag-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
     }
 
     .rc-ctrl-flag-btn {
-    min-height: 120px;
-    padding: 16px 8px;
+        min-height: 120px;
+        padding: 16px 8px;
     }
 
     .rc-ctrl-flag-btn__swatch {
-    width: 38px;
-    height: 38px;
+        width: 38px;
+        height: 38px;
     }
 
     .rc-ctrl-action-btn {
-    min-width: 0;
-    width: 100%;
+        min-width: 0;
+        width: 100%;
     }
 }
