@@ -15,10 +15,10 @@ const sortByFastest = (cars) =>
 const POS_COLOURS = ['lb-pos--gold', 'lb-pos--silver', 'lb-pos--bronze'];
 
 const MODE_META = {
-  Safe:   { label: 'Safe',   cls: 'lb-mode--safe',    textCls: 'lb-mode-text--safe' },
-  Hazard: { label: 'Hazard', cls: 'lb-mode--hazard',  textCls: 'lb-mode-text--hazard' },
-  Danger: { label: 'Danger', cls: 'lb-mode--danger',  textCls: 'lb-mode-text--danger' },
-  Finish: { label: 'Finish', cls: 'lb-mode--finish',  textCls: 'lb-mode-text--finish' },
+  Safe:   { label: 'SAFE',   cls: 'lb-mode--safe'   },
+  Hazard: { label: 'HAZARD', cls: 'lb-mode--hazard' },
+  Danger: { label: 'DANGER', cls: 'lb-mode--danger' },
+  Finish: { label: 'FINISH', cls: 'lb-mode--finish' },
 };
 
 const LeaderBoard = () => {
@@ -144,9 +144,9 @@ const LeaderBoard = () => {
           <span className="lb-session-name">{raceInfo.sessionName}</span>
         </div>
 
-        <div className="lb-topbar__center">
+        <div>
           <div className={`lb-mode-pill ${modeMeta.cls}`}>
-            <span className={`lb-mode-pill__text ${modeMeta.textCls}`}>
+            <span className='lb-mode-pill__text'>
               {modeMeta.label}
             </span>
           </div>
@@ -154,7 +154,7 @@ const LeaderBoard = () => {
 
         <div className="lb-topbar__right">
           <div className="lb-countdown-block">
-            <span className="lb-countdown-label">Time remaining</span>
+            <span className="lb-countdown-label">TIME REMAINING</span>
             <span className={`lb-countdown ${countdown < 30000 && countdown > 0 ? 'lb-countdown--warning' : ''}`}>
               {formatTime(countdown)}
             </span>
@@ -186,12 +186,12 @@ const LeaderBoard = () => {
           <table className="lb-table">
             <thead>
               <tr className="lb-table__head-row">
-                <th className="lb-th lb-th--pos">Pos</th>
-                <th className="lb-th lb-th--car">Car</th>
-                <th className="lb-th lb-th--driver">Driver</th>
-                <th className="lb-th lb-th--laps">Laps</th>
-                <th className="lb-th lb-th--current">Current lap</th>
-                <th className="lb-th lb-th--fastest">Fastest lap</th>
+                <th className="lb-th lb-th--pos">POS</th>
+                <th className="lb-th lb-th--car">CAR</th>
+                <th className="lb-th lb-th--driver">DRIVER</th>
+                <th className="lb-th lb-th--laps">LAPS</th>
+                <th className="lb-th lb-th--current">CURRENT LAP</th>
+                <th className="lb-th lb-th--fastest">FASTEST LAP</th>
               </tr>
             </thead>
             <tbody>
@@ -236,7 +236,7 @@ const LeaderBoard = () => {
       </main>
 
       <footer className={`lb-mode-banner ${modeMeta.cls}`}>
-        <span className={`lb-mode-banner__text ${modeMeta.textCls}`}>
+        <span className={`lb-mode-banner__text`}>
           {modeMeta.label}
         </span>
       </footer>
