@@ -270,7 +270,7 @@ const LapLineTracker = () => {
 
       {cars.some(car => (lapTimers[car.id]?.lapTimes?.length ?? 0) > 0) && (
         <section className="llt-history">
-          <h2 className="llt-history__title">Recorded lap times</h2>
+          <h2 className="rc-label">Recorded lap times</h2>
           <div className="llt-history-grid">
             {cars.map((car) => {
               const laps = lapTimers[car.id]?.lapTimes ?? [];

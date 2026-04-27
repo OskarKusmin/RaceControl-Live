@@ -7,6 +7,7 @@
 .llt-screen {
     background-color: var(--rc-bg);
     min-height: 100vh;
+    color: var(--rc-text);
 }
 
 .llt-statusbar {
@@ -112,9 +113,9 @@
     border-color: var(--rc-border);
 }
 
-.llt-car-btn--flash {
-    background: var(--rc-green-dim) !important;
-    border-color: var(--rc-green) !important;
+.llt-car-btn.llt-car-btn--flash {
+    background: var(--rc-green-dim);
+    border-color: var(--rc-green);
 }
 
 .llt-car-number {
@@ -185,15 +186,6 @@
     margin-top: 4px;
 }
 
-.llt-history__title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--rc-text-muted);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-}
-
 .llt-history-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -220,11 +212,6 @@
     font-size: 13px;
     font-weight: 600;
     color: var(--rc-text);
-}
-
-.llt-history-laps {
-    display: flex;
-    flex-direction: column;
 }
 
 .llt-history-lap {
