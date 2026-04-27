@@ -113,12 +113,14 @@
     gap: 10px;
     padding: 20px 12px;
     border-radius: var(--rc-radius-lg);
-    border: 2px solid transparent;
+    border: 2px solid color-mix(in srgb, var(--flag-color) 20%, transparent);
+    background: color-mix(in srgb, var(--flag-color) 8%, transparent);
+    color: var(--flag-color);
     cursor: pointer;
     transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.1s ease;
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      transform 0.1s ease;
     touch-action: manipulation;
     min-height: 140px;
 }
@@ -127,11 +129,23 @@
     transform: scale(0.97);
 }
 
+.rc-ctrl-flag-btn:hover {
+    background: color-mix(in srgb, var(--flag-color) 15%, transparent);
+    border-color: color-mix(in srgb, var(--flag-color) 40%, transparent);
+}
+
+.rc-ctrl-flag-btn--active {
+    background: color-mix(in srgb, var(--flag-color) 18%, transparent);
+    border-color: var(--flag-color);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--flag-color) 15%, transparent);
+}
+
 .rc-ctrl-flag-btn__swatch {
     display: block;
     width: 48px;
     height: 48px;
     border-radius: 50%;
+    background: var(--flag-color);
     flex-shrink: 0;
     transition: transform 0.15s ease;
 }
@@ -153,93 +167,29 @@
     opacity: 0.75;
 }
 
-.rc-ctrl-flag-btn--green {
-    background: rgba(34, 197, 94, 0.08);
-    border-color: rgba(34, 197, 94, 0.2);
-    color: var(--rc-green);
-}
-.rc-ctrl-flag-btn--green .rc-ctrl-flag-btn__swatch {
-    background: var(--rc-green);
-}
-.rc-ctrl-flag-btn--green:hover {
-    background: var(--rc-green-dim);
-    border-color: rgba(34, 197, 94, 0.4);
-}
-.rc-ctrl-flag-btn--green.rc-ctrl-flag-btn--active {
-    background: rgba(34, 197, 94, 0.18);
-    border-color: var(--rc-green);
-    box-shadow: 0 0 0 4px var(--rc-green-dim);
-}
-
-.rc-ctrl-flag-btn--yellow {
-    background: rgba(245, 158, 11, 0.08);
-    border-color: rgba(245, 158, 11, 0.2);
-    color: var(--rc-amber);
-}
-.rc-ctrl-flag-btn--yellow .rc-ctrl-flag-btn__swatch {
-    background: var(--rc-amber);
-}
-.rc-ctrl-flag-btn--yellow:hover {
-    background: var(--rc-amber-dim);
-    border-color: rgba(245, 158, 11, 0.4);
-}
-.rc-ctrl-flag-btn--yellow.rc-ctrl-flag-btn--active {
-    background: rgba(245, 158, 11, 0.18);
-    border-color: var(--rc-amber);
-    box-shadow: 0 0 0 4px var(--rc-amber-dim);
-}
-
-.rc-ctrl-flag-btn--red {
-    background: var(--rc-red-dim);
-    border-color: rgba(239, 68, 68, 0.2);
-    color: var(--rc-red);
-}
-.rc-ctrl-flag-btn--red .rc-ctrl-flag-btn__swatch {
-    background: var(--rc-red);
-}
-.rc-ctrl-flag-btn--red:hover {
-    background: var(--rc-red-dim);
-    border-color: rgba(239, 68, 68, 0.4);
-}
-.rc-ctrl-flag-btn--red.rc-ctrl-flag-btn--active {
-    background: rgba(239, 68, 68, 0.18);
-    border-color: var(--rc-red);
-    box-shadow: 0 0 0 4px var(--rc-red-dim);
-}
+.rc-ctrl-flag-btn--green  { --flag-color: var(--rc-green); }
+.rc-ctrl-flag-btn--yellow { --flag-color: var(--rc-amber); }
+.rc-ctrl-flag-btn--red    { --flag-color: var(--rc-red); }
 
 .rc-ctrl-flag-btn--chequered {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.15);
-    color: var(--rc-text);
+    --flag-color: var(--rc-text);
 }
+
 .rc-ctrl-flag-btn--chequered .rc-ctrl-flag-btn__swatch {
     background-image: repeating-conic-gradient(
-    var(--rc-text) 0% 25%,
-    var(--rc-surface-2) 0% 50%
+      var(--rc-text) 0% 25%,
+      var(--rc-surface-2) 0% 50%
     );
     background-size: 12px 12px;
-    border: 1px solid rgba(255,255,255,0.2);
-}
-.rc-ctrl-flag-btn--chequered:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.3);
-}
-.rc-ctrl-flag-btn--chequered.rc-ctrl-flag-btn--active {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
 }
 
 .rc-ctrl-flag-btn--finish-action {
     grid-column: 1 / -1;
-    border-color: var(--rc-border-strong);
     border-style: dashed;
     min-height: 100px;
 }
 
 .rc-ctrl-flag-btn--finish-action:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.5);
     border-style: solid;
 }
 
