@@ -1,9 +1,6 @@
 .fd-page {
-  min-height: 100vh;
-  padding: 32px 24px 64px;
+  padding: 20px;
   overflow-x: hidden;
-  color: var(--rc-text); 
-  background-color: var(--rc-bg);
 }
 
 .fd-content {
@@ -32,22 +29,8 @@
   gap: 12px;
 }
 
-.fd-add-field {
-  flex: 1;
-}
-
-.fd-add-btn {
-  height: 40px;
-}
-
-.fd-inline-error {
-  color: var(--rc-red);
-  background: var(--rc-red-dim);
-  border: 1px solid var(--rc-red-border);
-  border-radius: var(--rc-radius-md);
-  padding: 8px 12px;
-  margin-top: 10px;
-}
+.fd-add-field { flex: 1; }
+.fd-add-btn { height: 40px; }
 
 .fd-empty {
   background: var(--rc-surface);
@@ -117,20 +100,13 @@
     align-items: stretch;
   }
 
-  .fd-add-btn {
-    width: 100%;
-  }
-
-  .fd-driver-grid {
-    grid-template-columns: 1fr;
-  }
+  .fd-add-btn { width: 100%; }
+  .fd-driver-grid { grid-template-columns: 1fr; }
 
   .fd-session-card__header {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .fd-session-card__actions {
-    justify-content: flex-start;
-  }
+  .fd-session-card__actions { justify-content: flex-start; }
 }

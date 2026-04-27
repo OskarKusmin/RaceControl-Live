@@ -135,7 +135,7 @@ const LeaderBoard = () => {
   }, null);
 
   return (
-    <div className={`lb-page ${modeMeta.cls}`} data-theme={theme}>
+    <div className={`lb-page app-screen ${modeMeta.cls}`} data-theme={theme}>
 
       <header className="lb-topbar">
 

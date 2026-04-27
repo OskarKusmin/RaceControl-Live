@@ -185,7 +185,7 @@ const LapLineTracker = () => {
   };
 
   return (
-    <div className='llt-screen' data-theme={theme}>
+    <div className='app-screen' data-theme={theme}>
       
       <header className="llt-statusbar">
         <div className="llt-statusbar__session">
@@ -223,7 +223,7 @@ const LapLineTracker = () => {
       </header>
       
       {selectedSession && cars.length === 0 && (
-        <div className="llt-no-drivers">
+        <div className="rc-notice rc-notice--amber rc-notice--lg">
           <p>No drivers assigned to this session. Ask the front desk to add drivers and refresh.</p>
         </div>
       )}

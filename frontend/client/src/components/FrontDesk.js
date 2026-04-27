@@ -110,8 +110,8 @@ const FrontDesk = () => {
   };
 
   return (
-    <div className="fd-page" data-theme={theme}>
-      <button className="rc-btn rc-btn--ghost lp-theme-toggle" onClick={toggleTheme}>
+    <div className="app-screen fd-page" data-theme={theme}>
+      <button className="rc-btn rc-btn--ghost corner-btn-wrapper" onClick={toggleTheme}>
         {theme === 'dark' ? '🔆' : '🌗'}
       </button>
       <div className="grid-bg"/>
@@ -147,7 +147,7 @@ const FrontDesk = () => {
             </button>
           </div>
           {sessionError && (
-            <p className="fd-inline-error">{sessionError}</p>
+            <p className="c-notice rc-notice--red">{sessionError}</p>
           )}
         </section>
 
@@ -213,7 +213,7 @@ const FrontDesk = () => {
                     </div>
 
                     {isEditing && confirmError && (
-                      <p className="fd-inline-error">{confirmError}</p>
+                      <p className="rc-notice rc-notice--red">{confirmError}</p>
                     )}
 
                     <div className="fd-driver-grid">

@@ -116,11 +116,6 @@
     gap: 6px;
   }
 
-  .lp-section {
-    padding: 18px;
-  }
-
-  .lp-nav-btn {
-    width: 100%;
-  }
+  .lp-section { padding: 18px; }
+  .lp-nav-btn { width: 100%; }
 }

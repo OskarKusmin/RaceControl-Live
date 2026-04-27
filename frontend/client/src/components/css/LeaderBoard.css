@@ -1,9 +1,6 @@
 .lb-page {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    background-color: var(--rc-bg);
-    color: var(--rc-text);
 }
 
 .lb-topbar {

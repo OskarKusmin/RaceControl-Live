@@ -61,7 +61,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
   return (
     <div className="screen" data-theme={theme}>
 
-      <button className="rc-btn rc-btn--ghost lp-theme-toggle" onClick={toggleTheme}>
+      <button className="rc-btn rc-btn--ghost corner-btn-wrapper" onClick={toggleTheme}>
         {theme === 'dark' ? '🔆' : '🌗'}
       </button>
 

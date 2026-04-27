@@ -97,6 +97,12 @@ svg {
   color: var(--rc-text); 
 }
 
+.app-screen {
+  min-height: 100vh;
+  background-color: var(--rc-bg);
+  color: var(--rc-text);
+}
+
 .grid-bg {
   position: absolute;
   inset: 0;
@@ -397,4 +403,22 @@ p {
 @keyframes fade-up-animation {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+.rc-notice {
+  --notice-color: var(--rc-text-muted);
+  padding: 8px 12px;
+  border-radius: var(--rc-radius-md);
+  border: 1px solid color-mix(in srgb, var(--notice-color) 35%, transparent);
+  background: color-mix(in srgb, var(--notice-color) 15%, transparent);
+  color: var(--notice-color);
+}
+
+.rc-notice--red    { --notice-color: var(--rc-red); }
+.rc-notice--amber  { --notice-color: var(--rc-amber); }
+.rc-notice--green  { --notice-color: var(--rc-green); }
+
+.rc-notice--lg {
+  padding: 16px 20px;
+  text-align: center;
 }

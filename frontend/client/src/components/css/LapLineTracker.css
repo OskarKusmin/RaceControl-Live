@@ -4,12 +4,6 @@
     gap: 12px;
 }
 
-.llt-screen {
-    background-color: var(--rc-bg);
-    min-height: 100vh;
-    color: var(--rc-text);
-}
-
 .llt-statusbar {
     position: sticky;
     top: 0;
@@ -54,17 +48,6 @@
 
 .llt-countdown--warning {
     color: var(--rc-amber);
-}
-
-.llt-no-drivers {
-    margin: 20px;
-    padding: 16px 20px;
-    background: var(--rc-amber-dim);
-    border: 1px solid var(--rc-amber-border);
-    border-radius: var(--rc-radius-md);
-    color: var(--rc-amber);
-    font-weight: 500;
-    text-align: center;
 }
 
 .llt-cars-grid {
