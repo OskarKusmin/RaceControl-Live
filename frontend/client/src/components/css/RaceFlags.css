@@ -1,54 +1,25 @@
-.rf-flag--safe {
-  background-color: #16a34a;
-}
+.rf-flag--safe { background-color: var(--rc-green); }
 
-.rf-flag--hazard {
-  background-color: #d97706;
-}
+.rf-flag--hazard { animation: rf-hazard-pulse 1.6s ease-in-out infinite; }
 
-.rf-flag--danger {
-  background-color: #dc2626;
-}
+.rf-flag--danger { animation: rf-danger-flash 0.7s ease-in-out infinite; }
 
 .rf-flag--finish {
-  background-color: #fff;
-  background-image:
-    repeating-conic-gradient(#111 0% 25%, #fff 0% 50%);
+  background-image: repeating-conic-gradient(#111 0% 25%, #fff 0% 50%);
   background-size: 210px 210px;
-}
-
-.rf-flag--hazard {
-  animation: rf-hazard-pulse 1.6s ease-in-out infinite;
 }
 
 @keyframes rf-hazard-pulse {
   0%, 100% { background-color: #d97706; }
-  50%       { background-color: #b45309; }
-}
-
-.rf-flag--danger {
-  animation: rf-danger-flash 0.7s ease-in-out infinite;
+  50%      { background-color: #b45309; }
 }
 
 @keyframes rf-danger-flash {
   0%, 100% { background-color: #dc2626; }
-  50%       { background-color: #991b1b; }
-}
-
-@keyframes rf-btn-fade {
-  0%   { opacity: 1; }
-  70%  { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.rf-flag--finish .rc-fs-btn {
-  background: rgba(0, 0, 0, 0.5);
-  border-color: rgba(0, 0, 0, 0.3);
-  color: rgba(255, 255, 255, 0.85);
+  50%      { background-color: #991b1b; }
 }
 
 .rf-main {
-  position: relative;
   z-index: 1;
   display: flex;
   align-items: center;
@@ -60,28 +31,8 @@
 .rf-flag-text {
   font-size: clamp(120px, 28vw, 560px);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  line-height: 1;
-  text-align: center;
-  user-select: none;
-  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.18);
-}
-
-.rf-flag-text--safe   { color: #fff; }
-.rf-flag-text--hazard { color: #fff; }
-.rf-flag-text--danger { color: #fff; }
-.rf-flag-text--finish {
-  color: #111;
-  text-shadow:
-    0 0 80px rgba(255, 255, 255, 0.8),
-    0 0 160px rgba(255, 255, 255, 0.4);  background: rgba(255, 255, 255, 0.55);
-  padding: 0 40px;
-  border-radius: 8px;
 }
 
 @media (max-width: 600px) {
-  .rf-flag--finish {
-    background-size: 60px 60px;
-  }
+  .rf-flag--finish { background-size: 60px 60px; }
 }
