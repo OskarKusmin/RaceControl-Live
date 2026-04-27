@@ -22,7 +22,7 @@ const LandingPage = () => {
   return (
     <div className="screen" data-theme={theme}>
       
-      <button className="rc-btn rc-btn--ghost lp-theme-toggle" onClick={toggleTheme}>
+      <button className="rc-btn rc-btn--ghost corner-btn-wrapper" onClick={toggleTheme}>
         {theme === 'dark' ? '🔆' : '🌗'}
       </button>
       
@@ -51,7 +51,7 @@ const LandingPage = () => {
           </div>
           <div className="lp-btn-group">
             {STAFF_LINKS.map(({ to, label }) => (
-              <NavLink key={to} to={to} className="lp-nav-btn lp-nav-btn--staff">
+              <NavLink key={to} to={to} className="lp-nav-btn">
                 {label}
               </NavLink>
             ))}
@@ -68,7 +68,7 @@ const LandingPage = () => {
           </div>
           <div className="lp-btn-group">
             {DISPLAY_LINKS.map(({ to, label }) => (
-              <NavLink key={to} to={to} className="lp-nav-btn lp-nav-btn--display">
+              <NavLink key={to} to={to} className="lp-nav-btn">
                 {label}
               </NavLink>
             ))}

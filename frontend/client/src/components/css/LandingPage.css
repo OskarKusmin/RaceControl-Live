@@ -45,13 +45,6 @@
   gap: 16px;
 }
 
-.lp-theme-toggle {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 3;
-}
-
 .lp-section {
   background: var(--rc-surface);
   border: 1px solid var(--rc-border);
@@ -61,13 +54,41 @@
 }
 
 .lp-section--staff {
-  border-left: 3px solid var(--rc-red);
-  border-right: 3px solid var(--rc-red);
+  --tone:        var(--rc-red);
+  --tone-dim:    var(--rc-red-dim);
+  --tone-border: var(--rc-red-border);
 }
 
 .lp-section--display {
-  border-left: 3px solid var(--rc-accent);
-  border-right: 3px solid var(--rc-accent);
+  --tone:        var(--rc-accent);
+  --tone-dim:    var(--rc-accent-dim);
+  --tone-border: var(--rc-accent-border);
+}
+
+.lp-section--staff,
+.lp-section--display {
+  border-left: 3px solid var(--tone);
+  border-right: 3px solid var(--tone);
+}
+
+.lp-nav-btn {
+  padding: 10px 20px;
+  border-radius: var(--rc-radius-md);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  background: var(--tone-dim);
+  color: var(--tone);
+  border: 1px solid var(--tone-border);
+}
+
+.lp-nav-btn:hover {
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--tone) 30%, transparent);
 }
 
 .lp-section__header {
@@ -86,56 +107,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-}
-
-.lp-nav-btn {
-  padding: 10px 20px;
-  border-radius: var(--rc-radius-md);
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.lp-nav-btn:hover {
-  transform: translateY(-2px);
-}
-
-.lp-nav-btn--staff {
-  background: var(--rc-red-dim);
-  color: var(--rc-red);
-  border: 1px solid var(--rc-red-border);
-}
-
-.lp-nav-btn--staff:hover {
-  background: color-mix(in srgb, var(--rc-red) 30%, transparent);
-  box-shadow: 0 4px 16px var(--rc-red-dim);
-}
-
-.lp-nav-btn--staff.active {
-  background: var(--rc-red);
-  color: #fff;
-  border-color: var(--rc-red);
-}
-
-.lp-nav-btn--display {
-  background: var(--rc-accent-dim);
-  color: var(--rc-accent);
-  border: 1px solid var(--rc-accent-border);
-}
-
-.lp-nav-btn--display:hover {
-  background: color-mix(in srgb, var(--rc-accent) 30%, transparent);
-  box-shadow: 0 4px 16px var(--rc-accent-dim);
-}
-
-.lp-nav-btn--display.active {
-  background: var(--rc-accent);
-  color: #fff;
-  border-color: var(--rc-accent);
 }
 
 @media (max-width: 480px) {
