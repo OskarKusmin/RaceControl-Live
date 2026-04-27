@@ -1,24 +1,14 @@
-.nr-page--paddock {
-  --nr-paddock-tint: rgba(245, 158, 11, 0.06);
-}
-
 .nr-content {
-  position: relative;
-  z-index: 1;
   width: 100%;
   max-width: 560px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--rc-space-lg);
 }
 
 .nr-header {
   text-align: center;
   animation: fade-up-animation 0.4s ease both;
-}
-
-.nr-eyebrow {
-  margin-bottom: 6px;
 }
 
 .nr-title {
@@ -58,23 +48,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 28px 24px;
-  background: var(--rc-amber-dim);
+  gap: var(--rc-space-sm);
+  padding: 24px;
   border: 2px solid var(--rc-amber-border);
   border-radius: var(--rc-radius-lg);
   text-align: center;
   animation: nr-paddock-pulse 2s ease-in-out infinite, fade-up-animation 0.4s ease both;
+  color: var(--rc-amber);
 }
 
 @keyframes nr-paddock-pulse {
   0%, 100% { border-color: var(--rc-amber-border); background: var(--rc-amber-dim); }
-  50%       { border-color: var(--rc-amber);        background: rgba(245, 158, 11, 0.22); }
-}
-
-.nr-paddock-icon {
-  color: var(--rc-amber);
-  flex-shrink: 0;
+  50% { border-color: var(--rc-amber); background: color-mix(in srgb, var(--rc-amber) 22%, transparent); }
 }
 
 .nr-paddock-text {
@@ -85,18 +70,11 @@
   line-height: 1;
 }
 
-.nr-paddock-sub {
-  color: var(--rc-amber);
-  opacity: 0.8;
-  max-width: 380px;
-}
-
 .nr-card {
   background: var(--rc-surface);
   border: 1px solid var(--rc-border-md);
   border-top: 3px solid var(--rc-accent);
   border-radius: var(--rc-radius-lg);
-  overflow: hidden;
   animation: fade-up-animation 0.4s ease 0.08s both;
 }
 
@@ -104,52 +82,33 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--rc-border);
-  flex-wrap: wrap;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--rc-border-strong);
 }
 
-.nr-session-name {
-  font-size: clamp(22px, 4vw, 32px);
-}
+.nr-session-name { font-size: clamp(22px, 4vw, 32px); }
 
 .nr-no-drivers {
-  padding: 32px 24px;
+  padding: 24px;
   text-align: center;
   color: var(--rc-text-muted);
-}
-
-.nr-driver-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
 }
 
 .nr-driver-row {
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 16px 24px;
+  padding: 12px 24px;
   border-bottom: 1px solid var(--rc-border);
-  transition: background 0.15s ease;
+  font-weight: 700;
 }
 
-.nr-driver-row:last-child {
-  border-bottom: none;
-}
-
-.nr-driver-row:hover {
-  background: var(--rc-surface-2);
-}
+.nr-driver-row:last-child { border-bottom: none; }
 
 .nr-car-badge {
   display: inline-flex;
-  align-items: baseline;
   gap: 2px;
   font-size: 36px;
-  font-weight: 700;
-  color: var(--rc-text);
   min-width: 64px;
   flex-shrink: 0;
   line-height: 1;
@@ -158,28 +117,16 @@
 .nr-car-badge__hash {
   font-size: 20px;
   color: var(--rc-accent);
-  font-weight: 700;
-  align-self: flex-start;
   margin-top: 5px;
 }
 
 .nr-driver-name {
   font-size: clamp(20px, 3.5vw, 28px);
-  font-weight: 600;
-  color: var(--rc-text);
-  line-height: 1.2;
+  line-height: 1;
 }
 
 @media (max-width: 480px) {
-  .nr-page {
-    padding: 24px 16px;
-    align-items: flex-start;
-    padding-top: 60px;
-  }
-
-  .nr-card__header {
-    padding: 16px;
-  }
+  .nr-card__header { padding: 16px; }
 
   .nr-driver-row {
     padding: 14px 16px;

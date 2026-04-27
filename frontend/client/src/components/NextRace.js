@@ -75,7 +75,7 @@ const NextRace = () => {
   }, [paddockCall]);
 
   return (
-    <div className={`screen ${paddockCall ? 'nr-page--paddock' : ''}`} data-theme={theme}>
+    <div className='screen' data-theme={theme}>
 
       <div className="grid-bg"/>
 
@@ -113,11 +113,10 @@ const NextRace = () => {
 
         {paddockCall && (
           <div className="nr-paddock-banner">
-            <svg className="nr-paddock-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
             </svg>
             <p className="nr-paddock-text">Proceed to paddock</p>
-            <p className="nr-paddock-sub">Drivers for this session — please make your way to the starting area now</p>
           </div>
         )}
 
@@ -140,7 +139,7 @@ const NextRace = () => {
             {nextRace.drivers.length === 0 ? (
               <p className="nr-no-drivers">Drivers not yet assigned. Check back shortly.</p>
             ) : (
-              <ul className="nr-driver-list">
+              <ul>
                 {nextRace.drivers.map((driver) => (
                   <li key={driver.id} className="nr-driver-row">
                     <span className="nr-car-badge">
