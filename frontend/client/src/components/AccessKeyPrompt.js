@@ -48,11 +48,11 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
 
   if (isLoading) {
     return (
-      <div className="screen">
+      <div className="screen" data-theme={theme}>
         <div className="grid-bg" />
         <div className="akp-card">
-          <div className="akp-spinner" />
-          <p className="akp-connecting">Connecting to server…</p>
+          <div className="spinner" />
+          <p>Connecting to server…</p>
         </div>
       </div>
     );
@@ -94,15 +94,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
         </div>
 
         {error && (
-          <p className="akp-error">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2.5"
-              strokeLinecap="round" strokeLinejoin="round"
-              style={{ flexShrink: 0 }}>
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
+          <p className="rc-notice rc-notice--red">
             {error}
           </p>
         )}
@@ -114,7 +106,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
         >
           {isSubmitting ? (
             <>
-              <span className="akp-btn-spinner"/>
+              <span className="spinner"/>
               Verifying…
             </>
           ) : 'Submit'}

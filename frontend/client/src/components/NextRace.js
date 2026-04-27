@@ -106,7 +106,7 @@ const NextRace = () => {
 
         {loading && (
           <div className="nr-state-block">
-            <div className="nr-spinner"/>
+            <div className="spinner"/>
             <p className="nr-state-text">Loading session data…</p>
           </div>
         )}

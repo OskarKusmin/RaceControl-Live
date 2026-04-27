@@ -35,60 +35,13 @@
     padding: 12px;
 }
 
-.akp-input:focus {
-    border-color: var(--rc-red);
-    box-shadow: 0 0 0 3px var(--rc-red-dim);
-}
-
-.akp-error {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    width: 100%;
-    padding: 10px 12px;
-    background: var(--rc-red-dim);
-    border: 1px solid var(--rc-red-border);
-    border-radius: var(--rc-radius-md);
-    color: var(--rc-red);
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 12px;
-}
+.akp-input:focus { border-color: var(--rc-red); }
 
 .akp-submit {
     width: 100%;
     margin-top: var(--rc-space-xs);
     font-size: 15px;
     padding: 12px;
-}
-
-.akp-btn-spinner {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(255,255,255,0.35);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: akp-spin 0.7s linear infinite;
-}
-
-.akp-spinner {
-    width: 36px;
-    height: 36px;
-    border: 3px solid var(--rc-border-strong);
-    border-top-color: var(--rc-red);
-    border-radius: 50%;
-    animation: akp-spin 0.8s linear infinite;
-    margin-bottom: 16px;
-}
-
-.akp-connecting {
-    font-size: 13px;
-    color: var(--rc-text-muted);
-}
-
-@keyframes akp-spin {
-    to { transform: rotate(360deg); }
 }
 
 @media (max-width: 440px) {
