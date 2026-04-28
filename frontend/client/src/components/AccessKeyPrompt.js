@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { SocketContext } from '../App';
 import './css/AccessKeyPrompt.css';
-import { useTheme } from './useTheme';
+import ThemeToggle from './ThemeToggle';
 
 const ROLE_LABELS = {
   receptionist: 'Front Desk',
@@ -15,7 +15,6 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
   const [error, setError]           = useState('');
   const [isLoading, setIsLoading]   = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [theme, toggleTheme] = useTheme('rc-theme');
 
   useEffect(() => {
     if (!socket) { setIsLoading(true); return; }
@@ -48,7 +47,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
 
   if (isLoading) {
     return (
-      <div className="screen" data-theme={theme}>
+      <div className="screen">
         <div className="grid-bg" />
         <div className="akp-card">
           <div className="spinner" />
@@ -59,11 +58,11 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
   }
 
   return (
-    <div className="screen" data-theme={theme}>
+    <div className="screen">
 
-      <button className="rc-btn rc-btn--ghost corner-btn-wrapper" onClick={toggleTheme}>
-        {theme === 'dark' ? '🔆' : '🌗'}
-      </button>
+      <div className='corner-btn-wrapper'>
+        <ThemeToggle/>
+      </div>
 
       <div className="grid-bg"/>
 

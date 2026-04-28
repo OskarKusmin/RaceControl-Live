@@ -2,15 +2,14 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import { SocketContext } from "../App";
 import './css/NextRace.css';
 import chimeSound from './sounds/chime.mp3';
-import { useTheme } from './useTheme.js';
 import FullscreenToggle from "./FullscreenToggle.js";
+import ThemeToggle from "./ThemeToggle.js";
 
 const NextRace = () => {
   const socket = useContext(SocketContext);
   const [isRaceInProgress, setIsRaceInProgress] = useState(false);
   const [nextRace,         setNextRace]         = useState(null);
   const [loading,          setLoading]          = useState(true);
-  const [theme,            toggleTheme]         = useTheme('rc-theme');
   const chimeRef                                = useRef(new Audio(chimeSound));
 
   useEffect(() => {
@@ -61,15 +60,13 @@ const NextRace = () => {
   }, [paddockCall]);
 
   return (
-    <div className='screen' data-theme={theme}>
+    <div className='screen'>
 
       <div className="grid-bg"/>
 
       <div className="corner-btn-wrapper">
-      <FullscreenToggle />
-      <button className="rc-btn rc-btn--ghost rc-btn--sm" onClick={toggleTheme}>
-        {theme === 'dark' ? '🔆' : '🌗'}
-      </button>
+        <ThemeToggle/>
+        <FullscreenToggle />
       </div>
       
 

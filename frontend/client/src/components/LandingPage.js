@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import './css/LandingPage.css';
-import { useTheme } from './useTheme.js';
+import ThemeToggle from './ThemeToggle';
 
 const STAFF_LINKS = [
   { to: '/front-desk',       label: 'Front Desk' },
@@ -17,15 +17,14 @@ const DISPLAY_LINKS = [
 ];
 
 const LandingPage = () => {
-  const [theme, toggleTheme] = useTheme('rc-theme');
   useEffect(() => { document.title = 'RaceControl Live' }, []);
   return (
-    <div className="screen" data-theme={theme}>
+    <div className="screen">
       
-      <button className="rc-btn rc-btn--ghost corner-btn-wrapper" onClick={toggleTheme}>
-        {theme === 'dark' ? '🔆' : '🌗'}
-      </button>
-      
+      <div className='corner-btn-wrapper'>
+        <ThemeToggle/>
+      </div>
+
       <div className="grid-bg"/>
       
       <header className="lp-header">

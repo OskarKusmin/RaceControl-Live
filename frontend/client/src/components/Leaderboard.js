@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SocketContext } from '../App';
 import './css/LeaderBoard.css';
 import { formatTime } from './utils';
-import { useTheme } from './useTheme.js'
 import FullscreenToggle from './FullscreenToggle.js';
+import ThemeToggle from './ThemeToggle.js';
 
 const sortByFastest = (cars) =>
   [...cars].sort((a, b) => {
@@ -29,7 +29,6 @@ const LeaderBoard = () => {
   const [raceTimer,    setRaceTimer]    = useState(null);
   const [countdown,    setCountdown]    = useState(0);
   const prevSessionRef                  = useRef(null);
-  const [theme,        toggleTheme]     = useTheme('rc-theme');
 
   useEffect(() => {
     if (!socket) return;
@@ -122,7 +121,7 @@ const LeaderBoard = () => {
   }, null);
 
   return (
-    <div className={`lb-page app-screen ${modeMeta.cls}`} data-theme={theme}>
+    <div className={`lb-page app-screen ${modeMeta.cls}`}>
 
       <header className="lb-topbar">
 
@@ -146,9 +145,7 @@ const LeaderBoard = () => {
               {formatTime(countdown)}
             </span>
           </div>
-          <button className="rc-btn rc-btn--ghost rc-btn--sm" onClick={toggleTheme}>
-            {theme === 'dark' ? '🔆' : '🌗'} 
-          </button>
+          <ThemeToggle/>
           <FullscreenToggle />
         </div>
 

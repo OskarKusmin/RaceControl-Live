@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SocketContext } from '../App';
 import './css/LapLineTracker.css';
 import { formatTime } from './utils';
-import { useTheme } from './useTheme.js';
+import ThemeToggle from './ThemeToggle.js';
 
 const LapLineTracker = () => {
   const socket = useContext(SocketContext);
@@ -15,7 +15,6 @@ const LapLineTracker = () => {
   const [isRaceFinished,  setIsRaceFinished]  = useState(false);
   const [raceTimer,       setRaceTimer]       = useState(null);
   const [countdown,       setCountdown]       = useState(null);
-  const [theme,           toggleTheme]        = useTheme('rc-theme');
 
   useEffect(() => {
     if (!socket) return;
@@ -185,7 +184,7 @@ const LapLineTracker = () => {
   };
 
   return (
-    <div className='app-screen' data-theme={theme}>
+    <div className='app-screen'>
       
       <header className="llt-statusbar">
         <div className="llt-statusbar__session">
@@ -215,9 +214,7 @@ const LapLineTracker = () => {
               {formatTime(countdown)}
             </span>
           </div>
-          <button className="rc-btn rc-btn--ghost rc-btn--sm" onClick={toggleTheme}>
-            {theme === 'dark' ? '🔆' : '🌗'}
-          </button>
+          <ThemeToggle/>
         </div>
         
       </header>
