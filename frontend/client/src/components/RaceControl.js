@@ -133,9 +133,11 @@ const RaceControl = () => {
 
   return (
     <div className="rc-ctrl-page" data-theme={theme}>
-      <button className="rc-btn rc-btn--ghost rc-btn--sm lp-theme-toggle" onClick={toggleTheme}>
-        {theme === 'dark' ? '🔆' : '🌗'}
-      </button>
+      <div className='corner-btn-wrapper'>
+        <button className="rc-btn rc-btn--ghost rc-btn--sm lp-theme-toggle" onClick={toggleTheme}>
+          {theme === 'dark' ? '🔆' : '🌗'}
+        </button>
+      </div>
       <div className="grid-bg"/>
 
       <div className="rc-ctrl-content">

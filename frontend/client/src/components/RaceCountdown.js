@@ -3,6 +3,7 @@ import { SocketContext } from '../App';
 import './css/RaceCountdown.css';
 import countSound from './sounds/count.mp3';
 import goSound from './sounds/go.mp3';
+import FullscreenToggle from './FullscreenToggle';
 
 const formatCountdown = (ms) => {
   const total   = Math.floor(ms / 1000);
@@ -24,7 +25,6 @@ const getUrgency = (ms) => {
 const RaceCountdown = () => {
   const socket = useContext(SocketContext);
   const [countdown,    setCountdown]    = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [startCount,   setStartCount]   = useState(null);
   const [raceTimer,    setRaceTimer]    = useState(null);
   const countRef                        = useRef(new Audio(countSound));
@@ -74,20 +74,6 @@ const RaceCountdown = () => {
 
   useEffect(() => { document.title = 'Countdown — RaceControl Live'; }, []);
 
-  useEffect(() => {
-    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener('fullscreenchange', onChange);
-    return () => document.removeEventListener('fullscreenchange', onChange);
-  }, []);
-
-  const toggleFullScreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(console.error);
-    } else {
-      document.exitFullscreen();
-    }
-  };
-
   const urgency = getUrgency(countdown);
 
   return (
@@ -96,17 +82,7 @@ const RaceCountdown = () => {
       <div className="grid-bg" />
 
       <div className='corner-btn-wrapper'>
-        <button className="rc-fs-btn" onClick={toggleFullScreen} title="Toggle fullscreen">
-          {isFullscreen ? (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
-            </svg>
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-            </svg>
-          )}
-        </button>
+        <FullscreenToggle />
       </div>
 
       <main className="rcd-main">

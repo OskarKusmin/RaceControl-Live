@@ -3,6 +3,7 @@ import { SocketContext } from '../App';
 import './css/LeaderBoard.css';
 import { formatTime } from './utils';
 import { useTheme } from './useTheme.js'
+import FullscreenToggle from './FullscreenToggle.js';
 
 const sortByFastest = (cars) =>
   [...cars].sort((a, b) => {
@@ -27,7 +28,6 @@ const LeaderBoard = () => {
   const [raceInfo,     setRaceInfo]     = useState({ mode: 'Danger', sessionName: 'Awaiting session…' });
   const [raceTimer,    setRaceTimer]    = useState(null);
   const [countdown,    setCountdown]    = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const prevSessionRef                  = useRef(null);
   const [theme,        toggleTheme]     = useTheme('rc-theme');
 
@@ -113,19 +113,6 @@ const LeaderBoard = () => {
 
   useEffect(() => { document.title = 'Leaderboard — RaceControl Live'; }, []);
 
-  useEffect(() => {
-    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener('fullscreenchange', onChange);
-    return () => document.removeEventListener('fullscreenchange', onChange);
-  }, []);
-
-  const toggleFullScreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(console.error);
-    } else {
-      document.exitFullscreen();
-    }
-  };
 
   const sorted     = sortByFastest(cars);
   const modeMeta   = MODE_META[raceInfo.mode] ?? MODE_META.Danger;
@@ -162,17 +149,7 @@ const LeaderBoard = () => {
           <button className="rc-btn rc-btn--ghost rc-btn--sm" onClick={toggleTheme}>
             {theme === 'dark' ? '🔆' : '🌗'} 
           </button>
-          <button className="rc-fs-btn" onClick={toggleFullScreen} title="Toggle fullscreen">
-            {isFullscreen ? (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
-              </svg>
-            ) : (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-              </svg>
-            )}
-          </button>
+          <FullscreenToggle />
         </div>
 
       </header>
