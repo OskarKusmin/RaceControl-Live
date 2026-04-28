@@ -32,7 +32,6 @@
 --rc-space-sm:  8px;
 --rc-space-md:  16px;
 --rc-space-lg:  24px;
---rc-space-xl:  32px;
 --rc-radius-sm: 4px;
 --rc-radius-md: 8px;
 --rc-radius-lg: 12px;
@@ -337,12 +336,6 @@ p {
   50%       { opacity: 0.25; }
 }
 
-.rc-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
 .rc-form-label {
   font-size: 12px;
   font-weight: 500;
@@ -372,7 +365,7 @@ p {
 
 .rc-input:focus {
   border-color: var(--rc-accent);
-  box-shadow: 0 0 0 3px rgba(61, 142, 240, 0.18);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rc-accent) 18%, transparent);
 }
 
 .rc-input--mono {
