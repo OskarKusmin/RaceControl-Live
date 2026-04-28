@@ -136,7 +136,7 @@ const LapLineTracker = () => {
         socket.emit('current-lap-times', updates);
         return next;
       });
-    }, 10);
+    }, 100);
     return () => clearInterval(id);
   }, [isRaceActive, socket]);
 

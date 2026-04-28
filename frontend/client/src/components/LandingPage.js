@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import './css/LandingPage.css';
 import ThemeToggle from './ThemeToggle';
