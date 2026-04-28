@@ -257,7 +257,7 @@ io.on('connection', (socket) => {
         broadcastState();
     });
 
-    //Handler for 'validate-key' which is emited by AccessKeyPrompt when an access key is submitted
+    //Handler for 'validate-key' which is emited by AccessKeyPrompt when key is submitted
     socket.on('validate-key', ({ key, role }) => {
         let isValid = false; //Initialising key validity to false
 

@@ -104,10 +104,6 @@ const FrontDesk = () => {
     setEditingSessionId(null);
   };
 
-  const handleAddKeyDown = (e) => {
-    if (e.key === 'Enter') addRaceSession();
-  };
-
   return (
     <div className="app-screen fd-page">
 
@@ -134,7 +130,7 @@ const FrontDesk = () => {
                 type="text"
                 value={newSessionName}
                 onChange={(e) => { setNewSessionName(e.target.value); setSessionError(""); }}
-                onKeyDown={handleAddKeyDown}
+                onKeyDown={ (e) => {if (e.key === 'Enter') addRaceSession(); }}
                 placeholder="e.g. Junior Sprint — Heat 1"
                 autoComplete="off"
               />

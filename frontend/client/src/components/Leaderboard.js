@@ -5,14 +5,6 @@ import { formatTime, useDocumentTitle } from './utils';
 import FullscreenToggle from './FullscreenToggle.js';
 import ThemeToggle from './ThemeToggle.js';
 
-const sortByFastest = (cars) =>
-  [...cars].sort((a, b) => {
-    if (!a.fastestLap && !b.fastestLap) return 0;
-    if (!a.fastestLap) return 1;
-    if (!b.fastestLap) return -1;
-    return a.fastestLap - b.fastestLap;
-  });
-
 const POS_COLOURS = ['lb-pos--gold', 'lb-pos--silver', 'lb-pos--bronze'];
 
 const MODE_META = {
@@ -35,7 +27,7 @@ const LeaderBoard = () => {
     if (!socket) return;
     setCars([]);
 
-    const handleCurrentLapTimes = (incoming) => {
+    socket.on('current-lap-times', (incoming) => {
       if (!Array.isArray(incoming)) return;
       setCars(prev => prev.map(car => {
         const u = incoming.find(c => c.id === String(car.id));
@@ -48,9 +40,8 @@ const LeaderBoard = () => {
           fastestLap:  u.lapTimes?.length ? Math.min(...u.lapTimes) : null,
         };
       }));
-    };
+    });
 
-    socket.on('current-lap-times',  handleCurrentLapTimes);
     socket.on('race-started', () =>
       setCars(prev => prev.map(car => ({ ...car, currentTime: 0, startTime: Date.now(), lapTimes: [] })))
     );
@@ -111,7 +102,13 @@ const LeaderBoard = () => {
     return () => clearInterval(id);
   }, [raceTimer]);
 
-  const sorted     = sortByFastest(cars);
+  const sortedCars = [...cars].sort((a, b) => {
+    if (!a.fastestLap && !b.fastestLap) return 0;
+    if (!a.fastestLap) return 1;
+    if (!b.fastestLap) return -1;
+    return a.fastestLap - b.fastestLap;
+  });
+
   const modeMeta   = MODE_META[raceInfo.mode] ?? MODE_META.Danger;
   const globalBest = cars.reduce((best, car) => {
     if (!car.fastestLap) return best;
@@ -167,7 +164,7 @@ const LeaderBoard = () => {
               </tr>
             </thead>
             <tbody>
-              {sorted.map((car, index) => {
+              {sortedCars.map((car, index) => {
                 const isLeader      = index === 0;
                 const isOverallBest = car.fastestLap !== null && car.fastestLap === globalBest;
                 const posClass      = POS_COLOURS[index] ?? '';

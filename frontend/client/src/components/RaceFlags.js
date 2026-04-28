@@ -19,9 +19,7 @@ const RaceFlags = () => {
   useEffect(() => {
     if (!socket) return;
     socket.on('state-update', state => setRaceMode(state.currentRaceMode));
-
     socket.emit('request-full-state');
-
     return () => socket.off('state-update');
   }, [socket]);
 
@@ -29,17 +27,10 @@ const RaceFlags = () => {
 
   return (
     <div className={`${flag.cls}`}>
-
-      <div className='corner-btn-wrapper'>
-        <FullscreenToggle/>
-      </div>
-
+      <div className='corner-btn-wrapper'><FullscreenToggle/></div>
       <main className="rf-main" >
-        <span className={`rf-flag-text ${flag.textCls}`} >
-          {flag.label}
-        </span>
+        <span className={`rf-flag-text ${flag.textCls}`}>{flag.label}</span>
       </main>
-
     </div>
   );
 };

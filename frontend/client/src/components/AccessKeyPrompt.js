@@ -39,12 +39,6 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
     socket.emit('validate-key', { key: accessKey, role });
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleAccess();
-  };
-
-  const roleLabel = ROLE_LABELS[role] ?? role;
-
   if (isLoading) {
     return (
       <div className="screen">
@@ -59,12 +53,11 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
 
   return (
     <div className="screen">
+      <div className="grid-bg"/>
 
       <div className='corner-btn-wrapper'>
         <ThemeToggle/>
       </div>
-
-      <div className="grid-bg"/>
 
       <div className="akp-card">
         <div className="akp-icon">
@@ -77,8 +70,7 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
         </div>
 
         <h1>Staff Access</h1>
-
-        <p>Enter the access key to continue to <strong>{roleLabel}</strong>.</p>
+        <p>Enter the access key to continue to <strong>{ ROLE_LABELS[role] ?? role }</strong>.</p>
 
         <div className="akp-field">
           <input className="rc-input rc-input--mono akp-input"
@@ -86,17 +78,13 @@ const AccessKeyPrompt = ({ onAccessGranted, role }) => {
             placeholder="••••••••"
             value={accessKey}
             onChange={(e) => { setAccessKey(e.target.value); setError(''); }}
-            onKeyDown={handleKeyDown}
+            onKeyDown={(e) => {if (e.key === 'Enter') handleAccess();}}
             autoFocus
             autoComplete="current-password"
           />
         </div>
 
-        {error && (
-          <p className="rc-notice rc-notice--red">
-            {error}
-          </p>
-        )}
+        {error && (<p className="rc-notice rc-notice--red">{error}</p>)}
 
         <button
           className="rc-btn rc-btn--danger akp-submit"

@@ -4,17 +4,7 @@ import './css/RaceCountdown.css';
 import countSound from './sounds/count.mp3';
 import goSound from './sounds/go.mp3';
 import FullscreenToggle from './FullscreenToggle';
-import { useDocumentTitle } from './utils';
-
-const formatCountdown = (ms) => {
-  const total   = Math.floor(ms / 1000);
-  const hours   = Math.floor(total / 3600);
-  const minutes = Math.floor((total % 3600) / 60);
-  const seconds = total % 60;
-  return hours > 0
-    ? `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-    : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-};
+import { formatTime, useDocumentTitle } from './utils';
 
 const getUrgency = (ms) => {
   if (ms <= 0)      return 'finished';
@@ -97,7 +87,7 @@ const RaceCountdown = () => {
           <>
             <p className='rcd-label rc-label'>Time remaining</p>
             <div className={`rcd-time rcd-time--${urgency}`}>
-              {urgency === 'finished' ? 'Time up' : formatCountdown(countdown)}
+              {urgency === 'finished' ? 'Time up' : formatTime(countdown)}
             </div>
           </>
         )}
