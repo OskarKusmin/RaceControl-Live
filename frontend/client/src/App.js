@@ -22,7 +22,7 @@ const App = () => {
 
     useEffect(() => {
         const serverUrl = `${window.location.protocol}//${window.location.hostname}:5001`
-        const newSocket = io(serverUrl, { transports: ["polling", "websocket"] });
+        const newSocket = io(serverUrl, { transports: ["websocket", "polling"] });
         setSocket(newSocket);
 
         newSocket.on('state-update', state => setRaceSessions(state.raceSessions));
