@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { SocketContext } from '../App';
 import './css/RaceFlags.css';
 import FullscreenToggle from './FullscreenToggle';
+import { useDocumentTitle } from './utils';
 
 const FLAG_CONFIG = {
   Safe:   { label: 'SAFE',   cls: 'rf-flag--safe',   textCls:    'rf-flag-text--safe'   },
@@ -11,6 +12,7 @@ const FLAG_CONFIG = {
 };
 
 const RaceFlags = () => {
+  useDocumentTitle('Flags');
   const socket = useContext(SocketContext);
   const [raceMode,    setRaceMode]    = useState('Danger');
   
@@ -22,8 +24,6 @@ const RaceFlags = () => {
 
     return () => socket.off('state-update');
   }, [socket]);
-
-  useEffect(() => { document.title = 'Flags — RaceControl Live'; }, []);
 
   const flag = FLAG_CONFIG[raceMode] ?? FLAG_CONFIG.Danger;
 

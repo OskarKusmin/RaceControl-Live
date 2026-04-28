@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import './css/LandingPage.css';
 import ThemeToggle from './ThemeToggle';
+import { useDocumentTitle } from './utils';
 
 const STAFF_LINKS = [
   { to: '/front-desk',       label: 'Front Desk' },
@@ -17,7 +18,7 @@ const DISPLAY_LINKS = [
 ];
 
 const LandingPage = () => {
-  useEffect(() => { document.title = 'RaceControl Live' }, []);
+  useDocumentTitle();
   return (
     <div className="screen">
       

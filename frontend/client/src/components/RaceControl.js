@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { SocketContext } from '../App';
 import './css/RaceControl.css';
-import { formatTime } from './utils';
+import { formatTime, useDocumentTitle } from './utils';
 import ThemeToggle from './ThemeToggle';
 
 const FLAG_MODES = [
@@ -13,6 +13,7 @@ const FLAG_MODES = [
 const MODE_BADGE = { Safe: 'green', Hazard:  'amber', Danger:  'red', Finish:  'blue' };
 
 const RaceControl = () => {
+  useDocumentTitle('Race Control')
   const socket = useContext(SocketContext);
   const [raceTimer,      setRaceTimer]      = useState(null);
   const [raceMode,       setRaceMode]       = useState('Danger');
@@ -83,8 +84,6 @@ const RaceControl = () => {
     const id = setInterval(tick, 100);
     return () => clearInterval(id);
   }, [raceTimer]);
-
-  useEffect(() => { document.title = 'Race Control — RaceControl Live'; }, []);
 
   const changeMode = (mode) => {
     setError('');

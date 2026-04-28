@@ -4,8 +4,10 @@ import './css/NextRace.css';
 import chimeSound from './sounds/chime.mp3';
 import FullscreenToggle from "./FullscreenToggle.js";
 import ThemeToggle from "./ThemeToggle.js";
+import { useDocumentTitle } from "./utils.js";
 
 const NextRace = () => {
+  useDocumentTitle('Next Race');
   const socket = useContext(SocketContext);
   const [isRaceInProgress, setIsRaceInProgress] = useState(false);
   const [nextRace,         setNextRace]         = useState(null);
@@ -47,8 +49,6 @@ const NextRace = () => {
       socket.off('state-update');
     };
   }, [socket]);
-
-  useEffect(() => { document.title = 'Next Race — RaceControl Live'; }, []);
 
   const paddockCall = nextRace !== null && !isRaceInProgress;
 

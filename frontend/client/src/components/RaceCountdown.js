@@ -4,6 +4,7 @@ import './css/RaceCountdown.css';
 import countSound from './sounds/count.mp3';
 import goSound from './sounds/go.mp3';
 import FullscreenToggle from './FullscreenToggle';
+import { useDocumentTitle } from './utils';
 
 const formatCountdown = (ms) => {
   const total   = Math.floor(ms / 1000);
@@ -23,6 +24,7 @@ const getUrgency = (ms) => {
 };
 
 const RaceCountdown = () => {
+  useDocumentTitle('Countdown')
   const socket = useContext(SocketContext);
   const [countdown,    setCountdown]    = useState(0);
   const [startCount,   setStartCount]   = useState(null);
@@ -71,8 +73,6 @@ const RaceCountdown = () => {
     const id = setInterval(tick, 100);
     return () => clearInterval(id);
   }, [raceTimer]);
-
-  useEffect(() => { document.title = 'Countdown — RaceControl Live'; }, []);
 
   const urgency = getUrgency(countdown);
 

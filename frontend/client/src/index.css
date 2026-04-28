@@ -207,9 +207,7 @@ p {
   line-height: 1;
 }
 
-.rc-btn:active {
-  transform: scale(0.97);
-}
+.rc-btn:active { transform: scale(0.97); }
 
 .rc-btn:disabled {
   opacity: 0.4;
@@ -221,25 +219,19 @@ p {
   background: var(--rc-accent);
   color: #fff;
 }
-.rc-btn--primary:hover:not(:disabled) {
-  opacity: 0.88;
-}
+.rc-btn--primary:hover:not(:disabled) { opacity: 0.88; }
 
 .rc-btn--success {
   background: var(--rc-green);
   color: var(--rc-bg);
 }
-.rc-btn--success:hover:not(:disabled) {
-  opacity: 0.88;
-}
+.rc-btn--success:hover:not(:disabled) { opacity: 0.88; }
 
 .rc-btn--danger {
   background: var(--rc-red);
   color: #fff;
 }
-.rc-btn--danger:hover:not(:disabled) {
-  opacity: 0.88;
-}
+.rc-btn--danger:hover:not(:disabled) { opacity: 0.88; }
 
 .rc-btn--ghost {
   background: transparent;
@@ -359,9 +351,7 @@ p {
   appearance: none;
 }
 
-.rc-input::placeholder {
-  color: var(--rc-text-faint);
-}
+.rc-input::placeholder { color: var(--rc-text-faint); }
 
 .rc-input:focus {
   border-color: var(--rc-accent);
@@ -380,18 +370,14 @@ p {
   height: 6px;
 }
 
-::-webkit-scrollbar-track {
-  background: var(--rc-bg);
-}
+::-webkit-scrollbar-track { background: var(--rc-bg); }
 
 ::-webkit-scrollbar-thumb {
   background: var(--rc-surface-3);
   border-radius: 99px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--rc-border-strong);
-}
+::-webkit-scrollbar-thumb:hover { background: var(--rc-border-strong); }
 
 @keyframes fade-up-animation {
   from { opacity: 0; transform: translateY(14px); }

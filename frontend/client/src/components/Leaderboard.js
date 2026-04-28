@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SocketContext } from '../App';
 import './css/LeaderBoard.css';
-import { formatTime } from './utils';
+import { formatTime, useDocumentTitle } from './utils';
 import FullscreenToggle from './FullscreenToggle.js';
 import ThemeToggle from './ThemeToggle.js';
 
@@ -23,6 +23,7 @@ const MODE_META = {
 };
 
 const LeaderBoard = () => {
+  useDocumentTitle('Leaderboard');
   const socket =       useContext(SocketContext);
   const [cars,         setCars]         = useState([]);
   const [raceInfo,     setRaceInfo]     = useState({ mode: 'Danger', sessionName: 'Awaiting session…' });
@@ -109,9 +110,6 @@ const LeaderBoard = () => {
     const id = setInterval(tick, 100);
     return () => clearInterval(id);
   }, [raceTimer]);
-
-  useEffect(() => { document.title = 'Leaderboard — RaceControl Live'; }, []);
-
 
   const sorted     = sortByFastest(cars);
   const modeMeta   = MODE_META[raceInfo.mode] ?? MODE_META.Danger;

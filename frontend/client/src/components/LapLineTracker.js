@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { SocketContext } from '../App';
 import './css/LapLineTracker.css';
-import { formatTime } from './utils';
+import { formatTime, useDocumentTitle } from './utils';
 import ThemeToggle from './ThemeToggle.js';
 
 const LapLineTracker = () => {
+  useDocumentTitle('Lap Line Tracker')
   const socket = useContext(SocketContext);
   const prevSessionRef                        = useRef(null);
   const [selectedSession, setSelectedSession] = useState(null);
@@ -156,8 +157,6 @@ const LapLineTracker = () => {
     socket.on('current-lap-times', handleLapTimesUpdate);
     return () => socket.off('current-lap-times', handleLapTimesUpdate);
   }, [socket]);
-
-  useEffect(() => { document.title = 'Lap Line Tracker — RaceControl Live'; }, []);
 
   const handleLapComplete = (carId) => {
     if (!isRaceActive) return;

@@ -2,8 +2,10 @@ import React, { useEffect, useState, useContext } from "react";
 import { SocketContext } from "../App";
 import './css/FrontDesk.css';
 import ThemeToggle from "./ThemeToggle.js";
+import { useDocumentTitle } from "./utils.js";
 
 const FrontDesk = () => {
+  useDocumentTitle('Front desk')
   const socket = useContext(SocketContext);
   const [raceSessions, setRaceSessions] = useState([]);
   const [newSessionName, setNewSessionName] = useState("");
@@ -35,8 +37,6 @@ const FrontDesk = () => {
       socket.off("state-update");
     };
   }, [socket]);
-
-  useEffect(() => { document.title = "Front Desk — RaceControl Live"; }, []);
 
   const addRaceSession = () => {
     if (!newSessionName.trim()) {
