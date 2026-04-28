@@ -111,7 +111,7 @@ async function initializeData() {
 let saveTimeout = null;
 async function saveState() {
     if (saveTimeout) clearTimeout(saveTimeout);
-    saveTimeout = setInterval(async () => {
+    saveTimeout = setTimeout(async () => {
         try {
             await RaceData.save({
                 raceSessions,
