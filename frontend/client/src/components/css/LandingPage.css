@@ -96,6 +96,7 @@
   align-items: center;
   gap: 14px;
   margin-bottom: 20px;
+  color: var(--tone)
 }
 
 .lp-section__desc {

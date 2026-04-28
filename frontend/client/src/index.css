@@ -261,7 +261,7 @@ p {
   border-radius: var(--rc-radius-lg);
 }
 
-.rc-fs-btn {
+.icon-btn {
   display: flex;
   top: 16px;
   z-index: 3;
@@ -278,7 +278,7 @@ p {
   flex-shrink: 0;
 }
 
-.rc-fs-btn:hover {
+.icon-btn:hover {
   background: var(--rc-surface-2);
   color: var(--rc-text);
 }

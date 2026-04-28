@@ -21,7 +21,7 @@ const FullscreenToggle = () => {
     };
 
     return (
-        <button className='rc-fs-btn' onClick={toggle}>
+        <button className='icon-btn' onClick={toggle}>
             <svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
                 <path d={isFullscreen ? EXIT_PATH : ENTER_PATH} />
             </svg>
