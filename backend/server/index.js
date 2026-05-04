@@ -132,6 +132,20 @@ function clearRaceTimer(sessionId) {
     }
 }
 
+function snapShotSessionLaps(session) {
+    const sessionLaps = lapData[session.id];
+    if (sessionLaps) {
+        const endTime = Date.now();
+        Object.keys(sessionLaps).forEach(carId => {
+            const lap = sessionLaps[carId];
+            if (lap.startTime) {
+                lap.currentTime = endTime - lap.startTime;
+                lap.startTime = null;
+            }
+        });
+    }
+}
+
 function startRaceTimer(session, duration) {
     if (!session) return;
     clearRaceTimer(session.id);
@@ -142,6 +156,7 @@ function startRaceTimer(session, duration) {
         session.status = 'Finished';
         raceTimers[session.id].status = 'finished';
         currentRaceMode = 'Finish';
+        snapShotSessionLaps(session);
         broadcastState();
     }, duration);
 
@@ -233,6 +248,7 @@ io.on('connection', (socket) => {
         clearRaceTimer(session.id); //clearing the timer
         session.status = 'Finished';
         currentRaceMode = 'Finish';
+        snapShotSessionLaps(session);
         broadcastState();
         callback({ success: true });
     });

@@ -22,6 +22,14 @@ const LeaderBoard = () => {
   const [raceTimer,    setRaceTimer]    = useState(null);
   const [countdown,    setCountdown]    = useState(0);
   const prevSessionRef                  = useRef(null);
+  const [now, setNow] = useState(Date.now());
+  const [isRaceActive, setIsRaceActive] = useState(false);
+  
+  useEffect(() => {
+    if (!isRaceActive) return;
+    const id = setInterval(() => setNow(Date.now()), 100);
+    return () => clearInterval(id);
+  }, [isRaceActive]);
 
   useEffect(() => {
     if (!socket) return;
@@ -32,27 +40,30 @@ const LeaderBoard = () => {
       setCars(prev => prev.map(car => {
         const u = incoming.find(c => c.id === String(car.id));
         if (!u) return car;
-        return {
-          ...car,
-          currentTime: u.currentTime || 0,
-          startTime:   u.startTime,
-          lapTimes:    u.lapTimes || [],
-          fastestLap:  u.lapTimes?.length ? Math.min(...u.lapTimes) : null,
-        };
+        return { ...car, startTime: u.startTime, lapTimes: u.lapTimes || [] };
       }));
     });
 
     socket.on('race-started', () =>
-      setCars(prev => prev.map(car => ({ ...car, currentTime: 0, startTime: Date.now(), lapTimes: [] })))
+      setCars(prev => prev.map(car => ({
+        ...car, startTime: Date.now(), currentTime: 0, lapTimes: []
+      })))
     );
 
     socket.on('state-update', (state) => {
       setRaceInfo(prev => ({ ...prev, mode: state.currentRaceMode }));
       setRaceTimer(state.raceTimer ?? null);
       
+      const session = state.currentSelectSession ? state.raceSessions.find(s => s.id === state.currentSelectSession) : null;
+
+      if (session?.status === 'in-progress') {
+        setIsRaceActive(true);
+      } else {
+        setIsRaceActive(false);
+      }
+      
       if (state.currentSelectSession && state.currentSelectSession !== prevSessionRef.current) {
         prevSessionRef.current = state.currentSelectSession;
-        const session = state.raceSessions.find(s => s.id === state.currentSelectSession);
         if (session) {
           setRaceInfo(prev => ({ ...prev, sessionName: session.sessionName }));
           setCars(session.drivers.map((driver, index) => {
@@ -61,9 +72,9 @@ const LeaderBoard = () => {
               id: driver.id,
               name: driver.name,
               carNumber: `${index + 1}`,
-              currentTime: stored?.currentTime || 0,
+              startTime: stored?.startTime ?? null,
+              currentTime: stored?.currentTime ?? 0,
               lapTimes: stored?.lapTimes || [],
-              fastestLap: stored?.lapTimes?.length ? Math.min(...stored.lapTimes) : null
             }
           }));
         }
@@ -102,7 +113,13 @@ const LeaderBoard = () => {
     return () => clearInterval(id);
   }, [raceTimer]);
 
-  const sortedCars = [...cars].sort((a, b) => {
+  const sortedCars = [...cars]
+  .map(car => ({
+    ...car,
+    currentTime: car.startTime ? Math.max(0, now - car.startTime) : (car.currentTime ?? 0),
+    fastestLap:  car.lapTimes?.length ? Math.min(...car.lapTimes) : null,
+  }))
+  .sort((a, b) => {
     if (!a.fastestLap && !b.fastestLap) return 0;
     if (!a.fastestLap) return 1;
     if (!b.fastestLap) return -1;

@@ -16,6 +16,13 @@ const LapLineTracker = () => {
   const [isRaceFinished,  setIsRaceFinished]  = useState(false);
   const [raceTimer,       setRaceTimer]       = useState(null);
   const [countdown,       setCountdown]       = useState(null);
+  const [now,             setNow]             = useState(Date.now());
+
+  useEffect(() => {
+    if (!isRaceActive) return;
+    const id = setInterval(() => setNow(Date.now()), 100);
+    return () => clearInterval(id);
+  }, [isRaceActive]);
 
   useEffect(() => {
     if (!socket) return;
@@ -117,63 +124,26 @@ const LapLineTracker = () => {
     return () => clearInterval(id);
   }, [raceTimer]);
 
-  useEffect(() => {
-    if (!isRaceActive) return;
-    const id = setInterval(() => {
-      setLapTimers(prev => {
-        const next = { ...prev };
-        Object.keys(next).forEach(carId => {
-          if (next[carId].startTime) {
-            next[carId] = { ...next[carId], currentTime: Date.now() - next[carId].startTime };
-          }
-        });
-        const updates = Object.keys(next).map(carId => ({
-          id: carId,
-          currentTime: next[carId].currentTime,
-          startTime:   next[carId].startTime,
-          lapTimes:    next[carId].lapTimes,
-        }));
-        socket.emit('current-lap-times', updates);
-        return next;
-      });
-    }, 100);
-    return () => clearInterval(id);
-  }, [isRaceActive, socket]);
-
-  useEffect(() => {
-    if (!socket) return;
-    const handleLapTimesUpdate = (incoming) => {
-      if (!Array.isArray(incoming)) return;
-      setLapTimers(prev => {
-        const next = { ...prev };
-        incoming.forEach(u => {
-          if (next[u.id]) {
-            next[u.id] = { ...next[u.id], currentTime: u.currentTime, lapTimes: u.lapTimes };
-          }
-        });
-        return next;
-      });
-    };
-    socket.on('current-lap-times', handleLapTimesUpdate);
-    return () => socket.off('current-lap-times', handleLapTimesUpdate);
-  }, [socket]);
-
   const handleLapComplete = (carId) => {
     if (!isRaceActive) return;
-    const now = Date.now();
+    const tapTime = Date.now();
 
     setFlashCarId(carId);
     setTimeout(() => setFlashCarId(null), 300);
 
     setLapTimers(prev => {
-      const car = prev[carId] || { startTime: null, currentTime: 0, lapTimes: [] };
-      const newLapTimes = [...(car.lapTimes || [])];
-      if (car.startTime) newLapTimes.push(now - car.startTime);
+      const car = prev[carId] || { startTime: null, lapTimes: [] };
+      const newLapTimes = car.startTime ? [...(car.lapTimes || []), tapTime - car.startTime] : (car.lapTimes || []);
+      const updated = { startTime: tapTime, lapTimes: newLapTimes };
+      const nextState = { ...prev, [carId]: updated };
 
-      return {
-        ...prev,
-        [carId]: { startTime: now, currentTime: 0, lapTimes: newLapTimes },
-      };
+      const updates = Object.entries(nextState).map(([id, t]) => ({
+        id,
+        startTime: t.startTime,
+        lapTimes: t.lapTimes,
+      }));
+      socket.emit('current-lap-times', updates);
+      return nextState;
     });
   };
 
@@ -229,6 +199,7 @@ const LapLineTracker = () => {
           const lapCount = timer.lapTimes?.length ?? 0;
           const bestLap  = getBestLap(timer.lapTimes);
           const isFlash  = flashCarId === car.id;
+          const currentTime = timer.startTime ? Math.max(0, now - timer.startTime) : 0;
 
           return (
             <button
@@ -246,7 +217,7 @@ const LapLineTracker = () => {
               <div className="llt-driver-name">{car.name || '—'}</div>
 
               <div className="llt-current-time">
-                {formatTime(timer.currentTime ?? 0)}
+                {formatTime(currentTime)}
               </div>
 
               <div className="llt-car-footer">
