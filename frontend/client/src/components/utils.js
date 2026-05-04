@@ -13,3 +13,16 @@ export const useDocumentTitle = (title) => {
     document.title = title ? `${title} (RaceControl Live)` : 'RaceControl Live';
   });
 }
+
+export const buildCarsFromState = (session, lapData) =>
+  session?.drivers.map((driver, index) => {
+    const stored = lapData[driver.id];
+    return {
+      id:         driver.id,
+      name:       driver.name,
+      carNumber:  `${index + 1}`,
+      startTime:  stored?.startTime ?? null,
+      frozenTime: stored?.frozenTime ?? 0,
+      lapTimes:   stored?.lapTimes || [],
+    };
+  }) ?? [];

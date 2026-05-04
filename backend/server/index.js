@@ -16,7 +16,7 @@ if (!process.env.RECEPTIONIST_KEY || !process.env.OBSERVER_KEY || !process.env.S
 const app = express(); // Initialising the express application
 const server = http.createServer(app); // Creating an http server using express
 
-// Initialising a Socke.IO server
+// Initialising a Socket.IO server
 // CORS is set to allow all origins because the application is meant to be used on local networks where client device IPs are not known in advance. This is acceptable because the server is not exposed to the public internet.
 const io = new Server(server, {
     cors: {
@@ -132,14 +132,14 @@ function clearRaceTimer(sessionId) {
     }
 }
 
-function snapShotSessionLaps(session) {
+function snapshotSessionLaps(session) {
     const sessionLaps = lapData[session.id];
     if (sessionLaps) {
         const endTime = Date.now();
         Object.keys(sessionLaps).forEach(carId => {
             const lap = sessionLaps[carId];
             if (lap.startTime) {
-                lap.currentTime = endTime - lap.startTime;
+                lap.frozenTime = endTime - lap.startTime;
                 lap.startTime = null;
             }
         });
@@ -156,11 +156,17 @@ function startRaceTimer(session, duration) {
         session.status = 'Finished';
         raceTimers[session.id].status = 'finished';
         currentRaceMode = 'Finish';
-        snapShotSessionLaps(session);
+        snapshotSessionLaps(session);
         broadcastState();
     }, duration);
 
     activeTimers[session.id] = timer;
+
+    const raceStartTime = Date.now();
+    lapData[session.id] = {};
+    session.drivers.forEach(driver => {
+        lapData[session.id][driver.id] = { startTime: raceStartTime, lapTimes: [] };
+    });
     
     io.emit('race-started', session.id);
     currentRaceMode = 'Safe'
@@ -248,7 +254,7 @@ io.on('connection', (socket) => {
         clearRaceTimer(session.id); //clearing the timer
         session.status = 'Finished';
         currentRaceMode = 'Finish';
-        snapShotSessionLaps(session);
+        snapshotSessionLaps(session);
         broadcastState();
         callback({ success: true });
     });
@@ -306,23 +312,20 @@ io.on('connection', (socket) => {
         }, delay);
     });
 
-    //Handler for car lap timers which is emitted by LapLineTracker and then broadcased to be detected by LeaderBoard so it can display them
-    socket.on('current-lap-times', (data) => {
+    socket.on('lap-completed', ({ carId }) => {
         if (!authorize(socket, 'observer', null)) return;
+        if (!currentSelectSession) return;
 
-        if (currentSelectSession && Array.isArray(data)) {
-            if(!lapData[currentSelectSession]) {
-                lapData[currentSelectSession] = {};
-            }
-            data.forEach(car => {
-                lapData[currentSelectSession][car.id] = {
-                    startTime: car.startTime,
-                    currentTime: car.currentTime,
-                    lapTimes: car.lapTimes
-                };
-            });
-        }
-        socket.broadcast.emit('current-lap-times', data);
+        const sessionData = lapData[currentSelectSession];
+        if (!sessionData) return;
+        const carLap = sessionData[carId];
+        if (!carLap?.startTime) return;
+
+        const now = Date.now();
+        carLap.lapTimes = [...(carLap.lapTimes || []), now - carLap.startTime];
+        carLap.startTime = now;
+
+        broadcastState();
     });
 
     //Listener for race sessions being added in FrontDesk

@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { SocketContext } from '../App';
 import './css/LapLineTracker.css';
-import { formatTime, useDocumentTitle } from './utils';
+import { formatTime, useDocumentTitle, buildCarsFromState } from './utils';
 import ThemeToggle from './ThemeToggle.js';
 
 const LapLineTracker = () => {
   useDocumentTitle('Lap Line Tracker')
   const socket = useContext(SocketContext);
-  const prevSessionRef                        = useRef(null);
   const [selectedSession, setSelectedSession] = useState(null);
   const [cars,            setCars]            = useState([]);
   const [isRaceActive,    setIsRaceActive]    = useState(false);
-  const [lapTimers,       setLapTimers]       = useState({});
   const [flashCarId,      setFlashCarId]      = useState(null); // visual tap feedback
   const [isRaceFinished,  setIsRaceFinished]  = useState(false);
   const [raceTimer,       setRaceTimer]       = useState(null);
@@ -29,57 +27,10 @@ const LapLineTracker = () => {
     setCars([]);
     setIsRaceActive(false);
 
-    socket.on('race-started', () => {
-      setIsRaceActive(true);
-      setIsRaceFinished(false);
-      setLapTimers(prev => {
-        const next = { ...prev };
-        Object.keys(next).forEach(id => {
-          next[id] = { ...next[id], startTime: Date.now(), currentTime: 0 };
-        });
-        return next;
-      });
-    });
-
     socket.on('state-update', (state) => {
       setRaceTimer(state.raceTimer ?? null);
 
       const session = state.currentSelectSession ? state.raceSessions.find(s => s.id === state.currentSelectSession) : null;
-
-      if (state.currentSelectSession !== prevSessionRef.current) {
-        prevSessionRef.current = state.currentSelectSession;
-        if (state.currentSelectSession) {
-          const session = state.raceSessions.find(s => s.id === state.currentSelectSession);
-          if (session) {
-            setSelectedSession(session);
-            const initialCars = session.drivers.map((driver, index) => {
-              const stored = state.lapData[driver.id];
-              return {
-                id: driver.id,
-                name: driver.name,
-                carNumber: `${index + 1}`,
-                lapTimes: stored?.lapTimes || [],
-                currentLapStart: stored?.startTime || null,
-                currentTime: stored?.currentTime || 0,
-              };
-            });
-            setCars(initialCars);
-            const initialTimers = {};
-            initialCars.forEach(car => {
-              initialTimers[car.id] = {
-                startTime: car.currentLapStart || null,
-                currentTime: car.currentTime || 0,
-                lapTimes: car.lapTimes || []
-              };
-            });
-            setLapTimers(initialTimers);
-          }
-        } else {
-          setCars([]);
-          setLapTimers({});
-          setSelectedSession(null);
-        }
-      }
 
       if (session?.status === 'in-progress') {
         setIsRaceActive(true);
@@ -87,23 +38,18 @@ const LapLineTracker = () => {
       } else if (session?.status === 'Finished') {
         setIsRaceActive(false);
         setIsRaceFinished(true);
-        setLapTimers(prev => {
-          const next = { ...prev };
-          Object.keys(next).forEach(id => {
-            next[id] = { ...next[id], startTime: null, currentTime: 0 };
-          });
-          return next;
-        });
       } else {
         setIsRaceActive(false);
         setIsRaceFinished(false);
       }
+
+      setSelectedSession(session);
+      setCars(buildCarsFromState(session, state.lapData));
     });
     
     socket.emit('request-full-state');
 
     return () => {
-      socket.off('race-started');
       socket.off('state-update');
     };
   }, [socket]);
@@ -126,25 +72,9 @@ const LapLineTracker = () => {
 
   const handleLapComplete = (carId) => {
     if (!isRaceActive) return;
-    const tapTime = Date.now();
-
     setFlashCarId(carId);
     setTimeout(() => setFlashCarId(null), 300);
-
-    setLapTimers(prev => {
-      const car = prev[carId] || { startTime: null, lapTimes: [] };
-      const newLapTimes = car.startTime ? [...(car.lapTimes || []), tapTime - car.startTime] : (car.lapTimes || []);
-      const updated = { startTime: tapTime, lapTimes: newLapTimes };
-      const nextState = { ...prev, [carId]: updated };
-
-      const updates = Object.entries(nextState).map(([id, t]) => ({
-        id,
-        startTime: t.startTime,
-        lapTimes: t.lapTimes,
-      }));
-      socket.emit('current-lap-times', updates);
-      return nextState;
-    });
+    socket.emit('lap-completed', { carId });
   };
 
   const getBestLap = (lapTimes) => {
@@ -195,11 +125,10 @@ const LapLineTracker = () => {
       )}
       <main className="llt-cars-grid">
         {cars.map((car) => {
-          const timer    = lapTimers[car.id] ?? { currentTime: 0, lapTimes: [] };
-          const lapCount = timer.lapTimes?.length ?? 0;
-          const bestLap  = getBestLap(timer.lapTimes);
+          const lapCount = car.lapTimes?.length ?? 0;
+          const bestLap  = getBestLap(car.lapTimes);
           const isFlash  = flashCarId === car.id;
-          const currentTime = timer.startTime ? Math.max(0, now - timer.startTime) : 0;
+          const currentTime = car.startTime ? Math.max(0, now - car.frozenTime) : 0;
 
           return (
             <button
@@ -235,12 +164,12 @@ const LapLineTracker = () => {
         })}
       </main>
 
-      {cars.some(car => (lapTimers[car.id]?.lapTimes?.length ?? 0) > 0) && (
+      {cars.some(car => (car.lapTimes?.length ?? 0) > 0) && (
         <section className="llt-history">
           <h2 className="rc-label">Recorded lap times</h2>
           <div className="llt-history-grid">
             {cars.map((car) => {
-              const laps = lapTimers[car.id]?.lapTimes ?? [];
+              const laps = car.lapTimes ?? [];
               if (!laps.length) return null;
               const best = Math.min(...laps);
               return (

@@ -135,7 +135,6 @@ A single Socket.IO server holds the authoritative race state (sessions, selected
 
 - `add-session`, `confirm-session`, `delete-session`: Receptionist only
 - `start-race`, `finish-race`, `end-race-session`, `change-mode`: Safety only
-- `current-lap-times`: Observer only (emitted to leaderboard and lap tracker)
 - `validate-key`: Used by the access-key prompt. Invalid keys are deliberately delayed 500ms to discourage brute force
 
 Race timers are stored with `startTime` and `duration`, so on server restart any running race resumes with the correct remaining time instead of snapping back to full duration.

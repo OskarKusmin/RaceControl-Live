@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { SocketContext } from '../App';
 import './css/LeaderBoard.css';
 import { formatTime, useDocumentTitle } from './utils';
@@ -21,7 +21,6 @@ const LeaderBoard = () => {
   const [raceInfo,     setRaceInfo]     = useState({ mode: 'Danger', sessionName: 'Awaiting session…' });
   const [raceTimer,    setRaceTimer]    = useState(null);
   const [countdown,    setCountdown]    = useState(0);
-  const prevSessionRef                  = useRef(null);
   const [now, setNow] = useState(Date.now());
   const [isRaceActive, setIsRaceActive] = useState(false);
   
@@ -35,64 +34,23 @@ const LeaderBoard = () => {
     if (!socket) return;
     setCars([]);
 
-    socket.on('current-lap-times', (incoming) => {
-      if (!Array.isArray(incoming)) return;
-      setCars(prev => prev.map(car => {
-        const u = incoming.find(c => c.id === String(car.id));
-        if (!u) return car;
-        return { ...car, startTime: u.startTime, lapTimes: u.lapTimes || [] };
-      }));
-    });
-
-    socket.on('race-started', () =>
-      setCars(prev => prev.map(car => ({
-        ...car, startTime: Date.now(), currentTime: 0, lapTimes: []
-      })))
-    );
-
     socket.on('state-update', (state) => {
       setRaceInfo(prev => ({ ...prev, mode: state.currentRaceMode }));
       setRaceTimer(state.raceTimer ?? null);
-      
       const session = state.currentSelectSession ? state.raceSessions.find(s => s.id === state.currentSelectSession) : null;
-
-      if (session?.status === 'in-progress') {
-        setIsRaceActive(true);
-      } else {
-        setIsRaceActive(false);
-      }
+      setIsRaceActive(session?.status === 'in-progress');
       
-      if (state.currentSelectSession && state.currentSelectSession !== prevSessionRef.current) {
-        prevSessionRef.current = state.currentSelectSession;
-        if (session) {
-          setRaceInfo(prev => ({ ...prev, sessionName: session.sessionName }));
-          setCars(session.drivers.map((driver, index) => {
-            const stored = state.lapData[driver.id];
-            return {
-              id: driver.id,
-              name: driver.name,
-              carNumber: `${index + 1}`,
-              startTime: stored?.startTime ?? null,
-              currentTime: stored?.currentTime ?? 0,
-              lapTimes: stored?.lapTimes || [],
-            }
-          }));
-        }
-      };
-
-      if (!state.currentSelectSession) {
-        prevSessionRef.current = null;
-        setCars([]);
+      if (session) {
+        setRaceInfo(prev => ({ ...prev, sessionName: session.sessionName }));
+        setCars(session, state.lapData);
+      } else {
         setRaceInfo(prev => ({ ...prev, sessionName: 'Awaiting session…' }));
       }
-
     });
 
     socket.emit('request-full-state');
 
     return () => {
-      socket.off('current-lap-times');
-      socket.off('race-started');
       socket.off('state-update');
     };
   }, [socket]);
@@ -116,7 +74,7 @@ const LeaderBoard = () => {
   const sortedCars = [...cars]
   .map(car => ({
     ...car,
-    currentTime: car.startTime ? Math.max(0, now - car.startTime) : (car.currentTime ?? 0),
+    currentTime: car.startTime ? Math.max(0, now - car.startTime) : (car.frozenTime ?? 0),
     fastestLap:  car.lapTimes?.length ? Math.min(...car.lapTimes) : null,
   }))
   .sort((a, b) => {
