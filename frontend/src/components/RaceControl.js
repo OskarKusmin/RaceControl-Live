@@ -23,6 +23,7 @@ const RaceControl = () => {
   const [isRaceFinished, setIsRaceFinished] = useState(false);
   const [error,          setError]          = useState('');
   const [isStarting,     setIsStarting]     = useState(false);
+  const [raceDuration,   setRaceDuration]   = useState(process.env.NODE_ENV === 'development' ? 2 : 10);
 
   useEffect(() => {
     if (!socket) return;
@@ -93,7 +94,7 @@ const RaceControl = () => {
   const startRace = () => {
     if (!currentSession) { setError('No session selected.'); return; }
     setError('');
-    socket.emit('start-race', { sessionId: currentSession.id }, (response) => {
+    socket.emit('start-race', { sessionId: currentSession.id, duration: raceDuration * 60 }, (response) => {
       if (response.success) {
         setIsStarting(true);
       } else {
@@ -160,6 +161,30 @@ const RaceControl = () => {
 
         {currentSession ? (
           <div className="rc-card rc-ctrl-session-card">
+
+            {!isRaceActive && !isRaceFinished && !isStarting && currentSession && (
+              <div className="rc-card rc-ctrl-duration-card">
+                <span className="rc-label">Race duration</span>
+                <div className="rc-ctrl-duration-picker">
+                  <button
+                    className="rc-btn rc-ctrl-duration-btn"
+                    onClick={() => setRaceDuration(prev => Math.max(1, prev - 1))}
+                  >
+                    −
+                  </button>
+                  <span className="rc-ctrl-duration-value">
+                    {raceDuration} min
+                  </span>
+                  <button
+                    className="rc-btn rc-ctrl-duration-btn"
+                    onClick={() => setRaceDuration(prev => Math.min(60, prev + 1))}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="rc-ctrl-session-row">
               <div>
                 <p className="rc-label">Current session</p>

@@ -189,6 +189,27 @@
     border-style: solid;
 }
 
+.rc-ctrl-duration-picker {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.rc-ctrl-duration-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    min-width: 5ch;
+    text-align: center;
+}
+  
+.rc-ctrl-duration-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border-radius: 8px;
+}
+
 @media (max-width: 480px) {
     .rc-ctrl-timer {
         font-size: 56px;
