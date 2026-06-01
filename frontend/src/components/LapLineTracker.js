@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { SocketContext } from '../App';
+import { SocketContext } from '../App.js';
 import './css/LapLineTracker.css';
-import { formatTime, useDocumentTitle, buildCarsFromState } from './utils';
+import { formatTime, useDocumentTitle, buildCarsFromState } from './utils.js';
 import ThemeToggle from './ThemeToggle.js';
 
 const LapLineTracker = () => {
@@ -128,7 +128,7 @@ const LapLineTracker = () => {
           const lapCount = car.lapTimes?.length ?? 0;
           const bestLap  = getBestLap(car.lapTimes);
           const isFlash  = flashCarId === car.id;
-          const currentTime = car.startTime ? Math.max(0, now - car.frozenTime) : 0;
+          const currentTime = car.startTime ? Math.max(0, now - car.startTime) : (car.frozenTime ?? 0);
 
           return (
             <button

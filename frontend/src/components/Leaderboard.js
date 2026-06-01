@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { SocketContext } from '../App';
+import { SocketContext } from '../App.js';
 import './css/LeaderBoard.css';
-import { formatTime, useDocumentTitle } from './utils';
+import { buildCarsFromState, formatTime, useDocumentTitle } from './utils.js';
 import FullscreenToggle from './FullscreenToggle.js';
 import ThemeToggle from './ThemeToggle.js';
 
@@ -42,7 +42,7 @@ const LeaderBoard = () => {
       
       if (session) {
         setRaceInfo(prev => ({ ...prev, sessionName: session.sessionName }));
-        setCars(session, state.lapData);
+        setCars(buildCarsFromState(session, state.lapData));
       } else {
         setRaceInfo(prev => ({ ...prev, sessionName: 'Awaiting session…' }));
       }

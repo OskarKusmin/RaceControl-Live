@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { SocketContext } from "../App";
+import { SocketContext } from "../App.js";
 import './css/NextRace.css';
 import chimeSound from './sounds/chime.mp3';
 import FullscreenToggle from "./FullscreenToggle.js";

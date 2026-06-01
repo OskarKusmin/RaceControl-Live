@@ -17,21 +17,17 @@ const App = () => {
     const [socket, setSocket] = useState(null);
     const [accessGranted, setAccessGranted] = useState(false);
     const [role, setRole] = useState('');
-    const [currentSession, setCurrentSession] = useState(null);
-    const [raceSessions, setRaceSessions] = useState([]);
 
     useEffect(() => {
         const serverUrl = `${window.location.protocol}//${window.location.hostname}:5001`
         const newSocket = io(serverUrl, { transports: ["websocket", "polling"] });
         setSocket(newSocket);
 
-        newSocket.on('state-update', state => setRaceSessions(state.raceSessions));
         newSocket.on('connect_error', err => console.error('Socket connection failed:', err));
 
         // Clean up the socket connection on unmount
         return () => {
             newSocket.disconnect();
-            newSocket.off('state-update');
         }
     }, []);
 

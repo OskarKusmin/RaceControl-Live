@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { SocketContext } from "../App";
+import { SocketContext } from "../App.js";
 import './css/FrontDesk.css';
 import ThemeToggle from "./ThemeToggle.js";
 import { useDocumentTitle } from "./utils.js";
