@@ -86,7 +86,7 @@ const LeaderBoard = () => {
   });
 
   const modeMeta   = MODE_META[raceInfo.mode] ?? MODE_META.Danger;
-  const globalBest = cars.reduce((best, car) => {
+  const globalBest = sortedCars.reduce((best, car) => {
     if (!car.fastestLap) return best;
     return best === null || car.fastestLap < best ? car.fastestLap : best;
   }, null);
