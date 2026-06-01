@@ -371,6 +371,11 @@ io.on('connection', (socket) => {
         const deletedSession = raceSessions.splice(sessionIndex, 1)[0];
         delete lapData[sessionId];
 
+        if (currentSelectSession === sessionId) {
+            const nextSession = raceSessions.find (s => s.status === 'upcoming' || s.status === 'confirmed');
+            currentSelectSession = nextSession ? nextSession.id : null;
+        }
+
         if (deletedSession) {
             broadcastState();
             callback({ success: true });
