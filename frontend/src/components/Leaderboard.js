@@ -76,12 +76,13 @@ const LeaderBoard = () => {
     ...car,
     currentTime: car.startTime ? Math.max(0, now - car.startTime) : (car.frozenTime ?? 0),
     fastestLap:  car.lapTimes?.length ? Math.min(...car.lapTimes) : null,
+    lapCount:    car.lapTimes?.length ?? 0,
+    totalTime:   car.lapTimes?.reduce((sum, t) => sum + t, 0) ?? 0,
   }))
   .sort((a, b) => {
-    if (!a.fastestLap && !b.fastestLap) return 0;
-    if (!a.fastestLap) return 1;
-    if (!b.fastestLap) return -1;
-    return a.fastestLap - b.fastestLap;
+    if (b.lapCount !== a.lapCount) return b.lapCount - a.lapCount;
+    if (a.totalTime !== b.totalTime) return a.totalTime - b.totalTime;
+    return 0;
   });
 
   const modeMeta   = MODE_META[raceInfo.mode] ?? MODE_META.Danger;
