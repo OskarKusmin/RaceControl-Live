@@ -4,6 +4,8 @@ A real-time race management suite for small race tracks (go-kart circuits, track
 
 All clients are synchronised in real time over WebSockets, so every screen reflects the same race state within a few milliseconds: flag changes, countdowns, lap times, and session transitions.
 
+![demo-diagram](./RaceControl-Live.drawio.png)
+
 ## What it does
 
 The app is a single system with multiple role-specific interfaces, accessed from a shared landing page:
@@ -14,13 +16,13 @@ The app is a single system with multiple role-specific interfaces, accessed from
 - **Lap Line Tracker**: The observer taps a large button for each car as it crosses the start/finish line, which records lap times and streams them to the leaderboard.
 
 ### Public displays
-- **Leaderboard**: Live standings sorted by fastest lap, with current lap times, lap counts, session name, flag state, and race countdown. Fullscreen-ready.
+- **Leaderboard**: Live standings with current lap times, lap counts, session name, flag state, and race countdown. Fullscreen-ready. Sorted by most laps and then fastest lap as tiebreaker.
 - **Next Race**: Shows the upcoming session's name and and driver names with assigned car numbers. Switches to a "Proceed to paddock" call (with chime) when the track is free. Meant for drivers waiting their turn.
 - **Race Countdown**: Full-screen countdown clock with urgency colour states (normal / warning / critical / finished) and audio for the start countdown and "go".
 - **Race Flags**: A large full-screen flag indicator (green / yellow / red / chequered) for trackside monitors.
 
 ### Other features
-- **Persistent state**: Active sessions, timers, and race mode are written to `backend/server/data/races.json`, so an in-progress race survives a server restart and resumes with the correct remaining time.
+- **Persistent state**: Active sessions, timers, and race mode are written to `backend/data/races.json`, so an in-progress race survives a server restart and resumes with the correct remaining time.
 - **Role-based access**: Front Desk, Race Control, and Lap Line Tracker each require a separate access key defined in the server environment. Keys are validated server-side and the socket's role is used to authorise every privileged event.
 - **Dark / light theme**:Per-view theme toggle saved to `localStorage`.
 - **LAN-friendly**: CORS is open by design so staff tablets and display TVs on the same local network can connect to the host machine without extra configuration.
@@ -86,8 +88,6 @@ This runs:
 - the backend on `http://<host>:5001` with `nodemon` (auto-restart)
 - the React dev server on `http://<host>:3000`
 
-In `NODE_ENV=development` the race duration defaults to **2 minutes** to make testing quick. In any other mode it defaults to **10 minutes**.
-
 ### Production-style run
 
 Backend:
@@ -98,9 +98,8 @@ npm start
 
 Frontend (build + serve however you prefer):
 ```bash
-cd frontend/client
+cd frontend
 npm run build
-# Then serve ./build with any static server (e.g. `npx serve -s build`)
 ```
 
 The frontend automatically connects to `ws://<current-hostname>:5001`, so once the backend is reachable on the LAN, any device pointed at the frontend's host will connect correctly.
@@ -136,6 +135,7 @@ A single Socket.IO server holds the authoritative race state (sessions, selected
 - `add-session`, `confirm-session`, `delete-session`: Receptionist only
 - `start-race`, `finish-race`, `end-race-session`, `change-mode`: Safety only
 - `validate-key`: Used by the access-key prompt. Invalid keys are deliberately delayed 500ms to discourage brute force
+- `lap-completed`: Observer only. Updates leaderboard.
 
 Race timers are stored with `startTime` and `duration`, so on server restart any running race resumes with the correct remaining time instead of snapping back to full duration.
 
