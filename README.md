@@ -145,3 +145,8 @@ Lap timing is event-driven rather than polled. When the observer taps a car, the
 - State is written to a JSON file. This is deliberately simple and fits the "one venue, one host machine" use case.
 - **Browser audio policy.** Countdown, "go", and paddock-call sounds require a prior user interaction on some browsers. If you load a display screen in a tab that's never been interacted with, the first chime may be silently blocked until someone clicks on the page.
 - Lap data is not persisted. Race sessions and timers survive a server restart, but in-progress lap counts and lap times are held in memory only. If the server crashes mid-race, lap data is lost.
+
+
+## License
+
+MIT
